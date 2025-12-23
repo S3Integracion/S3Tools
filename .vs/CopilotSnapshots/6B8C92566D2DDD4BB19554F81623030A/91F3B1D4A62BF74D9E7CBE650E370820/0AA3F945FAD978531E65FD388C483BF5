@@ -1,0 +1,195 @@
+﻿namespace S3Integración_programs
+{
+    partial class Form1
+    {
+        /// <summary>
+        /// Variable del diseñador necesaria.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Limpiar los recursos que se estén usando.
+        /// </summary>
+        /// <param name="disposing">true si los recursos administrados se deben desechar; false en caso contrario.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Código generado por el Diseñador de Windows Forms
+
+        /// <summary>
+        /// Método necesario para admitir el Diseñador. No se puede modificar
+        /// el contenido de este método con el editor de código.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.asinBatcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.s3ScraperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.controlRemotoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabControlPrograms = new System.Windows.Forms.TabControl();
+            this.tabAsinBatcher = new System.Windows.Forms.TabPage();
+            this.asinBatcherPanel = new System.Windows.Forms.Panel();
+            this.tabS3Scraper = new System.Windows.Forms.TabPage();
+            this.s3ScraperPanel = new System.Windows.Forms.Panel();
+            this.tabControlRemoto = new System.Windows.Forms.TabPage();
+            this.controlRemotoPanel = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.menuStrip1.SuspendLayout();
+            this.tabControlPrograms.SuspendLayout();
+            this.tabAsinBatcher.SuspendLayout();
+            this.tabS3Scraper.SuspendLayout();
+            this.tabControlRemoto.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.asinBatcherToolStripMenuItem,
+            this.s3ScraperToolStripMenuItem,
+            this.controlRemotoToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1182, 28);
+            this.menuStrip1.TabIndex = 0;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // asinBatcherToolStripMenuItem
+            // 
+            this.asinBatcherToolStripMenuItem.Name = "asinBatcherToolStripMenuItem";
+            this.asinBatcherToolStripMenuItem.Size = new System.Drawing.Size(105, 24);
+            this.asinBatcherToolStripMenuItem.Text = "Asin Batcher";
+            this.asinBatcherToolStripMenuItem.Click += new System.EventHandler(this.asinBatcherToolStripMenuItem_Click);
+            // 
+            // s3ScraperToolStripMenuItem
+            // 
+            this.s3ScraperToolStripMenuItem.Name = "s3ScraperToolStripMenuItem";
+            this.s3ScraperToolStripMenuItem.Size = new System.Drawing.Size(89, 24);
+            this.s3ScraperToolStripMenuItem.Text = "S3Scraper";
+            this.s3ScraperToolStripMenuItem.Click += new System.EventHandler(this.s3ScraperToolStripMenuItem_Click);
+            // 
+            // controlRemotoToolStripMenuItem
+            // 
+            this.controlRemotoToolStripMenuItem.Name = "controlRemotoToolStripMenuItem";
+            this.controlRemotoToolStripMenuItem.Size = new System.Drawing.Size(131, 24);
+            this.controlRemotoToolStripMenuItem.Text = "Control_Remoto";
+            this.controlRemotoToolStripMenuItem.Click += new System.EventHandler(this.controlRemotoToolStripMenuItem_Click);
+            // 
+            // tabControlPrograms
+            // 
+            this.tabControlPrograms.Controls.Add(this.tabAsinBatcher);
+            this.tabControlPrograms.Controls.Add(this.tabS3Scraper);
+            this.tabControlPrograms.Controls.Add(this.tabControlRemoto);
+            this.tabControlPrograms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControlPrograms.Location = new System.Drawing.Point(0, 28);
+            this.tabControlPrograms.Name = "tabControlPrograms";
+            this.tabControlPrograms.SelectedIndex = 0;
+            this.tabControlPrograms.Size = new System.Drawing.Size(1182, 645);
+            this.tabControlPrograms.TabIndex = 1;
+            // 
+            // tabAsinBatcher
+            // 
+            this.tabAsinBatcher.Controls.Add(this.asinBatcherPanel);
+            this.tabAsinBatcher.Location = new System.Drawing.Point(4, 25);
+            this.tabAsinBatcher.Name = "tabAsinBatcher";
+            this.tabAsinBatcher.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAsinBatcher.Size = new System.Drawing.Size(1174, 616);
+            this.tabAsinBatcher.TabIndex = 0;
+            this.tabAsinBatcher.Text = "Asin Batcher";
+            this.tabAsinBatcher.UseVisualStyleBackColor = true;
+            // 
+            // asinBatcherPanel
+            // 
+            this.asinBatcherPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.asinBatcherPanel.Location = new System.Drawing.Point(3, 3);
+            this.asinBatcherPanel.Name = "asinBatcherPanel";
+            this.asinBatcherPanel.Size = new System.Drawing.Size(1168, 610);
+            this.asinBatcherPanel.TabIndex = 0;
+            // 
+            // tabS3Scraper
+            // 
+            this.tabS3Scraper.Controls.Add(this.s3ScraperPanel);
+            this.tabS3Scraper.Location = new System.Drawing.Point(4, 25);
+            this.tabS3Scraper.Name = "tabS3Scraper";
+            this.tabS3Scraper.Padding = new System.Windows.Forms.Padding(3);
+            this.tabS3Scraper.Size = new System.Drawing.Size(1174, 616);
+            this.tabS3Scraper.TabIndex = 1;
+            this.tabS3Scraper.Text = "S3Scraper";
+            this.tabS3Scraper.UseVisualStyleBackColor = true;
+            // 
+            // s3ScraperPanel
+            // 
+            this.s3ScraperPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.s3ScraperPanel.Location = new System.Drawing.Point(3, 3);
+            this.s3ScraperPanel.Name = "s3ScraperPanel";
+            this.s3ScraperPanel.Size = new System.Drawing.Size(1168, 610);
+            this.s3ScraperPanel.TabIndex = 0;
+            // 
+            // tabControlRemoto
+            // 
+            this.tabControlRemoto.Controls.Add(this.controlRemotoPanel);
+            this.tabControlRemoto.Location = new System.Drawing.Point(4, 25);
+            this.tabControlRemoto.Name = "tabControlRemoto";
+            this.tabControlRemoto.Padding = new System.Windows.Forms.Padding(3);
+            this.tabControlRemoto.Size = new System.Drawing.Size(1174, 616);
+            this.tabControlRemoto.TabIndex = 2;
+            this.tabControlRemoto.Text = "Control_Remoto";
+            this.tabControlRemoto.UseVisualStyleBackColor = true;
+            // 
+            // controlRemotoPanel
+            // 
+            this.controlRemotoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.controlRemotoPanel.Location = new System.Drawing.Point(3, 3);
+            this.controlRemotoPanel.Name = "controlRemotoPanel";
+            this.controlRemotoPanel.Size = new System.Drawing.Size(1168, 610);
+            this.controlRemotoPanel.TabIndex = 0;
+            // 
+            // Form1
+            // 
+            this.AllowDrop = true;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1182, 673);
+            this.Controls.Add(this.tabControlPrograms);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
+            this.Name = "Form1";
+            this.Text = "S3integración_programs";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.tabControlPrograms.ResumeLayout(false);
+            this.tabAsinBatcher.ResumeLayout(false);
+            this.tabS3Scraper.ResumeLayout(false);
+            this.tabControlRemoto.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem asinBatcherToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem s3ScraperToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem controlRemotoToolStripMenuItem;
+        private System.Windows.Forms.TabControl tabControlPrograms;
+        private System.Windows.Forms.TabPage tabAsinBatcher;
+        private System.Windows.Forms.TabPage tabS3Scraper;
+        private System.Windows.Forms.TabPage tabControlRemoto;
+        private System.Windows.Forms.Panel asinBatcherPanel;
+        private System.Windows.Forms.Panel s3ScraperPanel;
+        private System.Windows.Forms.Panel controlRemotoPanel;
+    }
+}
+

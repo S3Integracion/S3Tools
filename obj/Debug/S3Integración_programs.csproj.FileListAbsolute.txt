@@ -1,0 +1,12 @@
+C:\Users\ariel\GitHub\S3Integración_programs\bin\Debug\S3Integración_programs.exe.config
+C:\Users\ariel\GitHub\S3Integración_programs\bin\Debug\S3Integración_programs.exe
+C:\Users\ariel\GitHub\S3Integración_programs\bin\Debug\S3Integración_programs.pdb
+C:\Users\ariel\GitHub\S3Integración_programs\obj\Debug\S3Integración_programs.csproj.AssemblyReference.cache
+C:\Users\ariel\GitHub\S3Integración_programs\obj\Debug\S3Integración_programs.Form1.resources
+C:\Users\ariel\GitHub\S3Integración_programs\obj\Debug\S3Integración_programs.Properties.Resources.resources
+C:\Users\ariel\GitHub\S3Integración_programs\obj\Debug\S3Integración_programs.csproj.GenerateResource.cache
+C:\Users\ariel\GitHub\S3Integración_programs\obj\Debug\S3Integración_programs.csproj.CoreCompileInputs.cache
+C:\Users\ariel\GitHub\S3Integración_programs\obj\Debug\S3Integración_programs.exe
+C:\Users\ariel\GitHub\S3Integración_programs\obj\Debug\S3Integración_programs.pdb
+C:\Users\ariel\GitHub\S3Integración_programs\bin\Debug\Engines\AsinBatcherEngine\engine.py
+C:\Users\ariel\GitHub\S3Integración_programs\bin\Debug\Engines\AsinBatcherEngine\Formato de Sitemap.json
