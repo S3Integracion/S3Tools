@@ -1,4 +1,5 @@
-﻿using System;
+// Main shell form that hosts the tool tabs and injects their controls.
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +23,7 @@ namespace S3Integración_programs
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // Lazy-create controls to keep designer code minimal.
             if (asinBatcherControl == null)
             {
                 asinBatcherControl = new AsinBatcherControl

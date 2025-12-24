@@ -1,3 +1,5 @@
+// Asin Batcher tab UI.
+// Loads ASIN files, previews counts/duplicates, and generates URL batches.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,6 +47,7 @@ namespace S3Integración_programs
         public AsinBatcherControl()
         {
             _engineClient = new AsinBatcherEngineClient();
+            // Debounce preview requests while the user edits the input.
             _previewTimer = new Timer { Interval = 350 };
             _previewTimer.Tick += PreviewTimer_Tick;
             _inputControls = new List<Control>();
@@ -610,6 +613,7 @@ private Control BuildFileNameRow()
 
             if (!string.IsNullOrWhiteSpace(response.OutputFolder))
             {
+                // Persist output folder for Sitemap defaults.
                 AppState.SetLastAsinOutputDir(response.OutputFolder);
             }
 

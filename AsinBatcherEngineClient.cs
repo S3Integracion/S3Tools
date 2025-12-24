@@ -1,3 +1,5 @@
+// Client wrapper for the Asin Batcher Python engine.
+// Resolves the engine executable/script and exchanges JSON via stdin/stdout.
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -120,6 +122,7 @@ namespace S3Integración_programs
             }
         }
 
+        // Resolution order: env var -> embedded exe -> local exe -> local script.
         private static EngineCommand ResolveEngine()
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;

@@ -1,3 +1,5 @@
+// Sitemap tab UI.
+// Imports URL batch files and generates WebScraper sitemap JSONs.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -366,6 +368,7 @@ namespace S3Integración_programs
             _processButton.Click += ProcessButton_Click;
             VisibleChanged += (s, e) =>
             {
+                // Auto-load last Asin Batcher output on first show.
                 if (Visible && _filesList.Items.Count == 0)
                 {
                     LoadLastAsinBatcherFiles(true);
