@@ -1,3 +1,4 @@
+// Small persistence helper for local UI state (last Asin Batcher output folder).
 using System;
 using System.IO;
 

@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""Sitemap engine.
+
+Reads URL lists from txt/csv/xlsx/json files and writes WebScraper
+sitemap JSON files using the configured templates.
+"""
 import copy
 import csv
 import io
@@ -37,6 +42,7 @@ def _reset_cwd():
 
 
 def sanitize_name(text, default_value):
+    """Normalize output names to allowed characters."""
     repl = (text or "").strip()
     repl = repl.replace(" ", "_").replace("-", "_")
     repl = SITEMAP_ID_ALLOWED_RE.sub("_", repl)
@@ -197,6 +203,7 @@ def read_urls_from_excel(path):
 
 
 def read_urls_from_file(path):
+    """Read URLs from txt/csv/xlsx/json based on file extension."""
     ext = Path(path).suffix.lower()
     if ext == ".csv":
         return read_urls_from_csv(path)
@@ -232,6 +239,7 @@ def _error(message, tb=None):
 
 
 def handle_process(data):
+    """Generate sitemap JSON files from input URL batches."""
     _reset_cwd()
 
     input_files = data.get("input_files") or []

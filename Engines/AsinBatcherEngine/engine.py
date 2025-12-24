@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""Asin Batcher engine.
+
+Reads ASIN input files, removes duplicates, builds Amazon URLs,
+splits into batches, and returns JSON to the WinForms client.
+"""
 import json
 import os
 import re
@@ -152,6 +157,7 @@ def read_asins_from_plain_txt(path):
 
 
 def extract_asins_any(path):
+    """Read ASINs from txt/xlsx and return (unique, duplicates)."""
     sanitize_for_read(path)
     p = Path(path)
     ext = p.suffix.lower()
@@ -217,6 +223,7 @@ def ensure_folder(path):
     Path(path).mkdir(parents=True, exist_ok=True)
 
 
+# Normalize user names to allowed output chars.
 def sanitize_filename(text):
     repl = (text or "").strip()
     repl = repl.replace(" ", "_").replace("-", "_")
@@ -295,6 +302,7 @@ def _preview_response(uniques, dups):
 
 
 def handle_preview(data):
+    """Return counts for UI preview without writing outputs."""
     input_path = (data.get("input_path") or "").strip()
     if not input_path:
         return _error("Missing input_path")
@@ -305,6 +313,7 @@ def handle_preview(data):
 
 
 def handle_export_duplicates(data):
+    """Export duplicate ASINs to CSV."""
     input_path = (data.get("input_path") or "").strip()
     if not input_path:
         return _error("Missing input_path")
@@ -321,6 +330,7 @@ def handle_export_duplicates(data):
 
 
 def handle_process(data):
+    """Generate URL batches and return output metadata."""
     input_path = (data.get("input_path") or "").strip()
     if not input_path:
         return _error("Missing input_path")

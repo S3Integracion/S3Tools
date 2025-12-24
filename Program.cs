@@ -1,4 +1,6 @@
-﻿using System;
+// Entry point for the WinForms application.
+// Keeps startup minimal and hands control to Form1.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
