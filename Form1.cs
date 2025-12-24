@@ -13,6 +13,7 @@ namespace S3Integración_programs
     public partial class Form1 : Form
     {
         private AsinBatcherControl asinBatcherControl;
+        private SitemapControl sitemapControl;
 
         public Form1()
         {
@@ -28,6 +29,15 @@ namespace S3Integración_programs
                     Dock = DockStyle.Fill,
                 };
                 asinBatcherPanel.Controls.Add(asinBatcherControl);
+            }
+
+            if (sitemapControl == null)
+            {
+                sitemapControl = new SitemapControl
+                {
+                    Dock = DockStyle.Fill,
+                };
+                sitemapPanel.Controls.Add(sitemapControl);
             }
         }
 

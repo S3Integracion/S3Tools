@@ -186,7 +186,7 @@ namespace S3Integración_programs
             return panel;
         }
 
-        private Control BuildStoreGroup()
+                private Control BuildStoreGroup()
         {
             var group = new GroupBox
             {
@@ -198,35 +198,32 @@ namespace S3Integración_programs
             var layout = new TableLayoutPanel
             {
                 ColumnCount = 2,
+                RowCount = Math.Max(StoresLeft.Length, StoresRight.Length),
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
 
-            var left = new FlowLayoutPanel
-            {
-                FlowDirection = FlowDirection.TopDown,
-                AutoSize = true,
-                WrapContents = false,
-            };
-            var right = new FlowLayoutPanel
-            {
-                FlowDirection = FlowDirection.TopDown,
-                AutoSize = true,
-                WrapContents = false,
-            };
-
             var radios = new List<RadioButton>();
-            foreach (var store in StoresLeft)
+
+            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+            for (var i = 0; i < layout.RowCount; i++)
             {
-                var rb = new RadioButton { Text = store, AutoSize = true };
-                left.Controls.Add(rb);
-                radios.Add(rb);
-            }
-            foreach (var store in StoresRight)
-            {
-                var rb = new RadioButton { Text = store, AutoSize = true };
-                right.Controls.Add(rb);
-                radios.Add(rb);
+                layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+                if (i < StoresLeft.Length)
+                {
+                    var rb = new RadioButton { Text = StoresLeft[i], AutoSize = true, Anchor = AnchorStyles.Left };
+                    layout.Controls.Add(rb, 0, i);
+                    radios.Add(rb);
+                }
+
+                if (i < StoresRight.Length)
+                {
+                    var rb = new RadioButton { Text = StoresRight[i], AutoSize = true, Anchor = AnchorStyles.Left };
+                    layout.Controls.Add(rb, 1, i);
+                    radios.Add(rb);
+                }
             }
 
             if (radios.Count > 0)
@@ -234,8 +231,6 @@ namespace S3Integración_programs
                 radios[0].Checked = true;
             }
 
-            layout.Controls.Add(left, 0, 0);
-            layout.Controls.Add(right, 1, 0);
             group.Controls.Add(layout);
 
             _storeRadios = radios.ToArray();
@@ -244,7 +239,7 @@ namespace S3Integración_programs
             return group;
         }
 
-        private Control BuildFileNameRow()
+private Control BuildFileNameRow()
         {
             var layout = new TableLayoutPanel
             {
@@ -612,6 +607,11 @@ namespace S3Integración_programs
             _lastDuplicates = response.Duplicates ?? 0;
             _previewText.Text = FormatPreview(response);
             UpdateExportDuplicatesButton();
+
+            if (!string.IsNullOrWhiteSpace(response.OutputFolder))
+            {
+                AppState.SetLastAsinOutputDir(response.OutputFolder);
+            }
 
             var message = "Listo!\n";
             if (!string.IsNullOrWhiteSpace(response.ZipPath))

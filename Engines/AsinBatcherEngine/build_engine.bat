@@ -13,7 +13,6 @@ if errorlevel 1 (
 
 python -m PyInstaller --onefile --clean ^
   --name AsinBatcherEngine ^
-  --add-data "Formato de Sitemap.json;." ^
   --distpath "%SCRIPT_DIR%" ^
   --workpath "%SCRIPT_DIR%\\build" ^
   --specpath "%SCRIPT_DIR%" ^

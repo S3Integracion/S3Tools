@@ -5,7 +5,6 @@ import re
 import sys
 import zipfile
 import traceback
-import copy
 from pathlib import Path
 from datetime import datetime
 import random
@@ -14,12 +13,12 @@ DEFAULT_BATCHES = 30
 DEFAULT_MARKET = "US"
 MARKETS = ["MX", "US"]
 ORDER_CHOICES = ["Ordenado", "Inverso", "Aleatorio"]
-SITEMAP_TEMPLATE_FILE = "Formato de Sitemap.json"
-SITEMAP_ID_ALLOWED_RE = re.compile(r"[^a-zA-Z0-9_()+-]")
 
 STORES_LEFT = ["ProductosTX", "Holaproducto", "Altinor", "HervazTrade"]
 STORES_RIGHT = ["BBvs_Template", "BBvsBB2_2da", "BBvsBB2"]
 ALL_STORES = STORES_LEFT + STORES_RIGHT
+
+NAME_ALLOWED_RE = re.compile(r"[^a-zA-Z0-9_()+-]")
 
 
 def _app_dir():
@@ -220,45 +219,25 @@ def ensure_folder(path):
 
 def sanitize_filename(text):
     repl = (text or "").strip()
-    repl = SITEMAP_ID_ALLOWED_RE.sub("_", repl)
-    repl = repl.strip("_")
-    if not repl:
-        repl = "sitemap"
-    return repl
-
-
-def load_sitemap_template():
-    template_path = Path(SITEMAP_TEMPLATE_FILE)
-    if not template_path.exists():
-        template_path = _app_dir() / SITEMAP_TEMPLATE_FILE
-    if not template_path.exists():
-        raise FileNotFoundError(f"Sitemap template not found: {template_path}")
-    return json.loads(template_path.read_text(encoding="utf-8"))
-
-
-def build_sitemap_payload(title, urls, template):
-    payload = copy.deepcopy(template)
-    payload["_id"] = title
-    payload["startUrl"] = urls
-    return payload
-
-
-def write_batches_as_sitemaps(batches_list, folder, store, market, base_label):
+    repl = repl.replace(" ", "_").replace("-", "_")
+    repl = NAME_ALLOWED_RE.sub("_", repl)
+    repl = re.sub(r"_+", "_", repl)
+    repl = repl.strip("_").strip(".")
+    return repl or "archivo"
+def write_batches_as_txt(batches_list, folder, store, market, base_label):
     out_files = []
     safe_base = sanitize_filename(base_label)
     total = len(batches_list)
-    template = load_sitemap_template()
     for idx, batch in enumerate(batches_list, start=1):
         if total > 1:
-            title = f"{safe_base}-{idx}"
+            fname = f"{safe_base}_{idx}.txt"
         else:
-            title = safe_base
-        fname = f"{title}.json"
+            fname = f"{safe_base}.txt"
         fpath = Path(folder) / fname
-        urls = [to_url(asin, market) for asin in batch]
-        payload = build_sitemap_payload(title, urls, template)
         with fpath.open("w", encoding="utf-8") as f:
-            json.dump(payload, f, ensure_ascii=True, separators=(",", ":"))
+            f.write("start_url\n")
+            for asin in batch:
+                f.write(to_url(asin, market) + "\n")
         out_files.append(str(fpath))
     return out_files
 
@@ -375,13 +354,13 @@ def handle_process(data):
 
     ddmmaa = datetime.now().strftime("%d%m%y")
     hhmm = datetime.now().strftime("%H%M")
-    base_label = f"{store} - {file_label}"
+    base_label = f"{store}_{file_label}"
     folder_name = f"{sanitize_filename(base_label)}_{ddmmaa}_{hhmm}"
 
     work_dir = Path(outdir) / folder_name
     ensure_folder(str(work_dir))
     batches_list = split_in_batches(uniques, batches)
-    out_files = write_batches_as_sitemaps(batches_list, str(work_dir), store, market, base_label)
+    out_files = write_batches_as_txt(batches_list, str(work_dir), store, market, base_label)
 
     zip_path = ""
     if zip_out:
