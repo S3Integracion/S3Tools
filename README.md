@@ -19,11 +19,14 @@ El cliente C# resuelve el motor en este orden:
 ## Estructura principal
 - `AsinBatcherControl.cs`: UI de Asin Batcher.
 - `SitemapControl.cs`: UI de Sitemap.
+- `FormatoControl.cs`: UI de Formato.
 - `AsinBatcherEngineClient.cs`: cliente del motor Asin Batcher.
 - `SitemapEngineClient.cs`: cliente del motor Sitemap.
+- `FormatoEngineClient.cs`: cliente del motor Formato.
 - `AppState.cs`: estado local (ultima carpeta de salida del Asin Batcher).
 - `Engines/AsinBatcherEngine/engine.py`: motor de ASIN -> URLs.
 - `Engines/Sitemap/form_site.py`: motor de URLs -> sitemaps JSON.
+- `Engines/Formato/format.py`: motor de normalizacion de las primeras dos columnas.
 - `Engines/Sitemap/PlantillaSitemaps*.json`: plantillas para los sitemaps.
 
 ## Requisitos
@@ -31,6 +34,7 @@ El cliente C# resuelve el motor en este orden:
 - Python 3.12 recomendado.
 - Asin Batcher: `pandas` + `openpyxl` para leer Excel.
 - Sitemap: `openpyxl` para leer `.xlsx`.
+- Formato: `openpyxl` para editar `.xlsx`.
 
 ### Si se usa el motor empaquetado (.exe)
 - No requiere Python instalado.
@@ -39,6 +43,7 @@ El cliente C# resuelve el motor en este orden:
 ## Variables de entorno (opcional)
 - `ASIN_BATCHER_ENGINE_PATH`: ruta del motor Asin Batcher (`.exe` o `.py`).
 - `SITEMAP_ENGINE_PATH`: ruta del motor Sitemap (`.exe` o `.py`).
+- `FORMATO_ENGINE_PATH`: ruta del motor Formato (`.exe` o `.py`).
 
 ## Uso: Asin Batcher
 1) Selecciona archivo de entrada (`.txt` o `.xlsx`).
@@ -61,6 +66,11 @@ Salida:
 - Archivos `.json` en formato WebScraper.
 - Nombres: `Tienda_Nombre.json` o `Tienda_Nombre_1.json`, etc.
 - Mismo saneado de caracteres que en Asin Batcher.
+
+## Uso: Formato
+1) Importa archivos `.csv` o `.xlsx` generados por WebScraper.
+2) Elige plantilla (Auto/Tiendas/BBvs).
+3) Procesa y actualiza solo las primeras dos columnas en la misma carpeta.
 
 ## Plantillas de sitemap
 - `PlantillaSitemapsTiendas.json`: usada para ProductosTX, Holaproducto, Altinor, Hervaz Trade.

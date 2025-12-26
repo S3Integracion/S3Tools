@@ -15,6 +15,9 @@ namespace S3Integración_programs
     {
         private AsinBatcherControl asinBatcherControl;
         private SitemapControl sitemapControl;
+        private FormatoControl formatoControl;
+        private S3ScraperControl s3ScraperControl;
+        private ControlRemotoControl controlRemotoControl;
 
         public Form1()
         {
@@ -40,6 +43,33 @@ namespace S3Integración_programs
                     Dock = DockStyle.Fill,
                 };
                 sitemapPanel.Controls.Add(sitemapControl);
+            }
+
+            if (formatoControl == null)
+            {
+                formatoControl = new FormatoControl
+                {
+                    Dock = DockStyle.Fill,
+                };
+                formatoPanel.Controls.Add(formatoControl);
+            }
+
+            if (s3ScraperControl == null)
+            {
+                s3ScraperControl = new S3ScraperControl
+                {
+                    Dock = DockStyle.Fill,
+                };
+                s3ScraperPanel.Controls.Add(s3ScraperControl);
+            }
+
+            if (controlRemotoControl == null)
+            {
+                controlRemotoControl = new ControlRemotoControl
+                {
+                    Dock = DockStyle.Fill,
+                };
+                controlRemotoPanel.Controls.Add(controlRemotoControl);
             }
         }
 

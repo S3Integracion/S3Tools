@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace S3Integración_programs
 {
-    internal sealed class SitemapControl : UserControl
+    internal sealed partial class SitemapControl : UserControl
     {
         private static readonly string[] StoresLeft = { "ProductosTX", "Holaproducto", "Altinor", "HervazTrade" };
         private static readonly string[] StoresRight = { "BBvs_Template", "BBvsBB2_2da", "BBvsBB2" };
@@ -41,6 +41,7 @@ namespace S3Integración_programs
 
         public SitemapControl()
         {
+            InitializeComponent();
             _engineClient = new SitemapEngineClient();
             _inputControls = new List<Control>();
 

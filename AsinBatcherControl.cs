@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace S3Integración_programs
 {
-    internal sealed class AsinBatcherControl : UserControl
+    internal sealed partial class AsinBatcherControl : UserControl
     {
         private static readonly string[] StoresLeft = { "ProductosTX", "Holaproducto", "Altinor", "HervazTrade" };
         private static readonly string[] StoresRight = { "BBvs_Template", "BBvsBB2_2da", "BBvsBB2" };
@@ -46,6 +46,7 @@ namespace S3Integración_programs
 
         public AsinBatcherControl()
         {
+            InitializeComponent();
             _engineClient = new AsinBatcherEngineClient();
             // Debounce preview requests while the user edits the input.
             _previewTimer = new Timer { Interval = 350 };
