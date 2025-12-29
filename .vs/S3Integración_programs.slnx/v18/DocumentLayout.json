@@ -3,19 +3,19 @@
   "WorkspaceRootPath": "C:\\Users\\Public\\GitHub\\S3Tools\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\public\\github\\s3tools\\asinbatchercontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:asinbatchercontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\public\\github\\s3tools\\sitemapcontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\sitemapcontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:sitemapcontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\public\\github\\s3tools\\formatocontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\asinbatchercontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:asinbatchercontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\formatocontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:formatocontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\public\\github\\s3tools\\formatoengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\formatoengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:formatoengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -23,11 +23,11 @@
       "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:asinbatchercontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\public\\github\\s3tools\\asinbatcherengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\asinbatcherengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:asinbatcherengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\public\\github\\s3tools\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -54,11 +54,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "SitemapControl.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\SitemapControl.Designer.cs",
               "RelativeDocumentMoniker": "SitemapControl.Designer.cs",
@@ -71,16 +71,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "AsinBatcherControl.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherControl.Designer.cs",
               "RelativeDocumentMoniker": "AsinBatcherControl.Designer.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherControl.Designer.cs*",
-              "RelativeToolTip": "AsinBatcherControl.Designer.cs*",
+              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherControl.Designer.cs",
+              "RelativeToolTip": "AsinBatcherControl.Designer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T22:49:54.714Z",
-              "EditorCaption": ""
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001384|",
+              "WhenOpened": "2025-12-26T22:49:54.714Z"
             },
             {
               "$type": "Document",
@@ -92,8 +91,7 @@
               "RelativeToolTip": "FormatoControl.Designer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T22:49:41.836Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-26T22:49:41.836Z"
             },
             {
               "$type": "Document",
@@ -105,8 +103,7 @@
               "RelativeToolTip": "FormatoEngineClient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T22:49:34.75Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-26T22:49:34.75Z"
             },
             {
               "$type": "Document",
@@ -118,8 +115,7 @@
               "RelativeToolTip": "AsinBatcherEngineClient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T22:49:22.773Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-26T22:49:22.773Z"
             },
             {
               "$type": "Document",
@@ -130,8 +126,7 @@
               "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherControl.cs [Design]",
               "RelativeToolTip": "AsinBatcherControl.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.955Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-24T20:49:08.955Z"
             },
             {
               "$type": "Document",
@@ -155,8 +150,7 @@
               "RelativeToolTip": "Form1.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.955Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-24T20:49:08.955Z"
             },
             {
               "$type": "Document",
@@ -168,8 +162,7 @@
               "RelativeToolTip": "Form1.Designer.cs",
               "ViewState": "AgIAAAIAAAAAAAAAAAA6wBYAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.971Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-24T20:49:08.971Z"
             },
             {
               "$type": "Document",
@@ -192,8 +185,7 @@
               "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\Form1.cs [Design]",
               "RelativeToolTip": "Form1.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.971Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-24T20:49:08.971Z"
             }
           ]
         }
