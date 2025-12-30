@@ -199,22 +199,6 @@
             100% { opacity: 0; transform: scale(1.25); }
         }
 
-        .stats {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            color: var(--text-muted);
-        }
-
-        .stat {
-            min-width: 120px;
-        }
-
-        .stat h3 {
-            font-size: 1.9rem;
-            color: var(--text-primary);
-        }
-
         .hero-card {
             background: var(--bg-card);
             border-radius: 24px;
@@ -298,6 +282,21 @@
             margin-bottom: 0.5rem;
         }
 
+        #release-status {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .release-card .release-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .release-card .resource-links {
+            margin-top: 1.25rem;
+        }
+
         .tag {
             display: inline-flex;
             align-items: center;
@@ -371,10 +370,6 @@
             .cta-group {
                 flex-direction: column;
             }
-
-            .stats {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
@@ -393,28 +388,14 @@
         <div class="hero">
             <div class="hero-text">
                 <h1>Recursos oficiales para <span>S3Tools</span></h1>
-                <p>Centralizamos los instaladores firmados, manifiestos y plantillas del programa para que tu equipo despliegue S3Tools de forma segura en cualquier entorno de trabajo.</p>
+                <p>Centralizamos los instaladores, manifiestos y plantillas directamente desde este repositorio para que siempre consultes los mismos artefactos que publicamos.</p>
                 <div class="cta-group">
-                    <a class="btn btn-primary pulse" href="Application%20Files/S3Tools_2_0_0_3/S3Tools.application" download>
-                        Descargar versión 2.0.0.3
+                    <a class="btn btn-primary pulse" href="#descargas" id="primary-download">
+                        Ver descargas disponibles
                     </a>
-                    <a class="btn btn-secondary" href="https://github.com/s3integration/S3Tools" target="_blank" rel="noopener">
+                    <a class="btn btn-secondary" href="https://github.com/s3integracion/S3Tools" target="_blank" rel="noopener">
                         Ver repositorio
                     </a>
-                </div>
-                <div class="stats">
-                    <div class="stat">
-                        <h3>+8 años</h3>
-                        <p>Optimizando cargas a S3</p>
-                    </div>
-                    <div class="stat">
-                        <h3>4 releases</h3>
-                        <p>Versiones listas para producción</p>
-                    </div>
-                    <div class="stat">
-                        <h3>100%</h3>
-                        <p>Recursos firmados y verificados</p>
-                    </div>
                 </div>
             </div>
             <div class="hero-card" aria-label="Resumen del programa">
@@ -434,52 +415,11 @@
             <div class="section-heading">
                 <div>
                     <h2>Descargas disponibles</h2>
-                    <p>Selecciona la versión que necesitas. Cada paquete conserva sus manifest y plantillas de trabajo para una instalación íntegra.</p>
+                    <p>Los artefactos se leen directamente desde la carpeta <strong>Application Files</strong> de este repositorio para que siempre veas el inventario actualizado.</p>
                 </div>
             </div>
-            <div class="grid">
-                <article class="card">
-                    <div class="tag">Versión estable</div>
-                    <h3>S3Tools 2.0.0.3</h3>
-                    <p>Release con mejoras de seguridad y plantillas sitemap actualizadas.</p>
-                    <div class="resource-links">
-                        <a href="Application%20Files/S3Tools_2_0_0_3/S3Tools.application" download>.application</a>
-                        <a href="Application%20Files/S3Tools_2_0_0_3/S3Tools.exe.deploy" download>.exe</a>
-                        <a href="Application%20Files/S3Tools_2_0_0_3/S3Tools.exe.manifest" download>Manifest</a>
-                        <a href="Application%20Files/S3Tools_2_0_0_3/Engines/Sitemap/form_site.py.deploy" download>Sitemap engine</a>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="tag">Versión previa</div>
-                    <h3>S3Tools 2.0.0.2</h3>
-                    <p>Ideal para entornos que aún dependen del formato previo de plantillas.</p>
-                    <div class="resource-links">
-                        <a href="Application%20Files/S3Tools_2_0_0_2/S3Tools.application" download>.application</a>
-                        <a href="Application%20Files/S3Tools_2_0_0_2/S3Tools.exe.deploy" download>.exe</a>
-                        <a href="Application%20Files/S3Tools_2_0_0_2/Engines/Formato/format.py.deploy" download>Formato engine</a>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="tag">Compatibilidad</div>
-                    <h3>S3Tools 2.0.0.1</h3>
-                    <p>Versión pensada para validaciones en ambientes restringidos.</p>
-                    <div class="resource-links">
-                        <a href="Application%20Files/S3Tools_2_0_0_1/S3Tools.application" download>.application</a>
-                        <a href="Application%20Files/S3Tools_2_0_0_1/S3Tools.exe.deploy" download>.exe</a>
-                        <a href="Application%20Files/S3Tools_2_0_0_1/Engines/AsinBatcherEngine/engine.py.deploy" download>Batch engine</a>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="tag">Legacy</div>
-                    <h3>S3Tools 1.0.0.0</h3>
-                    <p>Referencia histórica del instalador original. Úsalo solo para auditorías.</p>
-                    <div class="resource-links">
-                        <a href="Application%20Files/S3Tools_1_0_0_0/S3Tools.application" download>.application</a>
-                        <a href="Application%20Files/S3Tools_1_0_0_0/S3Tools.exe.deploy" download>.exe</a>
-                        <a href="Application%20Files/S3Tools_1_0_0_0/Engines/Sitemap/PlantillaSitemapsBBvs.json.deploy" download>Plantilla BBvs</a>
-                    </div>
-                </article>
-            </div>
+            <div class="card" id="release-status">Leyendo recursos...</div>
+            <div class="grid" id="release-grid" aria-live="polite"></div>
         </section>
 
         <section id="novedades">
@@ -539,11 +479,155 @@
 
     <footer id="contacto">
         <p>¿Necesitas otro recurso o comprobante? Escríbenos en el repositorio de GitHub o al equipo de soporte interno.</p>
-        <p>© <span id="year"></span> S3 Integration · Recursos oficiales de S3Tools</p>
+        <p>© <span id="year"></span> S3 Integracion · Recursos oficiales de S3Tools</p>
     </footer>
 
     <script>
+        const host = window.location.hostname.toLowerCase();
+        const defaultOwner = "s3integracion";
+        const ownerFromHost = host.endsWith("github.io") ? host.split(".")[0] : defaultOwner;
+        const repoFromPath = window.location.pathname.split("/").filter(Boolean)[0] || "S3Tools";
+        const apiBase = `https://api.github.com/repos/${ownerFromHost}/${repoFromPath}`;
+        const releaseGrid = document.getElementById("release-grid");
+        const releaseStatus = document.getElementById("release-status");
+        const primaryDownload = document.getElementById("primary-download");
+
         document.getElementById("year").textContent = new Date().getFullYear();
+
+        const encodePath = (path) => path.split("/").map(encodeURIComponent).join("/");
+
+        async function fetchJson(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Error al consultar ${url}: ${response.status}`);
+            }
+            return response.json();
+        }
+
+        async function listFiles(path, branch, depth = 0, maxDepth = 3) {
+            if (!path) return [];
+            const apiUrl = `${apiBase}/contents/${encodePath(path)}?ref=${branch}`;
+            const entries = await fetchJson(apiUrl);
+            const files = [];
+            for (const entry of entries) {
+                if (entry.type === "file") {
+                    files.push(entry);
+                } else if (entry.type === "dir" && depth < maxDepth) {
+                    const nested = await listFiles(entry.path, branch, depth + 1, maxDepth);
+                    files.push(...nested);
+                }
+            }
+            return files;
+        }
+
+        function prettyReleaseName(name) {
+            if (!name.includes("_")) return name;
+            const [label, ...rest] = name.split("_");
+            const version = rest.join(".");
+            return version ? `${label} ${version}` : name;
+        }
+
+        function buildRawUrl(branch, path) {
+            return `https://raw.githubusercontent.com/${ownerFromHost}/${repoFromPath}/${branch}/${encodePath(path)}`;
+        }
+
+        function setPrimaryDownload(link, label) {
+            if (!link) return;
+            primaryDownload.href = link;
+            primaryDownload.textContent = `Descargar ${label}`;
+            primaryDownload.setAttribute("download", "");
+        }
+
+        function renderReleaseCard(release, files, branch) {
+            const card = document.createElement("article");
+            card.className = "card release-card";
+
+            const title = document.createElement("h3");
+            title.textContent = prettyReleaseName(release.name);
+            card.appendChild(title);
+
+            const meta = document.createElement("p");
+            meta.className = "release-meta";
+            meta.textContent = `${files.length} recurso${files.length === 1 ? "" : "s"} publicados en esta carpeta.`;
+            card.appendChild(meta);
+
+            if (files.length) {
+                const linksWrap = document.createElement("div");
+                linksWrap.className = "resource-links";
+                files.forEach((file) => {
+                    const anchor = document.createElement("a");
+                    anchor.href = buildRawUrl(branch, file.path);
+                    anchor.textContent = file.path.replace(`${release.path}/`, "");
+                    anchor.setAttribute("download", "");
+                    linksWrap.appendChild(anchor);
+                });
+                card.appendChild(linksWrap);
+            }
+
+            releaseGrid.appendChild(card);
+        }
+
+        async function populateReleases(branch, contents) {
+            const list = contents || (await fetchJson(`${apiBase}/contents/${encodePath("Application Files")}?ref=${branch}`));
+            const releaseDirs = list.filter((item) => item.type === "dir");
+            if (!releaseDirs.length) {
+                releaseStatus.textContent = "No encontramos carpetas de releases en Application Files.";
+                return;
+            }
+
+            releaseStatus.style.display = "none";
+            releaseStatus.setAttribute("aria-hidden", "true");
+
+            let primaryLinked = false;
+            for (const release of releaseDirs.sort((a, b) => b.name.localeCompare(a.name))) {
+                try {
+                    const files = await listFiles(release.path, branch);
+                    renderReleaseCard(release, files, branch);
+                    if (!primaryLinked) {
+                        const appFile = files.find((file) => file.name.endsWith(".application"));
+                        if (appFile) {
+                            setPrimaryDownload(buildRawUrl(branch, appFile.path), prettyReleaseName(release.name));
+                            primaryLinked = true;
+                        }
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        }
+
+        async function resolveBranch() {
+            const repoInfo = await fetchJson(apiBase);
+            const defaultBranch = repoInfo?.default_branch;
+            const candidateHostBranch = host.endsWith("github.io") ? "gh-pages" : null;
+            const candidates = [candidateHostBranch, defaultBranch, "gh-pages", "main", "master"].filter(Boolean);
+            const tested = new Set();
+
+            for (const candidate of candidates) {
+                if (tested.has(candidate)) continue;
+                tested.add(candidate);
+                const url = `${apiBase}/contents/${encodePath("Application Files")}?ref=${candidate}`;
+                const response = await fetch(url);
+                if (response.ok) {
+                    const contents = await response.json();
+                    return { branch: candidate, contents };
+                }
+            }
+
+            throw new Error("No pudimos ubicar Application Files en las ramas evaluadas.");
+        }
+
+        async function initReleases() {
+            try {
+                const { branch, contents } = await resolveBranch();
+                await populateReleases(branch, contents);
+            } catch (error) {
+                console.error(error);
+                releaseStatus.textContent = "No se pudo consultar el inventario. Verifica la conexión o los permisos del repositorio.";
+            }
+        }
+
+        initReleases();
     </script>
 </body>
 </html>
