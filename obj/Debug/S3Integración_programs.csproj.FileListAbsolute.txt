@@ -43,3 +43,6 @@ C:\Users\Public\GitHub\S3Tools\obj\Debug\S3Tools.exe.manifest
 C:\Users\Public\GitHub\S3Tools\obj\Debug\S3Tools.application
 C:\Users\Public\GitHub\S3Tools\obj\Debug\S3Tools.exe
 C:\Users\Public\GitHub\S3Tools\obj\Debug\S3Tools.pdb
+C:\Users\Public\GitHub\S3Tools\bin\Debug\Engines\AsinBatcherEngine\engine.exe
+C:\Users\Public\GitHub\S3Tools\bin\Debug\Engines\Formato\format.exe
+C:\Users\Public\GitHub\S3Tools\bin\Debug\Engines\Sitemap\form_site.exe

@@ -2,9 +2,9 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>C:\Releases\S3Tools\|C:\Resources\S3Tools\|C:\Resources\|publish\</PublishUrlHistory>
-    <InstallUrlHistory>https://s3integracion.github.io/S3Tools/</InstallUrlHistory>
+    <InstallUrlHistory>https://s3integracion.github.io/S3Tools/.setup.exe/|https://s3integracion.github.io/S3Tools/</InstallUrlHistory>
     <SupportUrlHistory>https://github.com/S3Integracion/S3Tools</SupportUrlHistory>
-    <UpdateUrlHistory />
+    <UpdateUrlHistory>http://s3integracion.github.io/S3Tools/</UpdateUrlHistory>
     <BootstrapperUrlHistory />
     <ErrorReportUrlHistory />
     <FallbackCulture>en-US</FallbackCulture>

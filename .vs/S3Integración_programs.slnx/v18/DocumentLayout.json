@@ -3,48 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\Public\\GitHub\\S3Tools\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\sitemapcontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:sitemapcontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|S3Integraci\u00F3n_programs||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\asinbatchercontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:asinbatchercontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\formatocontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:formatocontrol.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\formatoengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:formatoengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\asinbatchercontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:asinbatchercontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\asinbatcherengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:asinbatcherengineclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|C:\\Users\\Public\\GitHub\\S3Tools\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\public\\github\\s3tools\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
     }
   ],
   "DocumentGroupContainers": [
@@ -59,133 +21,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "SitemapControl.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\SitemapControl.Designer.cs",
-              "RelativeDocumentMoniker": "SitemapControl.Designer.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\SitemapControl.Designer.cs",
-              "RelativeToolTip": "SitemapControl.Designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T22:50:04.394Z",
+              "Title": "S3Integraci\u00F3n_programs",
+              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
+              "RelativeDocumentMoniker": "S3Integraci\u00F3n_programs.csproj",
+              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
+              "RelativeToolTip": "S3Integraci\u00F3n_programs.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-12-30T20:29:45.331Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AsinBatcherControl.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherControl.Designer.cs",
-              "RelativeDocumentMoniker": "AsinBatcherControl.Designer.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherControl.Designer.cs",
-              "RelativeToolTip": "AsinBatcherControl.Designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001384|",
-              "WhenOpened": "2025-12-26T22:49:54.714Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "FormatoControl.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\FormatoControl.Designer.cs",
-              "RelativeDocumentMoniker": "FormatoControl.Designer.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\FormatoControl.Designer.cs",
-              "RelativeToolTip": "FormatoControl.Designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T22:49:41.836Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "FormatoEngineClient.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\FormatoEngineClient.cs",
-              "RelativeDocumentMoniker": "FormatoEngineClient.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\FormatoEngineClient.cs",
-              "RelativeToolTip": "FormatoEngineClient.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T22:49:34.75Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "AsinBatcherEngineClient.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherEngineClient.cs",
-              "RelativeDocumentMoniker": "AsinBatcherEngineClient.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherEngineClient.cs",
-              "RelativeToolTip": "AsinBatcherEngineClient.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T22:49:22.773Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AsinBatcherControl.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherControl.cs",
-              "RelativeDocumentMoniker": "AsinBatcherControl.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\AsinBatcherControl.cs [Design]",
-              "RelativeToolTip": "AsinBatcherControl.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.955Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "AssemblyInfo.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\Properties\\AssemblyInfo.cs",
-              "RelativeDocumentMoniker": "Properties\\AssemblyInfo.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\Properties\\AssemblyInfo.cs",
-              "RelativeToolTip": "Properties\\AssemblyInfo.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.955Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Form1.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\Form1.cs",
-              "RelativeToolTip": "Form1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.955Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Form1.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\Form1.Designer.cs",
-              "RelativeDocumentMoniker": "Form1.Designer.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\Form1.Designer.cs",
-              "RelativeToolTip": "Form1.Designer.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAA6wBYAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.971Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.971Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\Form1.cs [Design]",
-              "RelativeToolTip": "Form1.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T20:49:08.971Z"
             }
           ]
         }

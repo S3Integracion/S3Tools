@@ -13,7 +13,7 @@ la logica Python como motor interno y usando C# para la interfaz.
 El cliente C# resuelve el motor en este orden:
 1) Variable de entorno (ruta manual).
 2) Motor embebido como recurso (si se agrega en el ensamblado).
-3) Ejecutable local en `Engines/<Motor>/<Motor>.exe`.
+3) Ejecutable local en `Engines/<Motor>/<script>.exe` (mismo nombre que el `.py`).
 4) Script local en `Engines/<Motor>/<script>.py` usando `python`.
 
 ## Estructura principal
@@ -39,6 +39,15 @@ El cliente C# resuelve el motor en este orden:
 ### Si se usa el motor empaquetado (.exe)
 - No requiere Python instalado.
 - Asegurar que los `.exe` estan en `Engines/<Motor>/`.
+
+## Compilar motores (.exe)
+1) Instala dependencias Python (segun el motor) y PyInstaller: `python -m pip install pyinstaller`.
+2) Ejecuta desde la raiz: `powershell -ExecutionPolicy Bypass -File .\\build_engines.ps1`.
+
+Salida (mismo nombre que el `.py`):
+- `Engines/AsinBatcherEngine/engine.exe`
+- `Engines/Formato/format.exe`
+- `Engines/Sitemap/form_site.exe`
 
 ## Variables de entorno (opcional)
 - `ASIN_BATCHER_ENGINE_PATH`: ruta del motor Asin Batcher (`.exe` o `.py`).
