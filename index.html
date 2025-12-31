@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>S3Tools | Gestión profesional de recursos</title>
+    <title>S3Tools | S3 Suite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #020617;
-            --bg-secondary: #0b1f3a;
-            --bg-card: rgba(6, 10, 28, 0.7);
-            --accent: #fca311;
-            --accent-soft: #7bf1a8;
-            --text-primary: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-glow: rgba(124, 58, 237, 0.4);
-            --max-width: 1200px;
+            --bg-deep: #0b0f0d;
+            --bg-olive: #1b2b24;
+            --bg-card: rgba(18, 28, 24, 0.86);
+            --accent: #f2b93b;
+            --accent-2: #3fcf8e;
+            --text: #f5f7f6;
+            --muted: #a7b4ad;
+            --border: rgba(242, 185, 59, 0.18);
+            --max: 1140px;
         }
 
         * {
@@ -27,42 +27,20 @@
         }
 
         body {
-            font-family: "Space Grotesk", "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top, #172554 0%, #020617 45%);
-            color: var(--text-primary);
+            font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+            background: radial-gradient(circle at 20% 15%, rgba(63, 207, 142, 0.18), transparent 45%),
+                        radial-gradient(circle at 80% 20%, rgba(242, 185, 59, 0.16), transparent 42%),
+                        linear-gradient(160deg, #0b0f0d 0%, #0d1a14 45%, #0b0f0d 100%);
+            color: var(--text);
             min-height: 100vh;
             line-height: 1.6;
-            position: relative;
-            overflow-x: hidden;
         }
 
-        body::before,
-        body::after {
-            content: "";
-            position: absolute;
-            width: 480px;
-            height: 480px;
-            background: radial-gradient(circle, rgba(123, 241, 168, 0.2), transparent 65%);
-            filter: blur(40px);
-            z-index: 0;
-        }
-
-        body::before {
-            top: -120px;
-            right: -120px;
-        }
-
-        body::after {
-            bottom: -200px;
-            left: -80px;
-        }
-
-        .noise-layer {
+        .grain {
             position: fixed;
             inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 40 40'%3E%3Cpath fill='%23ffffff0d' d='M0 0h5v5H0zm10 10h5v5h-5zm10-10h5v5h-5zm10 10h5v5h-5zm10-10h5v5h-5zm-30 20h5v5H0zm20 0h5v5h-5zm10 10h5v5h-5z'/%3E%3C/svg%3E");
-            opacity: 0.4;
-            mix-blend-mode: soft-light;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='10' cy='12' r='1' fill='%23ffffff1a'/%3E%3Ccircle cx='42' cy='18' r='1' fill='%23ffffff14'/%3E%3Ccircle cx='92' cy='34' r='1' fill='%23ffffff0d'/%3E%3Ccircle cx='68' cy='80' r='1' fill='%23ffffff12'/%3E%3Ccircle cx='22' cy='98' r='1' fill='%23ffffff0f'/%3E%3C/svg%3E");
+            opacity: 0.35;
             pointer-events: none;
             z-index: 0;
         }
@@ -75,48 +53,49 @@
         }
 
         .container {
-            width: min(var(--max-width), calc(100% - 2.5rem));
+            width: min(var(--max), calc(100% - 2.5rem));
             margin: 0 auto;
-            padding: 2.5rem 0 4rem;
         }
 
         nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1rem 0;
+            padding: 2rem 0 1.5rem;
         }
 
         .brand {
-            font-family: "Playfair Display", serif;
-            font-size: 1.3rem;
+            font-family: "Fraunces", serif;
+            font-size: 1.4rem;
             letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
         .nav-links {
             display: flex;
-            gap: 1.5rem;
+            gap: 1.4rem;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
-            color: var(--text-primary);
+            color: var(--text);
             text-decoration: none;
-            font-size: 0.95rem;
-            letter-spacing: 0.05em;
+            font-size: 0.9rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
             position: relative;
-            padding-bottom: 0.2rem;
         }
 
         .nav-links a::after {
             content: "";
             position: absolute;
             left: 0;
-            bottom: 0;
-            width: 100%;
+            bottom: -0.3rem;
             height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent));
+            width: 100%;
             transform: scaleX(0);
             transform-origin: left;
+            background: linear-gradient(90deg, transparent, var(--accent));
             transition: transform 0.3s ease;
         }
 
@@ -126,84 +105,70 @@
 
         .hero {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 2.5rem;
             align-items: center;
-            margin-top: 4rem;
+            padding: 3.5rem 0 2.5rem;
         }
 
-        .hero-text h1 {
-            font-size: clamp(2.5rem, 5vw, 3.7rem);
-            line-height: 1.1;
+        .hero h1 {
+            font-family: "Fraunces", serif;
+            font-size: clamp(2.6rem, 5vw, 3.8rem);
+            line-height: 1.05;
             margin-bottom: 1rem;
         }
 
-        .hero-text h1 span {
+        .hero h1 span {
             color: var(--accent);
         }
 
-        .hero-text p {
-            color: var(--text-muted);
-            max-width: 540px;
-            margin-bottom: 1.75rem;
+        .hero p {
+            color: var(--muted);
+            margin-bottom: 1.8rem;
+            max-width: 520px;
         }
 
-        .cta-group {
+        .cta {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            margin-bottom: 2rem;
         }
 
         .btn {
-            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.7rem;
             border-radius: 999px;
-            padding: 0.85rem 1.8rem;
             font-weight: 600;
-            letter-spacing: 0.05em;
-            cursor: pointer;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+            text-decoration: none;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent), #f15b2a);
-            color: #0f172a;
-            box-shadow: 0 20px 40px rgba(252, 163, 17, 0.35);
+            background: linear-gradient(140deg, var(--accent), #f08b2d);
+            color: #0b0f0d;
+            box-shadow: 0 20px 45px rgba(242, 185, 59, 0.3);
         }
 
         .btn-secondary {
-            border: 1px solid rgba(248, 250, 252, 0.4);
-            color: var(--text-primary);
-            background: transparent;
+            border-color: rgba(245, 247, 246, 0.25);
+            color: var(--text);
         }
 
         .btn:hover {
-            transform: translateY(-4px);
-        }
-
-        .pulse {
-            position: relative;
-        }
-
-        .pulse::after {
-            content: "";
-            position: absolute;
-            inset: -6px;
-            border-radius: inherit;
-            border: 2px solid rgba(252, 163, 17, 0.25);
-            animation: pulse 2.4s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1.25); }
+            transform: translateY(-3px);
         }
 
         .hero-card {
             background: var(--bg-card);
-            border-radius: 24px;
+            border-radius: 22px;
+            border: 1px solid rgba(245, 247, 246, 0.08);
             padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
             position: relative;
             overflow: hidden;
@@ -212,20 +177,24 @@
         .hero-card::before {
             content: "";
             position: absolute;
-            inset: -30% -20% auto auto;
-            width: 320px;
-            height: 320px;
-            background: linear-gradient(145deg, rgba(252, 163, 17, 0.35), rgba(123, 241, 168, 0.2));
-            filter: blur(20px);
-            opacity: 0.6;
+            inset: -40% auto auto -30%;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(63, 207, 142, 0.3), transparent 65%);
+            filter: blur(10px);
+        }
+
+        .hero-card h3 {
+            margin-bottom: 1rem;
         }
 
         .hero-card ul {
             list-style: none;
+            display: grid;
+            gap: 0.8rem;
         }
 
         .hero-card li {
-            margin-bottom: 1rem;
             padding-left: 1.4rem;
             position: relative;
         }
@@ -234,400 +203,354 @@
             content: "";
             position: absolute;
             left: 0;
-            top: 0.45rem;
-            width: 10px;
-            height: 10px;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
             border-radius: 2px;
-            background: var(--accent);
+            background: var(--accent-2);
         }
 
         section {
-            margin-top: 5rem;
+            padding: 3.5rem 0 0;
         }
 
         .section-heading {
             display: flex;
+            align-items: flex-end;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
+            gap: 1.5rem;
             flex-wrap: wrap;
-            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .section-heading h2 {
             font-size: 2rem;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.03em;
         }
 
         .section-heading p {
-            color: var(--text-muted);
+            color: var(--muted);
             max-width: 520px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 1.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(8px);
-        }
-
-        .card h3 {
-            margin-bottom: 0.5rem;
-        }
-
-        #release-status {
-            margin-bottom: 1.5rem;
-            text-align: center;
-            color: var(--text-muted);
-        }
-
-        .release-card .release-meta {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .release-card .resource-links {
-            margin-top: 1.25rem;
-        }
-
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.8rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--accent-soft);
-            margin-bottom: 0.8rem;
-        }
-
-        .resource-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-top: 1rem;
-        }
-
-        .resource-links a {
-            padding: 0.45rem 0.9rem;
-            border-radius: 999px;
-            border: 1px solid rgba(148, 163, 184, 0.4);
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: border 0.2s ease, color 0.2s ease;
-        }
-
-        .resource-links a:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .timeline {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .timeline-card {
-            border-left: 3px solid var(--accent);
-            padding-left: 1.2rem;
-        }
-
-        .steps {
+        .download-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1.5rem;
         }
 
-        .step {
-            border: 1px dashed rgba(252, 163, 17, 0.4);
+        .card {
+            background: var(--bg-card);
             border-radius: 18px;
-            padding: 1.5rem;
+            padding: 1.7rem;
+            border: 1px solid rgba(245, 247, 246, 0.08);
+        }
+
+        .card h3 {
+            margin-bottom: 0.6rem;
+        }
+
+        .meta {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .download-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .doc-shell {
+            background: rgba(10, 16, 13, 0.85);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+        }
+
+        .doc {
+            color: var(--text);
+            font-size: 0.98rem;
+        }
+
+        .doc h1,
+        .doc h2,
+        .doc h3,
+        .doc h4 {
+            font-family: "Fraunces", serif;
+            margin: 1.4rem 0 0.6rem;
+        }
+
+        .doc h1 { font-size: 1.9rem; }
+        .doc h2 { font-size: 1.5rem; }
+        .doc h3 { font-size: 1.2rem; }
+
+        .doc p {
+            margin: 0.6rem 0;
+            color: var(--muted);
+        }
+
+        .doc ul,
+        .doc ol {
+            padding-left: 1.3rem;
+            margin: 0.6rem 0;
+            color: var(--muted);
+        }
+
+        .doc li {
+            margin-bottom: 0.4rem;
+        }
+
+        .doc code {
+            background: rgba(242, 185, 59, 0.15);
+            color: var(--text);
+            padding: 0.05rem 0.35rem;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .doc pre {
+            background: rgba(13, 21, 17, 0.9);
+            border: 1px solid rgba(63, 207, 142, 0.25);
+            border-radius: 14px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 0.8rem 0;
+        }
+
+        .doc pre code {
+            background: none;
+            padding: 0;
         }
 
         footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            margin-top: 4rem;
-            padding: 2rem 0;
             text-align: center;
-            color: var(--text-muted);
+            padding: 3rem 0 2.5rem;
+            color: var(--muted);
+            border-top: 1px solid rgba(245, 247, 246, 0.08);
+            margin-top: 4rem;
         }
 
-        @media (max-width: 640px) {
-            .nav-links {
-                gap: 0.8rem;
-                font-size: 0.85rem;
-            }
+        .fade-up {
+            opacity: 0;
+            transform: translateY(14px);
+            animation: fadeUp 0.8s ease forwards;
+        }
 
-            .cta-group {
-                flex-direction: column;
-            }
+        .fade-up.delay-1 { animation-delay: 0.1s; }
+        .fade-up.delay-2 { animation-delay: 0.2s; }
+        .fade-up.delay-3 { animation-delay: 0.3s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 720px) {
+            nav { flex-direction: column; gap: 1rem; }
+            .cta { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <div class="noise-layer" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
     <header class="container">
         <nav>
             <div class="brand">S3Tools</div>
             <div class="nav-links">
-                <a href="#descargas">Descargas</a>
-                <a href="#novedades">Novedades</a>
-                <a href="#instalacion">Instalación</a>
-                <a href="#contacto">Contacto</a>
+                <a href="#descarga">Descarga</a>
+                <a href="#readme">README</a>
+                <a href="#manual">Manual</a>
             </div>
         </nav>
         <div class="hero">
-            <div class="hero-text">
-                <h1>Recursos oficiales para <span>S3Tools</span></h1>
-                <p>Centralizamos los instaladores, manifiestos y plantillas directamente desde este repositorio para que siempre consultes los mismos artefactos que publicamos.</p>
-                <div class="cta-group">
-                    <a class="btn btn-primary pulse" href="#descargas" id="primary-download">
-                        Ver descargas disponibles
-                    </a>
-                    <a class="btn btn-secondary" href="https://github.com/s3integracion/S3Tools" target="_blank" rel="noopener">
-                        Ver repositorio
-                    </a>
+            <div class="hero-text fade-up">
+                <h1>Suite operativa para <span>S3Tools</span></h1>
+                <p>La pagina concentra el instalador oficial, el README del proyecto y el manual de usuario. Todo lo que necesitas para operar y entender S3 Suite en un solo lugar.</p>
+                <div class="cta">
+                    <a class="btn btn-primary" href="S3%20Suite%20Installer.msi" download>Descargar MSI</a>
+                    <a class="btn btn-secondary" href="#manual">Leer manual</a>
                 </div>
             </div>
-            <div class="hero-card" aria-label="Resumen del programa">
-                <div class="tag">Lo nuevo</div>
-                <h3>Automatiza tus cargas a S3 con controles inteligentes</h3>
+            <div class="hero-card fade-up delay-1">
+                <h3>Flujo principal</h3>
                 <ul>
-                    <li>Motor de batch para ASIN con procesamiento incremental.</li>
-                    <li>Formatos unificados y plantillas dinámicas para catálogos.</li>
-                    <li>Generación de sitemaps listos para publicar.</li>
+                    <li>Asin Batcher: ASINs a lotes de URLs.</li>
+                    <li>Sitemap: lotes a sitemaps JSON WebScraper.</li>
+                    <li>Formato: normaliza columnas en CSV/XLSX.</li>
                 </ul>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <section id="descargas">
+        <section id="descarga">
             <div class="section-heading">
                 <div>
-                    <h2>Descargas disponibles</h2>
-                    <p>Los artefactos se leen directamente desde la carpeta <strong>Application Files</strong> de este repositorio para que siempre veas el inventario actualizado.</p>
+                    <h2>Descarga directa</h2>
+                    <p>El instalador MSI se distribuye desde el mismo repositorio para descarga inmediata.</p>
                 </div>
             </div>
-            <div class="card" id="release-status">Leyendo recursos...</div>
-            <div class="grid" id="release-grid" aria-live="polite"></div>
-        </section>
-
-        <section id="novedades">
-            <div class="section-heading">
-                <div>
-                    <h2>Notas de lanzamiento</h2>
-                    <p>Resumen de los cambios clave para identificar qué versión se ajusta mejor a tu operación.</p>
-                </div>
-            </div>
-            <div class="timeline">
-                <article class="card timeline-card">
-                    <h3>2.0.0.3</h3>
-                    <p>Validaciones de integridad para cargas masivas, mejoras en plantillas sitemap y refuerzo de firmas ClickOnce.</p>
+            <div class="download-grid">
+                <article class="card fade-up delay-2">
+                    <h3>S3 Suite Installer</h3>
+                    <p class="meta">Instalador oficial para Windows (.msi).</p>
+                    <div class="download-actions">
+                        <a class="btn btn-primary" href="S3%20Suite%20Installer.msi" download>Descargar MSI</a>
+                        <a class="btn btn-secondary" href="#readme">Ver funcionalidades</a>
+                    </div>
                 </article>
-                <article class="card timeline-card">
-                    <h3>2.0.0.2</h3>
-                    <p>Optimización del motor Formato para catálogos mixtos y revisión de dependencias Python.</p>
-                </article>
-                <article class="card timeline-card">
-                    <h3>2.0.0.1</h3>
-                    <p>Compatibilidad extendida con lotes heredados y ajustes menores en la UI del instalador.</p>
-                </article>
-                <article class="card timeline-card">
-                    <h3>1.0.0.0</h3>
-                    <p>Primera publicación oficial del agente S3Tools con motores individuales.</p>
+                <article class="card fade-up delay-3">
+                    <h3>Documentacion integrada</h3>
+                    <p class="meta">README y Manual de Usuario renderizados directamente desde los archivos del proyecto.</p>
+                    <div class="download-actions">
+                        <a class="btn btn-secondary" href="#readme">README</a>
+                        <a class="btn btn-secondary" href="#manual">Manual</a>
+                    </div>
                 </article>
             </div>
         </section>
 
-        <section id="instalacion">
+        <section id="readme">
             <div class="section-heading">
                 <div>
-                    <h2>Pasos de instalación</h2>
-                    <p>Sigue este flujo recomendado para garantizar una instalación limpia y segura.</p>
+                    <h2>README del proyecto</h2>
+                    <p>Contenido oficial tal como se encuentra en `README.md`.</p>
                 </div>
             </div>
-            <div class="steps">
-                <div class="step">
-                    <h3>1. Descarga</h3>
-                    <p>Obtén el archivo <strong>.application</strong> de la versión que tu entorno requiere.</p>
+            <div class="doc-shell">
+                <div class="doc" id="readme-content">Cargando README...</div>
+            </div>
+        </section>
+
+        <section id="manual">
+            <div class="section-heading">
+                <div>
+                    <h2>Manual de Usuario</h2>
+                    <p>Contenido oficial tal como se encuentra en `ManualUsuario.md`.</p>
                 </div>
-                <div class="step">
-                    <h3>2. Verifica firma</h3>
-                    <p>Comprueba que el certificado ClickOnce sea válido antes de proceder.</p>
-                </div>
-                <div class="step">
-                    <h3>3. Ejecuta instalador</h3>
-                    <p>Ejecuta el paquete en un equipo con permisos de administrador y conexión a S3.</p>
-                </div>
-                <div class="step">
-                    <h3>4. Importa plantillas</h3>
-                    <p>Usa las carpetas Engines para personalizar formatos, ASIN batching o sitemaps.</p>
-                </div>
+            </div>
+            <div class="doc-shell">
+                <div class="doc" id="manual-content">Cargando manual...</div>
             </div>
         </section>
     </main>
 
-    <footer id="contacto">
-        <p>¿Necesitas otro recurso o comprobante? Escríbenos en el repositorio de GitHub o al equipo de soporte interno.</p>
-        <p>© <span id="year"></span> S3 Integracion · Recursos oficiales de S3Tools</p>
+    <footer>
+        <p>Recursos oficiales para el equipo S3 Integracion.</p>
+        <p>c <span id="year"></span> S3Tools</p>
     </footer>
 
     <script>
-        const host = window.location.hostname.toLowerCase();
-        const defaultOwner = "s3integracion";
-        const ownerFromHost = host.endsWith("github.io") ? host.split(".")[0] : defaultOwner;
-        const repoFromPath = window.location.pathname.split("/").filter(Boolean)[0] || "S3Tools";
-        const apiBase = `https://api.github.com/repos/${ownerFromHost}/${repoFromPath}`;
-        const releaseGrid = document.getElementById("release-grid");
-        const releaseStatus = document.getElementById("release-status");
-        const primaryDownload = document.getElementById("primary-download");
-
         document.getElementById("year").textContent = new Date().getFullYear();
 
-        const encodePath = (path) => path.split("/").map(encodeURIComponent).join("/");
-
-        async function fetchJson(url) {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Error al consultar ${url}: ${response.status}`);
-            }
-            return response.json();
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
         }
 
-        async function listFiles(path, branch, depth = 0, maxDepth = 3) {
-            if (!path) return [];
-            const apiUrl = `${apiBase}/contents/${encodePath(path)}?ref=${branch}`;
-            const entries = await fetchJson(apiUrl);
-            const files = [];
-            for (const entry of entries) {
-                if (entry.type === "file") {
-                    files.push(entry);
-                } else if (entry.type === "dir" && depth < maxDepth) {
-                    const nested = await listFiles(entry.path, branch, depth + 1, maxDepth);
-                    files.push(...nested);
+        function inlineFormat(text) {
+            return text
+                .replace(/`([^`]+)`/g, "<code>$1</code>")
+                .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+                .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+        }
+
+        function renderMarkdown(markdown) {
+            const lines = markdown.replace(/\r\n/g, "\n").split("\n");
+            let html = "";
+            let inCode = false;
+            let listType = null;
+
+            function closeList() {
+                if (listType) {
+                    html += listType === "ol" ? "</ol>" : "</ul>";
+                    listType = null;
                 }
             }
-            return files;
-        }
 
-        function prettyReleaseName(name) {
-            if (!name.includes("_")) return name;
-            const [label, ...rest] = name.split("_");
-            const version = rest.join(".");
-            return version ? `${label} ${version}` : name;
-        }
+            for (const rawLine of lines) {
+                const line = rawLine.trimEnd();
 
-        function buildRawUrl(branch, path) {
-            return `https://raw.githubusercontent.com/${ownerFromHost}/${repoFromPath}/${branch}/${encodePath(path)}`;
-        }
-
-        function setPrimaryDownload(link, label) {
-            if (!link) return;
-            primaryDownload.href = link;
-            primaryDownload.textContent = `Descargar ${label}`;
-            primaryDownload.setAttribute("download", "");
-        }
-
-        function renderReleaseCard(release, files, branch) {
-            const card = document.createElement("article");
-            card.className = "card release-card";
-
-            const title = document.createElement("h3");
-            title.textContent = prettyReleaseName(release.name);
-            card.appendChild(title);
-
-            const meta = document.createElement("p");
-            meta.className = "release-meta";
-            meta.textContent = `${files.length} recurso${files.length === 1 ? "" : "s"} publicados en esta carpeta.`;
-            card.appendChild(meta);
-
-            if (files.length) {
-                const linksWrap = document.createElement("div");
-                linksWrap.className = "resource-links";
-                files.forEach((file) => {
-                    const anchor = document.createElement("a");
-                    anchor.href = buildRawUrl(branch, file.path);
-                    anchor.textContent = file.path.replace(`${release.path}/`, "");
-                    anchor.setAttribute("download", "");
-                    linksWrap.appendChild(anchor);
-                });
-                card.appendChild(linksWrap);
-            }
-
-            releaseGrid.appendChild(card);
-        }
-
-        async function populateReleases(branch, contents) {
-            const list = contents || (await fetchJson(`${apiBase}/contents/${encodePath("Application Files")}?ref=${branch}`));
-            const releaseDirs = list.filter((item) => item.type === "dir");
-            if (!releaseDirs.length) {
-                releaseStatus.textContent = "No encontramos carpetas de releases en Application Files.";
-                return;
-            }
-
-            releaseStatus.style.display = "none";
-            releaseStatus.setAttribute("aria-hidden", "true");
-
-            let primaryLinked = false;
-            for (const release of releaseDirs.sort((a, b) => b.name.localeCompare(a.name))) {
-                try {
-                    const files = await listFiles(release.path, branch);
-                    renderReleaseCard(release, files, branch);
-                    if (!primaryLinked) {
-                        const appFile = files.find((file) => file.name.endsWith(".application"));
-                        if (appFile) {
-                            setPrimaryDownload(buildRawUrl(branch, appFile.path), prettyReleaseName(release.name));
-                            primaryLinked = true;
-                        }
+                if (line.startsWith("```")) {
+                    if (!inCode) {
+                        closeList();
+                        inCode = true;
+                        html += "<pre><code>";
+                    } else {
+                        inCode = false;
+                        html += "</code></pre>";
                     }
-                } catch (error) {
-                    console.error(error);
+                    continue;
                 }
+
+                if (inCode) {
+                    html += escapeHtml(rawLine) + "\n";
+                    continue;
+                }
+
+                if (!line.trim()) {
+                    closeList();
+                    continue;
+                }
+
+                const heading = line.match(/^(#{1,4})\s+(.*)/);
+                if (heading) {
+                    closeList();
+                    const level = heading[1].length;
+                    html += `<h${level}>${inlineFormat(heading[2].trim())}</h${level}>`;
+                    continue;
+                }
+
+                const ol = line.match(/^\d+\.\s+(.*)/);
+                if (ol) {
+                    if (listType !== "ol") {
+                        closeList();
+                        listType = "ol";
+                        html += "<ol>";
+                    }
+                    html += `<li>${inlineFormat(ol[1])}</li>`;
+                    continue;
+                }
+
+                const ul = line.match(/^[-*]\s+(.*)/);
+                if (ul) {
+                    if (listType !== "ul") {
+                        closeList();
+                        listType = "ul";
+                        html += "<ul>";
+                    }
+                    html += `<li>${inlineFormat(ul[1])}</li>`;
+                    continue;
+                }
+
+                closeList();
+                html += `<p>${inlineFormat(line)}</p>`;
             }
+
+            closeList();
+            return html;
         }
 
-        async function resolveBranch() {
-            const repoInfo = await fetchJson(apiBase);
-            const defaultBranch = repoInfo?.default_branch;
-            const candidateHostBranch = host.endsWith("github.io") ? "gh-pages" : null;
-            const candidates = [candidateHostBranch, defaultBranch, "gh-pages", "main", "master"].filter(Boolean);
-            const tested = new Set();
-
-            for (const candidate of candidates) {
-                if (tested.has(candidate)) continue;
-                tested.add(candidate);
-                const url = `${apiBase}/contents/${encodePath("Application Files")}?ref=${candidate}`;
-                const response = await fetch(url);
-                if (response.ok) {
-                    const contents = await response.json();
-                    return { branch: candidate, contents };
-                }
-            }
-
-            throw new Error("No pudimos ubicar Application Files en las ramas evaluadas.");
-        }
-
-        async function initReleases() {
+        async function loadMarkdown(id, file) {
+            const target = document.getElementById(id);
             try {
-                const { branch, contents } = await resolveBranch();
-                await populateReleases(branch, contents);
+                const response = await fetch(file);
+                if (!response.ok) {
+                    throw new Error("No se pudo leer " + file);
+                }
+                const text = await response.text();
+                target.innerHTML = renderMarkdown(text);
             } catch (error) {
+                target.textContent = "No se pudo cargar el contenido.";
                 console.error(error);
-                releaseStatus.textContent = "No se pudo consultar el inventario. Verifica la conexión o los permisos del repositorio.";
             }
         }
 
-        initReleases();
+        loadMarkdown("readme-content", "README.md");
+        loadMarkdown("manual-content", "ManualUsuario.md");
     </script>
 </body>
 </html>
