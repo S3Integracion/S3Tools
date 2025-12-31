@@ -14,8 +14,8 @@ namespace S3Integración_programs
 {
     internal sealed class SitemapEngineClient
     {
-        private const string EngineExeName = "SitemapEngine.exe";
         private const string EngineScriptName = "form_site.py";
+        private static readonly string EngineExeName = Path.ChangeExtension(EngineScriptName, ".exe");
         private const string EngineEnvVar = "SITEMAP_ENGINE_PATH";
         private static readonly string EngineRelativeFolder = Path.Combine("Engines", "Sitemap");
 
@@ -98,21 +98,14 @@ namespace S3Integración_programs
             }
         }
 
-        // Resolution order: env var -> embedded exe -> local exe -> local script.
+        // Resolution order: env var -> embedded exe -> local exe/script (same base name).
         private static EngineCommand ResolveEngine()
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             var env = Environment.GetEnvironmentVariable(EngineEnvVar);
-            if (!string.IsNullOrWhiteSpace(env))
+            if (TryResolveEngineFromPath(env, baseDir, out var envCommand))
             {
-                if (TryResolveRelativePath(env, baseDir, out var resolvedEnv))
-                {
-                    if (resolvedEnv.EndsWith(".py", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return new EngineCommand("python", Quote(resolvedEnv));
-                    }
-                    return new EngineCommand(resolvedEnv, string.Empty);
-                }
+                return envCommand;
             }
 
             var extracted = TryExtractEmbeddedEngine();
@@ -121,18 +114,10 @@ namespace S3Integración_programs
                 return new EngineCommand(extracted, string.Empty);
             }
 
-            var exeRelative = Path.Combine(EngineRelativeFolder, EngineExeName);
-            var exePath = Path.Combine(baseDir, exeRelative);
-            if (File.Exists(exePath))
-            {
-                return new EngineCommand(exeRelative, string.Empty);
-            }
-
             var scriptRelative = Path.Combine(EngineRelativeFolder, EngineScriptName);
-            var scriptPath = Path.Combine(baseDir, scriptRelative);
-            if (File.Exists(scriptPath))
+            if (TryResolveEngineFromPath(scriptRelative, baseDir, out var localCommand))
             {
-                return new EngineCommand("python", Quote(scriptRelative));
+                return localCommand;
             }
 
             throw new FileNotFoundException("Sitemap engine not found. Configure SITEMAP_ENGINE_PATH or embed the engine.");
@@ -196,6 +181,72 @@ namespace S3Integración_programs
                 return "\"\"";
             }
             return "\"" + value.Replace("\"", "\\\"") + "\"";
+        }
+
+        private static bool TryResolveEngineFromPath(string input, string baseDir, out EngineCommand command)
+        {
+            command = null;
+            foreach (var candidate in GetPathCandidates(input))
+            {
+                if (TryResolveRelativePath(candidate, baseDir, out var resolved))
+                {
+                    command = CreateCommand(resolved);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static string[] GetPathCandidates(string input)
+        {
+            var trimmed = (input ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(trimmed))
+            {
+                return Array.Empty<string>();
+            }
+
+            var ext = Path.GetExtension(trimmed);
+            if (string.IsNullOrWhiteSpace(ext))
+            {
+                return new[]
+                {
+                    trimmed + ".exe",
+                    trimmed + ".py",
+                    trimmed,
+                };
+            }
+
+            if (ext.Equals(".py", StringComparison.OrdinalIgnoreCase))
+            {
+                return new[]
+                {
+                    Path.ChangeExtension(trimmed, ".exe"),
+                    trimmed,
+                };
+            }
+
+            if (ext.Equals(".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                return new[]
+                {
+                    trimmed,
+                    Path.ChangeExtension(trimmed, ".py"),
+                };
+            }
+
+            return new[]
+            {
+                trimmed,
+            };
+        }
+
+        private static EngineCommand CreateCommand(string resolvedPath)
+        {
+            if (resolvedPath.EndsWith(".py", StringComparison.OrdinalIgnoreCase))
+            {
+                return new EngineCommand("python", Quote(resolvedPath));
+            }
+            return new EngineCommand(resolvedPath, string.Empty);
         }
 
         private static bool TryResolveRelativePath(string input, string baseDir, out string relativePath)
