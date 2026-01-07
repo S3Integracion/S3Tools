@@ -1,1 +1,3 @@
- dotnet build S3Integración_programs.csproj
+dotnet build S3Integración_programs.csproj
+.\build_engines.ps1
+.\bin\Debug\S3Tools.exe

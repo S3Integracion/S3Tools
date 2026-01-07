@@ -17,6 +17,7 @@ namespace S3Integración_programs
         private static readonly string[] StoresLeft = { "ProductosTX", "Holaproducto", "Altinor", "HervazTrade" };
         private static readonly string[] StoresRight = { "BBvs_Template", "BBvsBB2_2da", "BBvsBB2" };
         private static readonly string[] InputExtensions = { ".txt", ".csv", ".xlsx", ".json" };
+        private static readonly string[] AsinBatcherExtensions = { ".txt" };
         private static readonly Regex UrlRegex = new Regex("https?://[^\\s\"']+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private readonly SitemapEngineClient _engineClient;
@@ -445,8 +446,15 @@ namespace S3Integración_programs
 
         private void UpdateMode()
         {
-            var allowSelection = _modeSelectRadio.Checked;
-            _filesList.Enabled = allowSelection;
+            if (_modeSelectRadio.Checked)
+            {
+                _filesList.SelectionMode = SelectionMode.MultiExtended;
+            }
+            else
+            {
+                _filesList.SelectionMode = SelectionMode.None;
+                _filesList.ClearSelected();
+            }
             UpdateSummary();
         }
 
@@ -490,10 +498,10 @@ namespace S3Integración_programs
                 return;
             }
 
-            LoadFilesFromFolder(folder, replace);
+            LoadFilesFromFolder(folder, replace, AsinBatcherExtensions);
         }
 
-        private void LoadFilesFromFolder(string folder, bool replace)
+        private void LoadFilesFromFolder(string folder, bool replace, IEnumerable<string> extensions)
         {
             if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
             {
@@ -505,7 +513,7 @@ namespace S3Integración_programs
             }
 
             var files = new List<string>();
-            foreach (var ext in InputExtensions)
+            foreach (var ext in extensions ?? InputExtensions)
             {
                 files.AddRange(Directory.GetFiles(folder, "*" + ext));
             }
@@ -690,10 +698,7 @@ namespace S3Integración_programs
             {
                 control.Enabled = !busy;
             }
-            if (!_modeSelectRadio.Checked)
-            {
-                _filesList.Enabled = false;
-            }
+            _filesList.Enabled = !busy;
         }
 
         private void ShowNameConfigDialog()

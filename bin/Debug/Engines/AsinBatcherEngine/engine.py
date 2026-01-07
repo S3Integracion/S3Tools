@@ -208,15 +208,15 @@ def split_in_batches(items, batches):
     n = len(items)
     if n == 0:
         return [[] for _ in range(batches)]
-    size = (n + batches - 1) // batches
-    out, i = [], 0
-    for _ in range(batches):
-        out.append(items[i:i + size])
-        i += size
-        if i >= n:
-            break
-    while len(out) < batches:
-        out.append([])
+    base = n // batches
+    remainder = n % batches
+    out = []
+    start = 0
+    for i in range(batches):
+        count = base + (1 if i < remainder else 0)
+        end = start + count
+        out.append(items[start:end])
+        start = end
     return out
 
 
@@ -376,6 +376,12 @@ def handle_process(data):
     uniques, dups = extract_asins_any(input_path)
     if not uniques:
         return _error("No valid ASINs found")
+
+    if batches > len(uniques):
+        return _error(
+            "La cantidad de lotes no puede ser mayor que la cantidad de URLs. "
+            f"URLs: {len(uniques)} | Lotes: {batches}"
+        )
 
     uniques = reorder_asins(uniques, order)
 

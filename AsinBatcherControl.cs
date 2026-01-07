@@ -23,6 +23,8 @@ namespace S3Integración_programs
         private readonly List<Control> _inputControls;
         private int _previewRequestId;
         private int _lastDuplicates;
+        private int _lastUnique;
+        private string _lastPreviewPath;
         private bool _isBusy;
         private bool _suppressStoreSync;
 
@@ -502,6 +504,8 @@ private Control BuildFileNameRow()
             if (string.IsNullOrWhiteSpace(inputPath) || !File.Exists(inputPath))
             {
                 _lastDuplicates = 0;
+                _lastUnique = 0;
+                _lastPreviewPath = null;
                 _previewText.Text = string.Empty;
                 UpdateExportDuplicatesButton();
                 return;
@@ -519,6 +523,8 @@ private Control BuildFileNameRow()
             if (!response.Ok)
             {
                 _lastDuplicates = 0;
+                _lastUnique = 0;
+                _lastPreviewPath = null;
                 _previewText.Text = string.Empty;
                 UpdateExportDuplicatesButton();
                 ShowEngineError("No se pudo leer el archivo.", response);
@@ -527,6 +533,8 @@ private Control BuildFileNameRow()
 
             _previewText.Text = FormatPreview(response);
             _lastDuplicates = response.Duplicates ?? 0;
+            _lastUnique = response.Unique ?? 0;
+            _lastPreviewPath = inputPath;
             UpdateExportDuplicatesButton();
         }
 
@@ -605,6 +613,12 @@ private Control BuildFileNameRow()
                 _outputText.Text = outputDir;
             }
 
+            var requestedBatches = (int)_batchesNumeric.Value;
+            if (!await ValidateBatchCountAsync(inputPath, requestedBatches))
+            {
+                return;
+            }
+
             var request = new EngineRequest
             {
                 InputPath = inputPath,
@@ -613,7 +627,7 @@ private Control BuildFileNameRow()
                 Store = storeName,
                 StoreName = storeName,
                 Order = _orderCombo.SelectedItem as string,
-                Batches = (int)_batchesNumeric.Value,
+                Batches = requestedBatches,
                 ZipOutput = _zipCheck.Checked,
                 FileLabel = null,
                 NamePrefix1 = _namePrefix1,
@@ -757,6 +771,43 @@ private Control BuildFileNameRow()
             _suppressStoreSync = true;
             _fileNameText.Text = string.Empty;
             _suppressStoreSync = false;
+        }
+
+        private async Task<bool> ValidateBatchCountAsync(string inputPath, int batches)
+        {
+            if (!string.Equals(_lastPreviewPath, inputPath, StringComparison.OrdinalIgnoreCase))
+            {
+                SetBusy(true);
+                var preview = await _engineClient.PreviewAsync(inputPath);
+                SetBusy(false);
+
+                if (!preview.Ok)
+                {
+                    ShowEngineError("No se pudo leer el archivo.", preview);
+                    return false;
+                }
+
+                _previewText.Text = FormatPreview(preview);
+                _lastDuplicates = preview.Duplicates ?? 0;
+                _lastUnique = preview.Unique ?? 0;
+                _lastPreviewPath = inputPath;
+                UpdateExportDuplicatesButton();
+            }
+
+            if (_lastUnique > 0 && batches > _lastUnique)
+            {
+                MessageBox.Show(
+                    this,
+                    "La cantidad de lotes no puede ser mayor que la cantidad de URLs.\n" +
+                    "URLs: " + _lastUnique + "\n" +
+                    "Lotes: " + batches,
+                    "Aviso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true;
         }
 
         private void SetBusy(bool busy)
