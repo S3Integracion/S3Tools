@@ -25,6 +25,7 @@ namespace S3Integración_programs
         private RadioButton _templateTiendasRadio;
         private RadioButton _templateBbvsRadio;
         private Button _processButton;
+        private Button _helpButton;
         private Label _noteLabel;
 
         public FormatoControl()
@@ -48,11 +49,12 @@ namespace S3Integración_programs
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
-                RowCount = 4,
+                RowCount = 5,
                 Padding = new Padding(10),
             };
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 60f));
+            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
@@ -60,6 +62,7 @@ namespace S3Integración_programs
             root.Controls.Add(BuildFilesSection(), 0, 1);
             root.Controls.Add(BuildTemplateSection(), 0, 2);
             root.Controls.Add(BuildProcessSection(), 0, 3);
+            root.Controls.Add(BuildHelpSection(), 0, 4);
 
             Controls.Add(root);
             ResumeLayout();
@@ -225,6 +228,27 @@ namespace S3Integración_programs
             return panel;
         }
 
+        private Control BuildHelpSection()
+        {
+            var panel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                FlowDirection = FlowDirection.RightToLeft,
+            };
+
+            _helpButton = new Button
+            {
+                Text = "Ayuda",
+                AutoSize = true,
+            };
+
+            panel.Controls.Add(_helpButton);
+            _inputControls.Add(_helpButton);
+
+            return panel;
+        }
+
         private void WireEvents()
         {
             _importFilesButton.Click += ImportFilesButton_Click;
@@ -233,6 +257,7 @@ namespace S3Integración_programs
             _modeSelectRadio.CheckedChanged += (s, e) => UpdateMode();
             _filesList.SelectedIndexChanged += (s, e) => UpdateSummary();
             _processButton.Click += ProcessButton_Click;
+            _helpButton.Click += (s, e) => ShowHelp();
         }
 
         private void SetDefaults()
@@ -389,6 +414,18 @@ namespace S3Integración_programs
             }
 
             MessageBox.Show(this, message, "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void ShowHelp()
+        {
+            var msg =
+                "Formato\n\n" +
+                "1) Importa archivos .csv o .xlsx.\n" +
+                "2) Elige modo: Procesar todos o Seleccionar archivos.\n" +
+                "3) Elige plantilla: Auto, Tiendas o BBvs.\n" +
+                "4) Presiona Procesar.\n\n" +
+                "Se actualizan solo las dos primeras columnas.";
+            MessageBox.Show(this, msg, "Ayuda - Formato", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void SetBusy(bool busy)

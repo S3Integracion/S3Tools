@@ -37,8 +37,6 @@
             this.sitemapPanel = new System.Windows.Forms.Panel();
             this.tabFormato = new System.Windows.Forms.TabPage();
             this.formatoPanel = new System.Windows.Forms.Panel();
-            this.tabS3Scraper = new System.Windows.Forms.TabPage();
-            this.s3ScraperPanel = new System.Windows.Forms.Panel();
             this.tabControlRemoto = new System.Windows.Forms.TabPage();
             this.controlRemotoPanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -46,7 +44,6 @@
             this.tabAsinBatcher.SuspendLayout();
             this.tabSitemap.SuspendLayout();
             this.tabFormato.SuspendLayout();
-            this.tabS3Scraper.SuspendLayout();
             this.tabControlRemoto.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,7 +52,6 @@
             this.tabControlPrograms.Controls.Add(this.tabAsinBatcher);
             this.tabControlPrograms.Controls.Add(this.tabSitemap);
             this.tabControlPrograms.Controls.Add(this.tabFormato);
-            this.tabControlPrograms.Controls.Add(this.tabS3Scraper);
             this.tabControlPrograms.Controls.Add(this.tabControlRemoto);
             this.tabControlPrograms.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlPrograms.Location = new System.Drawing.Point(0, 0);
@@ -121,25 +117,6 @@
             this.formatoPanel.Size = new System.Drawing.Size(1186, 765);
             this.formatoPanel.TabIndex = 0;
             // 
-            // tabS3Scraper
-            // 
-            this.tabS3Scraper.Controls.Add(this.s3ScraperPanel);
-            this.tabS3Scraper.Location = new System.Drawing.Point(4, 25);
-            this.tabS3Scraper.Name = "tabS3Scraper";
-            this.tabS3Scraper.Padding = new System.Windows.Forms.Padding(3);
-            this.tabS3Scraper.Size = new System.Drawing.Size(1174, 644);
-            this.tabS3Scraper.TabIndex = 3;
-            this.tabS3Scraper.Text = "S3Scraper";
-            this.tabS3Scraper.UseVisualStyleBackColor = true;
-            // 
-            // s3ScraperPanel
-            // 
-            this.s3ScraperPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.s3ScraperPanel.Location = new System.Drawing.Point(3, 3);
-            this.s3ScraperPanel.Name = "s3ScraperPanel";
-            this.s3ScraperPanel.Size = new System.Drawing.Size(1168, 638);
-            this.s3ScraperPanel.TabIndex = 0;
-            // 
             // tabControlRemoto
             // 
             this.tabControlRemoto.Controls.Add(this.controlRemotoPanel);
@@ -167,14 +144,13 @@
             this.ClientSize = new System.Drawing.Size(1200, 800);
             this.Controls.Add(this.tabControlPrograms);
             this.Name = "Form1";
-            this.Text = "S3integración_programs";
+            this.Text = "S3Tools";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.tabControlPrograms.ResumeLayout(false);
             this.tabAsinBatcher.ResumeLayout(false);
             this.tabSitemap.ResumeLayout(false);
             this.tabFormato.ResumeLayout(false);
-            this.tabS3Scraper.ResumeLayout(false);
             this.tabControlRemoto.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -187,12 +163,10 @@
         private System.Windows.Forms.TabPage tabAsinBatcher;
         private System.Windows.Forms.TabPage tabSitemap;
         private System.Windows.Forms.TabPage tabFormato;
-        private System.Windows.Forms.TabPage tabS3Scraper;
         private System.Windows.Forms.TabPage tabControlRemoto;
         private System.Windows.Forms.Panel asinBatcherPanel;
         private System.Windows.Forms.Panel sitemapPanel;
         private System.Windows.Forms.Panel formatoPanel;
-        private System.Windows.Forms.Panel s3ScraperPanel;
         private System.Windows.Forms.Panel controlRemotoPanel;
     }
 }

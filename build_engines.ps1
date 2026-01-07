@@ -1,5 +1,6 @@
 param(
-    [string]$EnginesPath = ""
+    [string]$EnginesPath = "",
+    [string]$Configuration = "Debug"
 )
 
 $ErrorActionPreference = "Stop"
@@ -44,6 +45,7 @@ if (-not $scriptFiles) {
 
 foreach ($script in $scriptFiles) {
     $scriptDir = $script.DirectoryName
+    $distPath = $scriptDir
     $workPath = Join-Path $scriptDir "build"
     $specPath = $workPath
     $dataSeparator = [System.IO.Path]::PathSeparator
@@ -76,7 +78,7 @@ foreach ($script in $scriptFiles) {
         "--onefile",
         "--clean",
         "--noconfirm",
-        "--distpath", $scriptDir,
+        "--distpath", $distPath,
         "--workpath", $workPath,
         "--specpath", $specPath
     )
@@ -97,4 +99,10 @@ foreach ($script in $scriptFiles) {
     }
 }
 
-Write-Host "All engines built."
+$binEnginesDir = Join-Path $root (Join-Path "bin" (Join-Path $Configuration "Engines"))
+if (Test-Path $binEnginesDir) {
+    Remove-Item -LiteralPath $binEnginesDir -Recurse -Force
+}
+Copy-Item -Path $enginesDir -Destination $binEnginesDir -Recurse -Force
+
+Write-Host ("All engines built. Copied to {0}" -f $binEnginesDir)

@@ -1,6 +1,8 @@
 // Client wrapper for the Sitemap Python engine.
 // Resolves the engine executable/script and exchanges JSON via stdin/stdout.
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,9 +33,10 @@ namespace S3Integración_programs
 
         private SitemapEngineResponse Send(SitemapEngineRequest request)
         {
+            EngineCommand command = null;
             try
             {
-                var command = ResolveEngine();
+                command = ResolveEngine();
                 var json = Serialize(request);
                 var psi = new ProcessStartInfo
                 {
@@ -87,6 +90,15 @@ namespace S3Integración_programs
                     return response;
                 }
             }
+            catch (Win32Exception ex)
+            {
+                return new SitemapEngineResponse
+                {
+                    Ok = false,
+                    Error = BuildStartError(ex, command),
+                    Traceback = ex.ToString(),
+                };
+            }
             catch (Exception ex)
             {
                 return new SitemapEngineResponse
@@ -102,8 +114,9 @@ namespace S3Integración_programs
         private static EngineCommand ResolveEngine()
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var searchRoots = GetSearchRoots(baseDir);
             var env = Environment.GetEnvironmentVariable(EngineEnvVar);
-            if (TryResolveEngineFromPath(env, baseDir, out var envCommand))
+            if (TryResolveEngineFromPath(env, searchRoots, out var envCommand))
             {
                 return envCommand;
             }
@@ -115,12 +128,12 @@ namespace S3Integración_programs
             }
 
             var scriptRelative = Path.Combine(EngineRelativeFolder, EngineScriptName);
-            if (TryResolveEngineFromPath(scriptRelative, baseDir, out var localCommand))
+            if (TryResolveEngineFromPath(scriptRelative, searchRoots, out var localCommand))
             {
                 return localCommand;
             }
 
-            throw new FileNotFoundException("Sitemap engine not found. Configure SITEMAP_ENGINE_PATH or embed the engine.");
+            throw new FileNotFoundException(BuildEngineNotFoundMessage(searchRoots));
         }
 
         private static string TryExtractEmbeddedEngine()
@@ -183,12 +196,12 @@ namespace S3Integración_programs
             return "\"" + value.Replace("\"", "\\\"") + "\"";
         }
 
-        private static bool TryResolveEngineFromPath(string input, string baseDir, out EngineCommand command)
+        private static bool TryResolveEngineFromPath(string input, IEnumerable<string> searchRoots, out EngineCommand command)
         {
             command = null;
             foreach (var candidate in GetPathCandidates(input))
             {
-                if (TryResolveRelativePath(candidate, baseDir, out var resolved))
+                if (TryResolveExistingPath(candidate, searchRoots, out var resolved))
                 {
                     command = CreateCommand(resolved);
                     return true;
@@ -249,85 +262,111 @@ namespace S3Integración_programs
             return new EngineCommand(resolvedPath, string.Empty);
         }
 
-        private static bool TryResolveRelativePath(string input, string baseDir, out string relativePath)
+        private static bool TryResolveExistingPath(string input, IEnumerable<string> searchRoots, out string resolvedPath)
         {
-            relativePath = null;
+            resolvedPath = null;
             var candidate = (input ?? string.Empty).Trim();
             if (string.IsNullOrWhiteSpace(candidate))
             {
                 return false;
             }
 
-            string fullPath;
             if (Path.IsPathRooted(candidate))
             {
-                fullPath = candidate;
-                if (!File.Exists(fullPath))
+                if (!File.Exists(candidate))
                 {
                     return false;
                 }
+                resolvedPath = Path.GetFullPath(candidate);
+                return true;
             }
-            else
+
+            if (File.Exists(candidate))
             {
-                fullPath = candidate;
-                if (!File.Exists(fullPath))
+                resolvedPath = Path.GetFullPath(candidate);
+                return true;
+            }
+
+            foreach (var root in searchRoots ?? Array.Empty<string>())
+            {
+                var combined = Path.Combine(root, candidate);
+                if (!File.Exists(combined))
                 {
-                    var combined = Path.Combine(baseDir, candidate);
-                    if (!File.Exists(combined))
-                    {
-                        return false;
-                    }
-                    fullPath = combined;
+                    continue;
+                }
+                resolvedPath = Path.GetFullPath(combined);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<string> GetSearchRoots(string baseDir)
+        {
+            var roots = new List<string>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            void AddRoot(string path)
+            {
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    return;
+                }
+                string fullPath;
+                try
+                {
+                    fullPath = Path.GetFullPath(path);
+                }
+                catch
+                {
+                    return;
+                }
+                if (!Directory.Exists(fullPath))
+                {
+                    return;
+                }
+                if (seen.Add(fullPath))
+                {
+                    roots.Add(fullPath);
                 }
             }
 
-            fullPath = Path.GetFullPath(fullPath);
-            var rel = GetRelativePath(baseDir, fullPath);
-            if (Path.IsPathRooted(rel))
+            AddRoot(baseDir);
+            AddRoot(Path.Combine(baseDir, "bin", "Debug"));
+            AddRoot(Path.Combine(baseDir, "bin", "Release"));
+
+            var current = new DirectoryInfo(baseDir);
+            for (var i = 0; i < 3 && current?.Parent != null; i++)
             {
-                if (!Path.IsPathRooted(candidate))
+                current = current.Parent;
+                if (current == null)
                 {
-                    relativePath = candidate;
-                    return true;
+                    break;
                 }
-                return false;
+                AddRoot(current.FullName);
+                AddRoot(Path.Combine(current.FullName, "bin", "Debug"));
+                AddRoot(Path.Combine(current.FullName, "bin", "Release"));
             }
 
-            relativePath = rel;
-            return true;
+            return roots;
         }
 
-        private static string GetRelativePath(string baseDir, string fullPath)
+        private static string BuildEngineNotFoundMessage(IEnumerable<string> searchRoots)
         {
-            if (string.IsNullOrWhiteSpace(baseDir) || string.IsNullOrWhiteSpace(fullPath))
-            {
-                return fullPath;
-            }
-
-            var baseUri = new Uri(AppendDirectorySeparator(baseDir));
-            var fullUri = new Uri(fullPath);
-            if (!string.Equals(baseUri.Scheme, fullUri.Scheme, StringComparison.OrdinalIgnoreCase))
-            {
-                return fullPath;
-            }
-
-            var relativeUri = baseUri.MakeRelativeUri(fullUri);
-            var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-            return relativePath.Replace('/', Path.DirectorySeparatorChar);
+            var roots = string.Join(Environment.NewLine, searchRoots.Select(root => " - " + root));
+            var expected = Path.Combine(EngineRelativeFolder, EngineExeName);
+            return "No se encontro el motor de Sitemap. Esperado: " + expected +
+                   Environment.NewLine + "Rutas buscadas:" + Environment.NewLine + roots +
+                   Environment.NewLine + "Ejecuta build_engines.ps1 o configura " + EngineEnvVar + ".";
         }
 
-        private static string AppendDirectorySeparator(string path)
+        private static string BuildStartError(Exception ex, EngineCommand command)
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if (command == null)
             {
-                return path;
+                return ex.Message;
             }
-            if (path.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
-                path.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
-            {
-                return path;
-            }
-            return path + Path.DirectorySeparatorChar;
+            return ex.Message + Environment.NewLine + "Comando: " + command.FileName + " " + command.Arguments;
         }
 
         private sealed class EngineCommand
@@ -363,6 +402,15 @@ namespace S3Integración_programs
 
         [DataMember(Name = "zip_output")]
         public bool? ZipOutput { get; set; }
+
+        [DataMember(Name = "name_prefix_1")]
+        public string NamePrefix1 { get; set; }
+
+        [DataMember(Name = "name_prefix_2")]
+        public string NamePrefix2 { get; set; }
+
+        [DataMember(Name = "store_name")]
+        public string StoreName { get; set; }
     }
 
     [DataContract]

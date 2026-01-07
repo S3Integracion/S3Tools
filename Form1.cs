@@ -1,12 +1,7 @@
 // Main shell form that hosts the tool tabs and injects their controls.
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace S3Integración_programs
@@ -16,12 +11,13 @@ namespace S3Integración_programs
         private AsinBatcherControl asinBatcherControl;
         private SitemapControl sitemapControl;
         private FormatoControl formatoControl;
-        private S3ScraperControl s3ScraperControl;
         private ControlRemotoControl controlRemotoControl;
 
         public Form1()
         {
             InitializeComponent();
+            Text = "S3Tools";
+            TrySetAppIcon();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -54,15 +50,6 @@ namespace S3Integración_programs
                 formatoPanel.Controls.Add(formatoControl);
             }
 
-            if (s3ScraperControl == null)
-            {
-                s3ScraperControl = new S3ScraperControl
-                {
-                    Dock = DockStyle.Fill,
-                };
-                s3ScraperPanel.Controls.Add(s3ScraperControl);
-            }
-
             if (controlRemotoControl == null)
             {
                 controlRemotoControl = new ControlRemotoControl
@@ -86,14 +73,25 @@ namespace S3Integración_programs
             ShowTab(tabAsinBatcher);
         }
 
-        private void s3ScraperToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ShowTab(tabS3Scraper);
-        }
-
         private void controlRemotoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowTab(tabControlRemoto);
+        }
+
+        private void TrySetAppIcon()
+        {
+            try
+            {
+                var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "S3Tools.ico");
+                if (File.Exists(iconPath))
+                {
+                    Icon = new Icon(iconPath);
+                }
+            }
+            catch
+            {
+                // Keep default icon if the custom one cannot be loaded.
+            }
         }
     }
 }

@@ -17,11 +17,13 @@ namespace S3Integración_programs
         private static readonly string[] StoresLeft = { "ProductosTX", "Holaproducto", "Altinor", "HervazTrade" };
         private static readonly string[] StoresRight = { "BBvs_Template", "BBvsBB2_2da", "BBvsBB2" };
         private static readonly string[] InputExtensions = { ".txt", ".csv", ".xlsx", ".json" };
+        private static readonly string[] AsinBatcherExtensions = { ".txt" };
         private static readonly Regex UrlRegex = new Regex("https?://[^\\s\"']+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private readonly SitemapEngineClient _engineClient;
         private readonly List<Control> _inputControls;
         private bool _isBusy;
+        private bool _suppressStoreSync;
 
         private Button _importFilesButton;
         private Button _clearFilesButton;
@@ -37,7 +39,11 @@ namespace S3Integración_programs
         private Button _chooseOutputButton;
         private CheckBox _zipCheck;
         private Button _processButton;
+        private Button _nameConfigButton;
+        private Button _helpButton;
         private RadioButton[] _storeRadios;
+        private string _namePrefix1 = string.Empty;
+        private string _namePrefix2 = string.Empty;
 
         public SitemapControl()
         {
@@ -60,11 +66,12 @@ namespace S3Integración_programs
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
-                RowCount = 6,
+                RowCount = 7,
                 Padding = new Padding(10),
             };
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
+            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -76,6 +83,7 @@ namespace S3Integración_programs
             root.Controls.Add(BuildBaseNameSection(), 0, 3);
             root.Controls.Add(BuildOutputSection(), 0, 4);
             root.Controls.Add(BuildProcessSection(), 0, 5);
+            root.Controls.Add(BuildHelpSection(), 0, 6);
 
             Controls.Add(root);
             ResumeLayout();
@@ -199,6 +207,26 @@ namespace S3Integración_programs
                 AutoSize = true,
             };
 
+            var outer = new TableLayoutPanel
+            {
+                ColumnCount = 1,
+                RowCount = 2,
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+            };
+            outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+            var header = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                FlowDirection = FlowDirection.RightToLeft,
+            };
+            _nameConfigButton = new Button { Text = "Configurar nombre...", AutoSize = true };
+            header.Controls.Add(_nameConfigButton);
+            outer.Controls.Add(header, 0, 0);
+
             var layout = new TableLayoutPanel
             {
                 ColumnCount = 2,
@@ -235,9 +263,11 @@ namespace S3Integración_programs
                 radios[0].Checked = true;
             }
 
-            group.Controls.Add(layout);
+            outer.Controls.Add(layout, 0, 1);
+            group.Controls.Add(outer);
 
             _storeRadios = radios.ToArray();
+            _inputControls.Add(_nameConfigButton);
             _inputControls.AddRange(_storeRadios);
 
             return group;
@@ -355,6 +385,28 @@ namespace S3Integración_programs
             return panel;
         }
 
+        private Control BuildHelpSection()
+        {
+            var panel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                FlowDirection = FlowDirection.RightToLeft,
+            };
+
+            _helpButton = new Button
+            {
+                Text = "Ayuda",
+                AutoSize = true,
+            };
+
+            panel.Controls.Add(_helpButton);
+
+            _inputControls.Add(_helpButton);
+
+            return panel;
+        }
+
         private void WireEvents()
         {
             _importFilesButton.Click += ImportFilesButton_Click;
@@ -367,6 +419,13 @@ namespace S3Integración_programs
             _desktopButton.Click += (s, e) => _outputText.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             _chooseOutputButton.Click += ChooseOutputButton_Click;
             _processButton.Click += ProcessButton_Click;
+            _nameConfigButton.Click += (s, e) => ShowNameConfigDialog();
+            _helpButton.Click += (s, e) => ShowHelp();
+            _baseNameText.TextChanged += BaseNameText_TextChanged;
+            foreach (var radio in _storeRadios)
+            {
+                radio.CheckedChanged += StoreRadio_CheckedChanged;
+            }
             VisibleChanged += (s, e) =>
             {
                 // Auto-load last Asin Batcher output on first show.
@@ -387,8 +446,15 @@ namespace S3Integración_programs
 
         private void UpdateMode()
         {
-            var allowSelection = _modeSelectRadio.Checked;
-            _filesList.Enabled = allowSelection;
+            if (_modeSelectRadio.Checked)
+            {
+                _filesList.SelectionMode = SelectionMode.MultiExtended;
+            }
+            else
+            {
+                _filesList.SelectionMode = SelectionMode.None;
+                _filesList.ClearSelected();
+            }
             UpdateSummary();
         }
 
@@ -432,10 +498,10 @@ namespace S3Integración_programs
                 return;
             }
 
-            LoadFilesFromFolder(folder, replace);
+            LoadFilesFromFolder(folder, replace, AsinBatcherExtensions);
         }
 
-        private void LoadFilesFromFolder(string folder, bool replace)
+        private void LoadFilesFromFolder(string folder, bool replace, IEnumerable<string> extensions)
         {
             if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
             {
@@ -447,7 +513,7 @@ namespace S3Integración_programs
             }
 
             var files = new List<string>();
-            foreach (var ext in InputExtensions)
+            foreach (var ext in extensions ?? InputExtensions)
             {
                 files.AddRange(Directory.GetFiles(folder, "*" + ext));
             }
@@ -571,10 +637,10 @@ namespace S3Integración_programs
                 return;
             }
 
-            var baseName = (_baseNameText.Text ?? string.Empty).Trim();
-            if (string.IsNullOrWhiteSpace(baseName))
+            var storeName = GetStoreNameForFiles();
+            if (string.IsNullOrWhiteSpace(storeName))
             {
-                MessageBox.Show(this, "Ingresa un nombre para los sitemaps.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, "Selecciona una tienda o escribe un nombre.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -589,9 +655,12 @@ namespace S3Integración_programs
             {
                 InputFiles = files,
                 OutputDir = outputDir,
-                BaseName = baseName,
-                Store = GetSelectedStore(),
+                BaseName = null,
+                Store = storeName,
+                StoreName = storeName,
                 ZipOutput = _zipCheck.Checked,
+                NamePrefix1 = _namePrefix1,
+                NamePrefix2 = _namePrefix2,
             };
 
             SetBusy(true);
@@ -629,14 +698,92 @@ namespace S3Integración_programs
             {
                 control.Enabled = !busy;
             }
-            if (!_modeSelectRadio.Checked)
+            _filesList.Enabled = !busy;
+        }
+
+        private void ShowNameConfigDialog()
+        {
+            using (var dialog = new FileNameConfigDialog(_namePrefix1, _namePrefix2))
             {
-                _filesList.Enabled = false;
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _namePrefix1 = dialog.Prefix1;
+                    _namePrefix2 = dialog.Prefix2;
+                }
             }
         }
 
-        private string GetSelectedStore()
+        private void ShowHelp()
         {
+            var msg =
+                "Sitemap\n\n" +
+                "1) Importa archivos .txt/.csv/.xlsx/.json.\n" +
+                "2) Elige modo: Convertir todos o Seleccionar lotes.\n" +
+                "3) Elige una tienda o escribe un nombre manual.\n" +
+                "4) Configura los prefijos si aplica.\n" +
+                "5) Elige carpeta destino (opcional ZIP).\n" +
+                "6) Presiona Procesar.";
+            MessageBox.Show(this, msg, "Ayuda - Sitemap", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void BaseNameText_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressStoreSync)
+            {
+                return;
+            }
+
+            var manual = (_baseNameText.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(manual))
+            {
+                if (_storeRadios.Length > 0 && Array.TrueForAll(_storeRadios, r => !r.Checked))
+                {
+                    _suppressStoreSync = true;
+                    _storeRadios[0].Checked = true;
+                    _suppressStoreSync = false;
+                }
+                return;
+            }
+
+            _suppressStoreSync = true;
+            foreach (var radio in _storeRadios)
+            {
+                radio.Checked = false;
+            }
+            _suppressStoreSync = false;
+        }
+
+        private void StoreRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressStoreSync)
+            {
+                return;
+            }
+
+            var radio = sender as RadioButton;
+            if (radio == null || !radio.Checked)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(_baseNameText.Text))
+            {
+                return;
+            }
+
+            _suppressStoreSync = true;
+            _baseNameText.Text = string.Empty;
+            _suppressStoreSync = false;
+        }
+
+        private string GetStoreNameForFiles()
+        {
+            var manual = (_baseNameText.Text ?? string.Empty).Trim();
+            if (!string.IsNullOrWhiteSpace(manual))
+            {
+                return manual;
+            }
+
             foreach (var radio in _storeRadios)
             {
                 if (radio.Checked)
