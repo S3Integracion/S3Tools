@@ -17,3 +17,7 @@ C:\Users\Public\GitHub\S3Tools\obj\Release\S3Tools.exe.manifest
 C:\Users\Public\GitHub\S3Tools\obj\Release\S3Tools.application
 C:\Users\Public\GitHub\S3Tools\obj\Release\S3Tools.exe
 C:\Users\Public\GitHub\S3Tools\obj\Release\S3Tools.pdb
+C:\Users\Public\GitHub\S3Tools\bin\Release\Engines\AsinBatcherEngine\engine.exe
+C:\Users\Public\GitHub\S3Tools\bin\Release\Engines\Formato\format.exe
+C:\Users\Public\GitHub\S3Tools\bin\Release\Engines\Sitemap\form_site.exe
+C:\Users\Public\GitHub\S3Tools\bin\Release\S3Tools.ico

@@ -1,12 +1,12 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\ariel\\GitHub\\S3Tools\\",
+  "WorkspaceRootPath": "C:\\Users\\Public\\GitHub\\S3Tools\\",
   "Documents": [
     {
       "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|S3Integraci\u00F3n_programs||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\ariel\\github\\s3tools\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\public\\github\\s3tools\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,9 +22,9 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "S3Integraci\u00F3n_programs",
-              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
+              "DocumentMoniker": "C:\\Users\\Public\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
               "RelativeDocumentMoniker": "S3Integraci\u00F3n_programs.csproj",
-              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
+              "ToolTip": "C:\\Users\\Public\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
               "RelativeToolTip": "S3Integraci\u00F3n_programs.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-12-30T20:29:45.331Z",
