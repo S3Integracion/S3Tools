@@ -17,7 +17,6 @@ namespace S3Integración_programs
         private static readonly string[] Markets = { "MX", "US" };
         private static readonly string[] OrderChoices = { "Ordenado", "Inverso", "Aleatorio" };
         private const int DefaultBatches = 30;
-        private const string VersionText = "v10.5 2025-08-16 01:47  -  Propiedad de S3 Integracion S de RL de CV";
 
         private readonly AsinBatcherEngineClient _engineClient;
         private readonly Timer _previewTimer;
@@ -25,6 +24,7 @@ namespace S3Integración_programs
         private int _previewRequestId;
         private int _lastDuplicates;
         private bool _isBusy;
+        private bool _suppressStoreSync;
 
         private TextBox _inputText;
         private Button _browseButton;
@@ -40,9 +40,11 @@ namespace S3Integración_programs
         private Button _chooseOutputButton;
         private CheckBox _zipCheck;
         private Button _processButton;
-        private Label _versionLabel;
-        private Button _aboutButton;
+        private Button _nameConfigButton;
+        private Button _helpButton;
         private RadioButton[] _storeRadios;
+        private string _namePrefix1 = string.Empty;
+        private string _namePrefix2 = string.Empty;
 
         public AsinBatcherControl()
         {
@@ -83,7 +85,7 @@ namespace S3Integración_programs
             root.Controls.Add(BuildOptionsSection(), 0, 2);
             root.Controls.Add(BuildOutputSection(), 0, 3);
             root.Controls.Add(BuildProcessSection(), 0, 4);
-            root.Controls.Add(BuildFooterSection(), 0, 5);
+            root.Controls.Add(BuildHelpSection(), 0, 5);
 
             Controls.Add(root);
             ResumeLayout();
@@ -190,7 +192,7 @@ namespace S3Integración_programs
             return panel;
         }
 
-                private Control BuildStoreGroup()
+        private Control BuildStoreGroup()
         {
             var group = new GroupBox
             {
@@ -198,6 +200,26 @@ namespace S3Integración_programs
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
+
+            var outer = new TableLayoutPanel
+            {
+                ColumnCount = 1,
+                RowCount = 2,
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+            };
+            outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+            var header = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                FlowDirection = FlowDirection.RightToLeft,
+            };
+            _nameConfigButton = new Button { Text = "Configurar nombre...", AutoSize = true };
+            header.Controls.Add(_nameConfigButton);
+            outer.Controls.Add(header, 0, 0);
 
             var layout = new TableLayoutPanel
             {
@@ -235,9 +257,11 @@ namespace S3Integración_programs
                 radios[0].Checked = true;
             }
 
-            group.Controls.Add(layout);
+            outer.Controls.Add(layout, 0, 1);
+            group.Controls.Add(outer);
 
             _storeRadios = radios.ToArray();
+            _inputControls.Add(_nameConfigButton);
             _inputControls.AddRange(_storeRadios);
 
             return group;
@@ -399,37 +423,26 @@ private Control BuildFileNameRow()
             return panel;
         }
 
-        private Control BuildFooterSection()
+        private Control BuildHelpSection()
         {
-            var layout = new TableLayoutPanel
+            var panel = new FlowLayoutPanel
             {
-                ColumnCount = 2,
                 Dock = DockStyle.Fill,
                 AutoSize = true,
+                FlowDirection = FlowDirection.RightToLeft,
             };
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
 
-            _versionLabel = new Label
+            _helpButton = new Button
             {
-                Text = VersionText,
+                Text = "Ayuda",
                 AutoSize = true,
-                ForeColor = SystemColors.GrayText,
-            };
-            _aboutButton = new Button
-            {
-                Text = "?",
-                AutoSize = true,
-                Width = 28,
-                Height = 24,
             };
 
-            layout.Controls.Add(_versionLabel, 0, 0);
-            layout.Controls.Add(_aboutButton, 1, 0);
+            panel.Controls.Add(_helpButton);
 
-            _inputControls.Add(_aboutButton);
+            _inputControls.Add(_helpButton);
 
-            return layout;
+            return panel;
         }
 
         private void WireEvents()
@@ -449,7 +462,13 @@ private Control BuildFileNameRow()
             _chooseOutputButton.Click += ChooseOutputButton_Click;
             _exportDuplicatesButton.Click += ExportDuplicatesButton_Click;
             _processButton.Click += ProcessButton_Click;
-            _aboutButton.Click += (s, e) => ShowAbout();
+            _nameConfigButton.Click += (s, e) => ShowNameConfigDialog();
+            _helpButton.Click += (s, e) => ShowHelp();
+            _fileNameText.TextChanged += FileNameText_TextChanged;
+            foreach (var radio in _storeRadios)
+            {
+                radio.CheckedChanged += StoreRadio_CheckedChanged;
+            }
         }
 
         private void SetDefaults()
@@ -572,10 +591,10 @@ private Control BuildFileNameRow()
                 return;
             }
 
-            var fileLabel = (_fileNameText.Text ?? string.Empty).Trim();
-            if (string.IsNullOrWhiteSpace(fileLabel))
+            var storeName = GetStoreNameForFiles();
+            if (string.IsNullOrWhiteSpace(storeName))
             {
-                MessageBox.Show(this, "Ingresa un nombre para el archivo.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, "Selecciona una tienda o escribe un nombre.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -591,11 +610,14 @@ private Control BuildFileNameRow()
                 InputPath = inputPath,
                 OutputDir = outputDir,
                 Market = _marketCombo.SelectedItem as string,
-                Store = GetSelectedStore(),
+                Store = storeName,
+                StoreName = storeName,
                 Order = _orderCombo.SelectedItem as string,
                 Batches = (int)_batchesNumeric.Value,
                 ZipOutput = _zipCheck.Checked,
-                FileLabel = fileLabel,
+                FileLabel = null,
+                NamePrefix1 = _namePrefix1,
+                NamePrefix2 = _namePrefix2,
             };
 
             SetBusy(true);
@@ -612,7 +634,7 @@ private Control BuildFileNameRow()
             _previewText.Text = FormatPreview(response);
             UpdateExportDuplicatesButton();
 
-            if (!string.IsNullOrWhiteSpace(response.OutputFolder))
+            if (!string.IsNullOrWhiteSpace(response.OutputFolder) && Directory.Exists(response.OutputFolder))
             {
                 // Persist output folder for Sitemap defaults.
                 AppState.SetLastAsinOutputDir(response.OutputFolder);
@@ -660,19 +682,81 @@ private Control BuildFileNameRow()
             }
         }
 
-        private void ShowAbout()
+        private void ShowNameConfigDialog()
+        {
+            using (var dialog = new FileNameConfigDialog(_namePrefix1, _namePrefix2))
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _namePrefix1 = dialog.Prefix1;
+                    _namePrefix2 = dialog.Prefix2;
+                }
+            }
+        }
+
+        private void ShowHelp()
         {
             var msg =
-                "ASIN Batcher - S3 Integracion\n" +
-                "Version de build: v10.5 2025-08-16 01:47\n\n" +
-                "Instructivo rapido:\n" +
+                "ASIN Batcher\n\n" +
                 "1) Selecciona un archivo .txt o .xlsx.\n" +
-                "2) Se eliminan duplicados (se mantiene el orden original).\n" +
-                "3) Elige Mercado: MX o US.\n" +
-                "4) Define la cantidad de lotes y carpeta destino.\n" +
-                "5) Exportar como ZIP (opcional).\n" +
-                "6) Exportar duplicados genera un CSV con repetidos.";
-            MessageBox.Show(this, msg, "Acerca de", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                "2) Revisa la previsualizacion (totales, unicos, duplicados).\n" +
+                "3) Elige una tienda o escribe un nombre manual.\n" +
+                "4) Configura los prefijos si aplica.\n" +
+                "5) Define Mercado, Lotes y Orden.\n" +
+                "6) Elige carpeta destino (opcional ZIP).\n" +
+                "7) Presiona Procesar.\n\n" +
+                "Extra: Exportar duplicados crea un CSV si hay repetidos.";
+            MessageBox.Show(this, msg, "Ayuda - Asin Batcher", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void FileNameText_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressStoreSync)
+            {
+                return;
+            }
+
+            var manual = (_fileNameText.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(manual))
+            {
+                if (_storeRadios.Length > 0 && Array.TrueForAll(_storeRadios, r => !r.Checked))
+                {
+                    _suppressStoreSync = true;
+                    _storeRadios[0].Checked = true;
+                    _suppressStoreSync = false;
+                }
+                return;
+            }
+
+            _suppressStoreSync = true;
+            foreach (var radio in _storeRadios)
+            {
+                radio.Checked = false;
+            }
+            _suppressStoreSync = false;
+        }
+
+        private void StoreRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressStoreSync)
+            {
+                return;
+            }
+
+            var radio = sender as RadioButton;
+            if (radio == null || !radio.Checked)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(_fileNameText.Text))
+            {
+                return;
+            }
+
+            _suppressStoreSync = true;
+            _fileNameText.Text = string.Empty;
+            _suppressStoreSync = false;
         }
 
         private void SetBusy(bool busy)
@@ -695,8 +779,14 @@ private Control BuildFileNameRow()
             _exportDuplicatesButton.Enabled = !_isBusy && _lastDuplicates > 0;
         }
 
-        private string GetSelectedStore()
+        private string GetStoreNameForFiles()
         {
+            var manual = (_fileNameText.Text ?? string.Empty).Trim();
+            if (!string.IsNullOrWhiteSpace(manual))
+            {
+                return manual;
+            }
+
             foreach (var radio in _storeRadios)
             {
                 if (radio.Checked)

@@ -396,6 +396,15 @@ namespace S3Integración_programs
 
         [DataMember(Name = "file_label")]
         public string FileLabel { get; set; }
+
+        [DataMember(Name = "name_prefix_1")]
+        public string NamePrefix1 { get; set; }
+
+        [DataMember(Name = "name_prefix_2")]
+        public string NamePrefix2 { get; set; }
+
+        [DataMember(Name = "store_name")]
+        public string StoreName { get; set; }
     }
 
     [DataContract]

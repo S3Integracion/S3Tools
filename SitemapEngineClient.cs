@@ -363,6 +363,15 @@ namespace S3Integración_programs
 
         [DataMember(Name = "zip_output")]
         public bool? ZipOutput { get; set; }
+
+        [DataMember(Name = "name_prefix_1")]
+        public string NamePrefix1 { get; set; }
+
+        [DataMember(Name = "name_prefix_2")]
+        public string NamePrefix2 { get; set; }
+
+        [DataMember(Name = "store_name")]
+        public string StoreName { get; set; }
     }
 
     [DataContract]

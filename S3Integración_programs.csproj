@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="AsinBatcherEngineClient.cs" />
     <Compile Include="AppState.cs" />
+    <Compile Include="FileNameConfigDialog.cs" />
     <Compile Include="FormatoControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -179,7 +180,9 @@
     <Content Include="Engines\Sitemap\PlantillaSitemapsBBvs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="S3Tools.ico" />
+    <Content Include="S3Tools.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

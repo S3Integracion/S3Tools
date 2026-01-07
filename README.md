@@ -81,7 +81,7 @@ Salida (mismo nombre que el `.py`):
 
 Salida:
 - Archivos `.txt` con encabezado `start_url`.
-- Nombres: `Tienda_Nombre.txt` o `Tienda_Nombre_1.txt`, etc.
+- Nombres: `Prefijo1Prefijo2NombreTienda.txt` o `Prefijo1Prefijo2NombreTienda_1.txt`, etc.
 - Solo caracteres permitidos: `a-zA-Z0-9_()+-`.
 - Espacios y `-` se convierten a `_`.
 - Opcional: exportar como ZIP y/o generar CSV de duplicados.
@@ -93,7 +93,7 @@ Salida:
 
 Salida:
 - Archivos `.json` en formato WebScraper.
-- Nombres: `Tienda_Nombre.json` o `Tienda_Nombre_1.json`, etc.
+- Nombres: `Prefijo1Prefijo2NombreTienda.json` o `Prefijo1Prefijo2NombreTienda_1.json`, etc.
 - Mismo saneado de caracteres que en Asin Batcher.
 - Opcional: exportar como ZIP.
 
@@ -102,8 +102,8 @@ Salida:
 2) Elige plantilla (Auto/Tiendas/BBvs).
 3) Procesa y actualiza solo las primeras dos columnas en la misma carpeta.
 
-### S3 Scraper / Control Remoto
-Tabs disponibles en la UI pero sin implementacion de logica de negocio en el codigo actual.
+### Control Remoto
+Tab disponible en la UI pero sin implementacion de logica de negocio en el codigo actual.
 
 ## Plantillas de sitemap
 - `PlantillaSitemapsTiendas.json`: usada para ProductosTX, Holaproducto, Altinor, Hervaz Trade.

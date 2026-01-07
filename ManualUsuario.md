@@ -39,20 +39,21 @@ Convierte ASINs en lotes de URLs listos para generar sitemaps.
 1) **Archivo de entrada**: selecciona un `.txt` o `.xlsx`.
 2) **Previsualizacion**: revisa total, unicos y duplicados.
 3) **Tienda**: elige una de las opciones disponibles.
-4) **Nombre del archivo**: define el nombre base para la salida.
-5) **Mercado**: MX o US.
-6) **Lotes**: cantidad de lotes a generar.
-7) **Orden**: Ordenado, Inverso o Aleatorio.
-8) **Carpeta destino**: Descargas, Escritorio u otra.
-9) (Opcional) **Exportar como ZIP**.
-10) Presiona **Procesar**.
+4) **Nombre del archivo**: nombre manual de tienda (opcional). Si escribes aqui, se desmarca la tienda seleccionada.
+5) **Configurar nombre**: define prefijos fijos para el nombre de salida.
+6) **Mercado**: MX o US.
+7) **Lotes**: cantidad de lotes a generar.
+8) **Orden**: Ordenado, Inverso o Aleatorio.
+9) **Carpeta destino**: Descargas, Escritorio u otra.
+10) (Opcional) **Exportar como ZIP**.
+11) Presiona **Procesar**.
 
 ### Salidas
 - Archivos `.txt` con encabezado `start_url`.
-- Nombres: `Tienda_Nombre.txt` o `Tienda_Nombre_1.txt`.
+- Nombres: `Prefijo1Prefijo2NombreTienda.txt` o `Prefijo1Prefijo2NombreTienda_1.txt`.
 - Solo caracteres permitidos: `a-zA-Z0-9_()+-`.
 - Espacios y `-` se convierten a `_`.
-- Si marcas ZIP, obtendras un archivo comprimido.
+- Si marcas ZIP, solo se genera el `.zip` (no se conserva la carpeta).
 
 ### Exportar duplicados
 Si hay duplicados detectados, puedes exportarlos como CSV desde el boton
@@ -72,15 +73,18 @@ Convierte lotes de URLs a sitemaps JSON con plantillas WebScraper.
    - *Seleccionar lotes*: procesa solo los seleccionados.
 3) **Cargar ultimo lote**: trae los archivos generados por Asin Batcher.
 4) **Tienda**: elige la tienda para aplicar la plantilla correcta.
-5) **Nombre para sitemaps**: base del nombre de salida.
-6) **Carpeta destino**: Descargas, Escritorio u otra.
-7) (Opcional) **Exportar como ZIP**.
-8) Presiona **Procesar**.
+5) **Nombre para sitemaps**: nombre manual de tienda (opcional). Si escribes aqui, se desmarca la tienda seleccionada.
+6) **Configurar nombre**: define prefijos fijos para el nombre de salida.
+7) **Carpeta destino**: Descargas, Escritorio u otra.
+8) (Opcional) **Exportar como ZIP**.
+9) Presiona **Procesar**.
 
 ### Salidas
 - Archivos `.json` en formato WebScraper.
-- Nombres: `Tienda_Nombre.json` o `Tienda_Nombre_1.json`.
+- Nombres: `Prefijo1Prefijo2NombreTienda.json` o `Prefijo1Prefijo2NombreTienda_1.json`.
 - Mismo saneado de caracteres que en Asin Batcher.
+- El numero final se toma del lote importado cuando existe.
+- Si marcas ZIP, solo se genera el `.zip` (no se conserva la carpeta).
 
 ## Formato
 Normaliza las primeras dos columnas de archivos WebScraper.
@@ -104,8 +108,8 @@ Normaliza las primeras dos columnas de archivos WebScraper.
 - Al finalizar se muestra el total de archivos actualizados.
 
 ## Pestañas sin logica activa
-- **S3 Scraper** y **Control Remoto** aparecen en la UI pero no tienen logica de
-  negocio implementada en esta version.
+- **Control Remoto** aparece en la UI pero no tiene logica de negocio implementada
+  en esta version.
 
 ## Plantillas de sitemap
 - `PlantillaSitemapsTiendas.json`: ProductosTX, Holaproducto, Altinor, Hervaz Trade.
