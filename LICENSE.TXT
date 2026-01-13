@@ -1,0 +1,323 @@
+# 1) EULA (ES) — S3TOOLS
+
+**ACUERDO DE LICENCIA DE USUARIO FINAL (EULA) — S3TOOLS**
+**Última actualización:** [13-ENERO-2026]
+**Versión del Software:** [2.0.1]
+**Titular de derechos:** **S3 INTEGRACION S. DE R.L. DE C.V.** (“S3 Integración”)
+**Contacto comercial y soporte:** **[developmen@s3integracion.com](mailto:developmen@s3integracion.com)**
+
+## 1. Aceptación
+
+AL INSTALAR, COPIAR, ACCEDER O UTILIZAR EL SOFTWARE, USTED (“EL USUARIO”) ACEPTA ESTE EULA.
+SI NO ESTÁ DE ACUERDO, NO INSTALE NI USE EL SOFTWARE.
+
+## 2. Definiciones
+
+* **“Software”**: el programa de escritorio “S3Tools”, incluyendo ejecutables, instaladores, archivos de configuración, documentación y Actualizaciones (según se definan aquí).
+* **“Código Fuente”**: código, scripts, repositorios, plantillas, proyectos, recursos, y cualquier material de desarrollo relacionado con el Software.
+* **“Organización Autorizada”**: **S3 INTEGRACION S. DE R.L. DE C.V.** y únicamente sus empleados y/o colaboradores expresamente autorizados por S3 Integración.
+* **“Cliente”**: persona física o moral distinta de S3 Integración que usa el Software bajo una Licencia de Evaluación o un Acuerdo Comercial.
+* **“Organización del Cliente”**: la entidad legal del Cliente y sus usuarios internos autorizados (empleados y contratistas bajo obligación de confidencialidad) en la medida permitida por el Acuerdo Comercial.
+* **“Uso No Comercial”**: uso estrictamente personal, académico, de evaluación técnica o comunitaria **sin fines de lucro**, sin explotación económica, sin prestación de servicios a terceros, y sin integración a procesos productivos comerciales.
+* **“Acuerdo Comercial”**: acuerdo económico por escrito celebrado entre el Cliente y S3 Integración (correo aceptado, contrato, orden de compra u otro documento equivalente) que define alcance, precio, vigencia, soporte/mantenimiento y condiciones.
+* **“Actualizaciones”**: mejoras, correcciones, nuevas versiones o parches proporcionados por S3 Integración.
+
+## 3. Propiedad intelectual y reserva de derechos
+
+El Software y el Código Fuente son propiedad exclusiva de S3 Integración o de sus licenciantes y están protegidos por las leyes aplicables.
+**Se reservan todos los derechos** no otorgados expresamente en este EULA.
+
+## 4. Licencias: Ejecutable vs. Código Fuente
+
+### 4.1 Licencia del ejecutable (rutas permitidas)
+
+El Usuario podrá usar el ejecutable **solo** si se encuentra bajo **una** de estas modalidades:
+
+**A) Licencia de Evaluación (sin pago inicial)**
+S3 Integración otorga una licencia **no exclusiva, revocable, intransferible y no sublicenciable** para usar el ejecutable del Software bajo los términos del apartado 5 (Evaluación).
+
+**B) Licencia Comercial (con Acuerdo Comercial)**
+Para uso comercial, uso productivo, continuidad operativa, soporte/mantenimiento y/o acceso a Actualizaciones, el Cliente deberá **contactar** a S3 Integración en **[developmen@s3integracion.com](mailto:developmen@s3integracion.com)** y celebrar un **Acuerdo Comercial**. Sin Acuerdo Comercial vigente, el uso comercial **no está autorizado**.
+
+### 4.2 Licencia del Código Fuente (exclusiva de S3 Integración)
+
+El acceso, uso, copia, modificación, compilación, integración o creación de obras derivadas del **Código Fuente** está permitido **únicamente** para la **Organización Autorizada**.
+Ningún tercero adquiere derechos sobre el Código Fuente por usar el ejecutable.
+
+## 5. Licencia de Evaluación (trial)
+
+### 5.1 Evaluación estándar: hasta 30 días
+
+Se permite al Cliente usar el Software por **hasta 30 días** contados desde la instalación o primera ejecución (lo que ocurra primero), únicamente para **evaluación interna**.
+
+**Limitación clave:** Durante la Evaluación estándar, el uso debe ser **no comercial** (según definición). Si el Cliente desea usarlo con fines comerciales o productivos, debe firmar un Acuerdo Comercial.
+
+Al finalizar los 30 días, el Cliente debe:
+(a) dejar de usar el Software y desinstalarlo, **o**
+(b) contactar a S3 Integración y celebrar un Acuerdo Comercial.
+
+### 5.2 Uso No Comercial extendido: hasta 365 días
+
+S3 Integración permite un uso **no comercial** del Software por hasta **365 días** bajo estos requisitos:
+
+* El uso cumple estrictamente la definición de **Uso No Comercial**.
+* No se ofrece el Software como servicio a terceros ni se obtiene beneficio económico directo o indirecto.
+* No se integra a procesos productivos comerciales.
+
+Al finalizar los 365 días, el Usuario debe:
+(a) dejar de usar el Software y desinstalarlo, **o**
+(b) contactar a S3 Integración para acordar una licencia comercial, renovación o un acuerdo de aportación/soporte.
+
+### 5.3 Revocación
+
+S3 Integración puede revocar la Licencia de Evaluación si detecta incumplimiento de este EULA.
+
+## 6. Redistribución del ejecutable (permitida solo dentro de la Organización del Cliente)
+
+### 6.1 Redistribución interna bajo Acuerdo Comercial
+
+Si el Cliente cuenta con un **Acuerdo Comercial vigente**, el Cliente puede **redistribuir internamente** el ejecutable del Software **únicamente dentro de su Organización** (empleados y contratistas autorizados) y **solo** para el uso permitido por el Acuerdo Comercial.
+
+### 6.2 Redistribución interna durante Evaluación
+
+Durante el periodo de Evaluación, la redistribución interna se permite únicamente para que otros usuarios internos participen en la evaluación, respetando las restricciones de uso no comercial y el límite temporal.
+
+### 6.3 Prohibición de redistribución externa
+
+Queda prohibida la redistribución del ejecutable a terceros fuera de la Organización del Cliente, así como su publicación en internet, marketplaces, repositorios públicos, o cualquier canal de distribución masiva, salvo autorización expresa por escrito de S3 Integración.
+
+## 7. Restricciones (prohibiciones)
+
+Salvo autorización expresa por escrito de S3 Integración, el Usuario **no puede**:
+
+1. Copiar, reproducir, vender, rentar, sublicenciar o distribuir el Software fuera de lo permitido en este EULA y/o el Acuerdo Comercial.
+2. Realizar ingeniería inversa, descompilar o desensamblar el Software, salvo en la medida irrenunciable permitida por ley.
+3. Modificar el ejecutable, crear obras derivadas, o “parchear” el Software, excepto si el Acuerdo Comercial lo permite por escrito.
+4. Eliminar avisos legales, marcas, o atribuciones.
+5. Usar el Software con fines ilícitos o que infrinjan derechos de terceros.
+
+## 8. Aportaciones económicas, soporte, mantenimiento y actualizaciones
+
+### 8.1 Aportaciones y acuerdos
+
+Cualquier persona u organización puede **aportar económicamente** al proyecto para recibir Actualizaciones generales o personalizadas, **siempre** sujeto a un **Acuerdo Comercial** con S3 Integración.
+
+**Una aportación por sí sola no concede automáticamente** derechos de licencia comercial, soporte, mantenimiento, acceso a Código Fuente o entregables, salvo pacto expreso por escrito.
+
+### 8.2 Soporte y mantenimiento
+
+El soporte/mantenimiento/capacitación solo se otorgan si están contemplados en el Acuerdo Comercial.
+
+### 8.3 Actualizaciones
+
+La disponibilidad, periodicidad y alcance de Actualizaciones dependerá del Acuerdo Comercial. S3 Integración puede actualizar o descontinuar funcionalidades sin obligación salvo pacto.
+
+## 9. Confidencialidad (cuando aplique)
+
+Si el Cliente recibe información no pública (diagnósticos, builds preliminares, documentación interna, etc.), se obliga a mantenerla confidencial y a no divulgarla sin autorización.
+
+## 10. Datos y telemetría
+
+[Elige una opción y elimina la otra]
+
+**Opción A (sin telemetría):** El Software no recopila ni transmite datos automáticamente a S3 Integración.
+**Opción B (con telemetría):** El Software puede recopilar y transmitir información mínima (versión, errores, métricas de uso) conforme a la Política de Privacidad [URL/Documento], con opción de deshabilitarlo.
+
+## 11. Terminación
+
+Este EULA termina automáticamente si el Usuario incumple sus términos o si expira la licencia aplicable (Evaluación o Acuerdo Comercial).
+Al terminar, el Usuario debe cesar el uso y desinstalar el Software, salvo pacto distinto por escrito.
+
+## 12. Garantías y limitación de responsabilidad
+
+En la máxima medida permitida por ley:
+
+* El Software se proporciona “TAL CUAL”, sin garantías.
+* S3 Integración no será responsable por daños indirectos o consecuenciales.
+* La responsabilidad total de S3 Integración se limitará al monto pagado por el Cliente a S3 Integración en los **[3/6/12]** meses previos al evento, o el mínimo legal aplicable.
+
+## 13. Ley aplicable y jurisdicción
+
+Este EULA se rige por las leyes de los **Estados Unidos Mexicanos**. Jurisdicción: **[TIJUANA/BAJA CALIFORNIA, MÉXICO]**, salvo pacto distinto en el Acuerdo Comercial.
+
+## 14. Contacto
+
+Para licencias comerciales, acuerdos, aportaciones, soporte o mantenimiento: **[developmen@s3integracion.com](mailto:developmen@s3integracion.com)**
+
+---
+
+# 2) EULA (EN) — S3TOOLS
+
+**END USER LICENSE AGREEMENT (EULA) — S3TOOLS**
+**Last updated:** [JAUNARI-13-2026]
+**Software version:** [2.0.1]
+**Rights holder:** **S3 INTEGRACION S. DE R.L. DE C.V.** (“S3 Integración”)
+**Commercial & support contact:** **[developmen@s3integracion.com](mailto:developmen@s3integracion.com)**
+
+## 1. Acceptance
+
+BY INSTALLING, COPYING, ACCESSING OR USING THE SOFTWARE, YOU (“USER”) AGREE TO THIS EULA.
+IF YOU DO NOT AGREE, DO NOT INSTALL OR USE THE SOFTWARE.
+
+## 2. Definitions
+
+* **“Software”**: the “S3Tools” desktop application, including executables, installers, configuration files, documentation and Updates (as defined herein).
+* **“Source Code”**: any code, scripts, repositories, templates, projects, resources and development materials related to the Software.
+* **“Authorized Organization”**: **S3 INTEGRACION S. DE R.L. DE C.V.** and only its employees/contractors expressly authorized by S3 Integración.
+* **“Customer”**: any individual or legal entity other than S3 Integración using the Software under a Trial License or a Commercial Agreement.
+* **“Customer Organization”**: the Customer’s legal entity and its authorized internal users (employees and contractors bound by confidentiality) to the extent permitted by the Commercial Agreement.
+* **“Non-Commercial Use”**: strictly personal, academic, technical evaluation or community use **without profit**, without economic exploitation, without providing services to third parties, and without integration into commercial production operations.
+* **“Commercial Agreement”**: a written economic agreement between Customer and S3 Integración (accepted email, contract, purchase order or equivalent) defining scope, price, term, support/maintenance and conditions.
+* **“Updates”**: improvements, fixes, new versions or patches provided by S3 Integración.
+
+## 3. Intellectual property; reservation of rights
+
+The Software and Source Code are owned exclusively by S3 Integración (or its licensors) and protected by applicable IP laws.
+All rights not expressly granted are reserved.
+
+## 4. Licenses: Executable vs. Source Code
+
+### 4.1 Executable license (allowed paths)
+
+You may use the executable **only** under **one** of the following:
+
+**A) Trial License (no upfront payment)**
+S3 Integración grants a **non-exclusive, revocable, non-transferable, non-sublicensable** license to use the executable under Section 5 (Trial).
+
+**B) Commercial License (Commercial Agreement required)**
+For commercial use, production use, ongoing operations, support/maintenance and/or access to Updates, you must **contact** S3 Integración at **[developmen@s3integracion.com](mailto:developmen@s3integracion.com)** and enter into a **Commercial Agreement**. Without a valid Commercial Agreement, commercial use is **not authorized**.
+
+### 4.2 Source Code license (S3-only)
+
+Access, use, copying, modification, compilation, integration or creation of derivative works from the **Source Code** is permitted **only** for the **Authorized Organization**.
+No third party obtains any Source Code rights by using the executable.
+
+## 5. Trial License
+
+### 5.1 Standard trial: up to 30 days
+
+You may use the Software for up to **30 days** from installation or first run (whichever occurs first), for **internal evaluation** only.
+
+**Key limitation:** During the standard trial, use must be **Non-Commercial**. If you want commercial or production use, you must enter a Commercial Agreement.
+
+At the end of 30 days, you must:
+(a) stop using and uninstall the Software, **or**
+(b) contact S3 Integración and enter a Commercial Agreement.
+
+### 5.2 Extended Non-Commercial use: up to 365 days
+
+S3 Integración allows **Non-Commercial Use** for up to **365 days**, provided that:
+
+* Your use strictly meets the **Non-Commercial Use** definition;
+* You do not offer the Software as a service to third parties;
+* You do not obtain direct or indirect economic benefit;
+* You do not integrate it into commercial production operations.
+
+At the end of 365 days, you must:
+(a) stop using and uninstall the Software, **or**
+(b) contact S3 Integración to agree on a commercial license, renewal, or a contribution/support arrangement.
+
+### 5.3 Revocation
+
+S3 Integración may revoke the Trial License if you violate this EULA.
+
+## 6. Redistribution of the executable (internal only)
+
+### 6.1 Internal redistribution under Commercial Agreement
+
+If you have a **valid Commercial Agreement**, you may **redistribute internally** the executable **within your Customer Organization only** (employees and authorized contractors), solely for the use permitted by the Commercial Agreement.
+
+### 6.2 Internal redistribution during Trial
+
+During the Trial period, internal redistribution is allowed only so internal users can participate in evaluation, subject to the Non-Commercial restrictions and time limits.
+
+### 6.3 No external redistribution
+
+You may not redistribute outside your Customer Organization, or publish the executable on the internet, marketplaces, or public repositories, unless expressly authorized in writing by S3 Integración.
+
+## 7. Restrictions
+
+Unless expressly authorized in writing, you may not:
+
+1. Copy, reproduce, sell, rent, sublicense or distribute the Software beyond what this EULA and/or the Commercial Agreement allow.
+2. Reverse engineer, decompile or disassemble the Software, except as mandatory permitted by law.
+3. Modify the executable or create derivative works, unless allowed in the Commercial Agreement.
+4. Remove legal notices, trademarks or attribution.
+5. Use the Software unlawfully or to infringe third-party rights.
+
+## 8. Contributions, support, maintenance and updates
+
+### 8.1 Contributions and agreements
+
+Anyone may **financially contribute** to the project to receive general or customized Updates, **subject to** a **Commercial Agreement** with S3 Integración.
+
+A contribution alone **does not automatically grant** commercial license rights, support, maintenance, Source Code access, or deliverables unless explicitly agreed in writing.
+
+### 8.2 Support & maintenance
+
+Support/maintenance/training is provided only if included in the Commercial Agreement.
+
+### 8.3 Updates
+
+Availability, cadence and scope of Updates depend on the Commercial Agreement. S3 Integración may change or discontinue features unless otherwise agreed.
+
+## 9. Confidentiality (if applicable)
+
+If you receive non-public technical information, you must keep it confidential and not disclose it without written permission.
+
+## 10. Data & telemetry
+
+[Choose one and remove the other]
+
+**Option A (no telemetry):** The Software does not collect or transmit data automatically.
+**Option B (telemetry):** The Software may collect/transmit minimal info (version, errors, usage metrics) per the Privacy Policy [URL/Document], with an opt-out.
+
+## 11. Termination
+
+This EULA terminates automatically upon breach or when your applicable license expires (Trial or Commercial Agreement).
+Upon termination you must stop using and uninstall the Software unless otherwise agreed in writing.
+
+## 12. Warranty disclaimer; limitation of liability
+
+To the maximum extent permitted by law:
+
+* The Software is provided “AS IS”, without warranties.
+* No liability for indirect or consequential damages.
+* Total liability is limited to amounts paid to S3 Integración in the **[3/6/12]** months prior to the event, or the legal minimum.
+
+## 13. Governing law; venue
+
+Governing law: **United Mexican States**. Venue: **[TIJUANA/BAJA CALIFORNIA, MEXICO]**, unless the Commercial Agreement states otherwise.
+
+## 14. Contact
+
+Commercial licensing, agreements, contributions, support: **[developmen@s3integracion.com](mailto:developmen@s3integracion.com)**
+
+---
+
+# 3) CLICKWRAP — BILINGÜE ES/EN
+
+## ES 
+
+Al hacer clic en “Acepto”, usted acepta:
+
+1. **Propiedad**: S3Tools es propiedad de **S3 INTEGRACION S. DE R.L. DE C.V.**
+2. **Código fuente**: el acceso/uso/modificación del **código fuente** está **restringido exclusivamente** a la organización S3 Integración y sus autorizados.
+3. **Evaluación**: puede usar el ejecutable sin pago para **evaluación no comercial** por **30 días**, o **hasta 365 días** si el uso es estrictamente **no comercial**.
+4. **Uso comercial**: para uso comercial/productivo, soporte, mantenimiento o actualizaciones, debe contactar **[developmen@s3integracion.com](mailto:developmen@s3integracion.com)** y celebrar un **Acuerdo Comercial**.
+5. **Redistribución**: se permite **redistribución interna** del ejecutable dentro de su organización **solo** para usuarios internos autorizados (y conforme al Acuerdo Comercial o periodo de evaluación). Prohibida la redistribución externa/publicación.
+6. **Restricciones**: prohibida ingeniería inversa, descompilación o modificación del ejecutable salvo lo permitido por ley o acuerdo escrito.
+7. **Terminación**: al expirar la evaluación o incumplir, debe dejar de usar y desinstalar.
+
+## EN 
+
+By clicking “I Agree”, you agree that:
+
+1. **Ownership**: S3Tools is owned by **S3 INTEGRACION S. DE R.L. DE C.V.**
+2. **Source Code**: access/use/modification of **Source Code** is **restricted exclusively** to S3 Integración and its authorized personnel.
+3. **Trial**: you may use the executable at no cost for **non-commercial evaluation** for **30 days**, or **up to 365 days** if use remains strictly **Non-Commercial**.
+4. **Commercial use**: for commercial/production use, support, maintenance or updates you must contact **[developmen@s3integracion.com](mailto:developmen@s3integracion.com)** and enter a **Commercial Agreement**.
+5. **Redistribution**: **internal redistribution** within your organization is allowed only for authorized internal users (and as permitted by the Commercial Agreement or trial). No external redistribution/public posting.
+6. **Restrictions**: no reverse engineering/decompiling/modifying the executable except as required by law or expressly agreed in writing.
+7. **Termination**: when the trial ends or upon breach, you must stop using and uninstall.
+
