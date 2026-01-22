@@ -9,14 +9,14 @@
     <framework targetVersion="4.8" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="S3Tools.exe.manifest" size="7302">
+    <dependentAssembly dependencyType="install" codebase="S3Tools.exe.manifest" size="7301">
       <assemblyIdentity name="S3Tools.exe" version="2.0.0.9" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>u7yokfJ7NSy6aADs6rlZm2EQiSdLhpWCz5lOogP0xTM=</dsig:DigestValue>
+        <dsig:DigestValue>mczDhY5wOk91/WmHJO4yVu6pXT5wolPHQwc3x5gitb8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

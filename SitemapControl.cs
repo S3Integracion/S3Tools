@@ -19,6 +19,8 @@ namespace S3Integración_programs
         private static readonly string[] InputExtensions = { ".txt", ".csv", ".xlsx", ".json" };
         private static readonly string[] AsinBatcherExtensions = { ".txt" };
         private static readonly Regex UrlRegex = new Regex("https?://[^\\s\"']+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private const double UrlsPerHourEstimate = 600d;
+        private const double TimeEstimateRangeFactor = 1.5d;
 
         private readonly SitemapEngineClient _engineClient;
         private readonly List<Control> _inputControls;
@@ -32,6 +34,8 @@ namespace S3Integración_programs
         private ListBox _filesList;
         private Button _refreshButton;
         private Label _summaryLabel;
+        private Label _urlsPerBatchLabel;
+        private Label _timeRangeLabel;
         private TextBox _baseNameText;
         private TextBox _outputText;
         private Button _downloadsButton;
@@ -141,13 +145,14 @@ namespace S3Integración_programs
             var layout = new TableLayoutPanel
             {
                 ColumnCount = 2,
-                RowCount = 3,
+                RowCount = 4,
                 Dock = DockStyle.Fill,
             };
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
             layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             _modeAllRadio = new RadioButton { Text = "Convertir todos", AutoSize = true };
@@ -188,6 +193,22 @@ namespace S3Integración_programs
             layout.Controls.Add(_summaryLabel, 0, 2);
             layout.SetColumnSpan(_summaryLabel, 2);
 
+            var infoPanel = new TableLayoutPanel
+            {
+                ColumnCount = 1,
+                RowCount = 2,
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                Margin = new Padding(0, 6, 0, 0),
+            };
+            _urlsPerBatchLabel = new Label { Text = "URLs por lote: -", AutoSize = true };
+            _timeRangeLabel = new Label { Text = "Rango de tiempo aproximado: -", AutoSize = true };
+            infoPanel.Controls.Add(_urlsPerBatchLabel, 0, 0);
+            infoPanel.Controls.Add(_timeRangeLabel, 0, 1);
+
+            layout.Controls.Add(infoPanel, 0, 3);
+            layout.SetColumnSpan(infoPanel, 2);
+
             group.Controls.Add(layout);
 
             _inputControls.Add(_modeAllRadio);
@@ -221,7 +242,8 @@ namespace S3Integración_programs
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
-                FlowDirection = FlowDirection.RightToLeft,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
             };
             _nameConfigButton = new Button { Text = "Configurar nombre...", AutoSize = true };
             header.Controls.Add(_nameConfigButton);
@@ -567,6 +589,7 @@ namespace S3Integración_programs
             if (files.Count == 0)
             {
                 _summaryLabel.Text = "Archivos: 0 | URLs: 0";
+                UpdateBatchEstimateLabels(0, 0);
                 return;
             }
 
@@ -577,6 +600,7 @@ namespace S3Integración_programs
             }
 
             _summaryLabel.Text = "Archivos: " + files.Count + " | URLs: " + urlCount;
+            UpdateBatchEstimateLabels(urlCount, files.Count);
         }
 
         private IEnumerable<string> GetSelectedFiles()
@@ -792,6 +816,56 @@ namespace S3Integración_programs
                 }
             }
             return StoresLeft[0];
+        }
+
+        private void UpdateBatchEstimateLabels(int totalUrls, int batches)
+        {
+            if (_urlsPerBatchLabel == null || _timeRangeLabel == null)
+            {
+                return;
+            }
+
+            if (totalUrls <= 0 || batches <= 0)
+            {
+                _urlsPerBatchLabel.Text = "URLs por lote: -";
+                _timeRangeLabel.Text = "Rango de tiempo aproximado: -";
+                return;
+            }
+
+            var urlsPerBatch = totalUrls / (double)batches;
+            var approxHours = urlsPerBatch / UrlsPerHourEstimate;
+            var approxText = FormatHours(approxHours);
+            var rangeText = FormatHours(approxHours * TimeEstimateRangeFactor);
+
+            _urlsPerBatchLabel.Text = "URLs por lote: " + FormatUrlCount(urlsPerBatch);
+            _timeRangeLabel.Text = "Rango de tiempo aproximado: " + approxText + " : " + rangeText;
+        }
+
+        private static string FormatUrlCount(double value)
+        {
+            if (Math.Abs(value - Math.Round(value)) < 0.005)
+            {
+                return ((int)Math.Round(value)).ToString();
+            }
+            return value.ToString("0.##");
+        }
+
+        private static string FormatHours(double hours)
+        {
+            if (hours < 0)
+            {
+                hours = 0;
+            }
+
+            var totalMinutes = (int)Math.Round(hours * 60, MidpointRounding.AwayFromZero);
+            if (totalMinutes < 0)
+            {
+                totalMinutes = 0;
+            }
+
+            var displayHours = totalMinutes / 60;
+            var minutes = totalMinutes % 60;
+            return displayHours + ":" + minutes.ToString("00") + " hr";
         }
 
         private void ShowEngineError(string title, SitemapEngineResponse response)

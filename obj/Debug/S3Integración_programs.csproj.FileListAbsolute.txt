@@ -55,3 +55,4 @@ C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Tools.application
 C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Tools.exe
 C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Tools.pdb
 C:\Users\ariel\GitHub\S3Tools\bin\Debug\S3Tools.ico
+C:\Users\Public\GitHub\S3Tools\bin\Debug\S3Tools.ico
