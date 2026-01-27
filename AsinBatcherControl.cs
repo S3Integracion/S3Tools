@@ -17,6 +17,8 @@ namespace S3Integración_programs
         private static readonly string[] Markets = { "MX", "US" };
         private static readonly string[] OrderChoices = { "Ordenado", "Inverso", "Aleatorio" };
         private const int DefaultBatches = 30;
+        private const double UrlsPerHourEstimate = 600d;
+        private const double TimeEstimateRangeFactor = 1.5d;
 
         private readonly AsinBatcherEngineClient _engineClient;
         private readonly Timer _previewTimer;
@@ -31,6 +33,8 @@ namespace S3Integración_programs
         private TextBox _inputText;
         private Button _browseButton;
         private TextBox _previewText;
+        private Label _urlsPerBatchLabel;
+        private Label _timeRangeLabel;
         private Button _exportDuplicatesButton;
         private TextBox _fileNameText;
         private ComboBox _marketCombo;
@@ -137,10 +141,11 @@ namespace S3Integración_programs
             var layout = new TableLayoutPanel
             {
                 ColumnCount = 1,
-                RowCount = 2,
+                RowCount = 3,
                 Dock = DockStyle.Fill,
             };
             layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             _previewText = new TextBox
@@ -157,6 +162,19 @@ namespace S3Integración_programs
                 Enabled = false,
             };
 
+            var infoPanel = new TableLayoutPanel
+            {
+                ColumnCount = 1,
+                RowCount = 2,
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                Margin = new Padding(0, 6, 0, 0),
+            };
+            _urlsPerBatchLabel = new Label { Text = "URLs por lote: -", AutoSize = true };
+            _timeRangeLabel = new Label { Text = "Rango de tiempo aproximado: -", AutoSize = true };
+            infoPanel.Controls.Add(_urlsPerBatchLabel, 0, 0);
+            infoPanel.Controls.Add(_timeRangeLabel, 0, 1);
+
             var buttonPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -166,7 +184,8 @@ namespace S3Integración_programs
             buttonPanel.Controls.Add(_exportDuplicatesButton);
 
             layout.Controls.Add(_previewText, 0, 0);
-            layout.Controls.Add(buttonPanel, 0, 1);
+            layout.Controls.Add(infoPanel, 0, 1);
+            layout.Controls.Add(buttonPanel, 0, 2);
             group.Controls.Add(layout);
 
             _inputControls.Add(_exportDuplicatesButton);
@@ -217,7 +236,8 @@ namespace S3Integración_programs
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
-                FlowDirection = FlowDirection.RightToLeft,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
             };
             _nameConfigButton = new Button { Text = "Configurar nombre...", AutoSize = true };
             header.Controls.Add(_nameConfigButton);
@@ -467,6 +487,7 @@ private Control BuildFileNameRow()
             _nameConfigButton.Click += (s, e) => ShowNameConfigDialog();
             _helpButton.Click += (s, e) => ShowHelp();
             _fileNameText.TextChanged += FileNameText_TextChanged;
+            _batchesNumeric.ValueChanged += (s, e) => UpdateBatchEstimateLabels();
             foreach (var radio in _storeRadios)
             {
                 radio.CheckedChanged += StoreRadio_CheckedChanged;
@@ -490,6 +511,7 @@ private Control BuildFileNameRow()
             _batchesNumeric.Value = DefaultBatches;
             _outputText.Text = GetDownloadsPath();
             _previewText.Text = string.Empty;
+            UpdateBatchEstimateLabels();
         }
 
         private async void PreviewTimer_Tick(object sender, EventArgs e)
@@ -508,6 +530,7 @@ private Control BuildFileNameRow()
                 _lastPreviewPath = null;
                 _previewText.Text = string.Empty;
                 UpdateExportDuplicatesButton();
+                UpdateBatchEstimateLabels();
                 return;
             }
 
@@ -527,6 +550,7 @@ private Control BuildFileNameRow()
                 _lastPreviewPath = null;
                 _previewText.Text = string.Empty;
                 UpdateExportDuplicatesButton();
+                UpdateBatchEstimateLabels();
                 ShowEngineError("No se pudo leer el archivo.", response);
                 return;
             }
@@ -536,6 +560,7 @@ private Control BuildFileNameRow()
             _lastUnique = response.Unique ?? 0;
             _lastPreviewPath = inputPath;
             UpdateExportDuplicatesButton();
+            UpdateBatchEstimateLabels();
         }
 
         private async void ExportDuplicatesButton_Click(object sender, EventArgs e)
@@ -645,8 +670,10 @@ private Control BuildFileNameRow()
             }
 
             _lastDuplicates = response.Duplicates ?? 0;
+            _lastUnique = response.Unique ?? _lastUnique;
             _previewText.Text = FormatPreview(response);
             UpdateExportDuplicatesButton();
+            UpdateBatchEstimateLabels();
 
             if (!string.IsNullOrWhiteSpace(response.OutputFolder) && Directory.Exists(response.OutputFolder))
             {
@@ -792,6 +819,7 @@ private Control BuildFileNameRow()
                 _lastUnique = preview.Unique ?? 0;
                 _lastPreviewPath = inputPath;
                 UpdateExportDuplicatesButton();
+                UpdateBatchEstimateLabels();
             }
 
             if (_lastUnique > 0 && batches > _lastUnique)
@@ -856,6 +884,61 @@ private Control BuildFileNameRow()
             return "ASIN totales (incl. duplicados): " + total + Environment.NewLine +
                    "Unicos: " + unique + Environment.NewLine +
                    "Duplicados: " + duplicates;
+        }
+
+        private void UpdateBatchEstimateLabels()
+        {
+            UpdateBatchEstimateLabels(_lastUnique, (int)_batchesNumeric.Value);
+        }
+
+        private void UpdateBatchEstimateLabels(int totalUrls, int batches)
+        {
+            if (_urlsPerBatchLabel == null || _timeRangeLabel == null)
+            {
+                return;
+            }
+
+            if (totalUrls <= 0 || batches <= 0)
+            {
+                _urlsPerBatchLabel.Text = "URLs por lote: -";
+                _timeRangeLabel.Text = "Rango de tiempo aproximado: -";
+                return;
+            }
+
+            var urlsPerBatch = totalUrls / (double)batches;
+            var approxHours = urlsPerBatch / UrlsPerHourEstimate;
+            var approxText = FormatHours(approxHours);
+            var rangeText = FormatHours(approxHours * TimeEstimateRangeFactor);
+
+            _urlsPerBatchLabel.Text = "URLs por lote: " + FormatUrlCount(urlsPerBatch);
+            _timeRangeLabel.Text = "Rango de tiempo aproximado: " + approxText + " : " + rangeText;
+        }
+
+        private static string FormatUrlCount(double value)
+        {
+            if (Math.Abs(value - Math.Round(value)) < 0.005)
+            {
+                return ((int)Math.Round(value)).ToString();
+            }
+            return value.ToString("0.##");
+        }
+
+        private static string FormatHours(double hours)
+        {
+            if (hours < 0)
+            {
+                hours = 0;
+            }
+
+            var totalMinutes = (int)Math.Round(hours * 60, MidpointRounding.AwayFromZero);
+            if (totalMinutes < 0)
+            {
+                totalMinutes = 0;
+            }
+
+            var displayHours = totalMinutes / 60;
+            var minutes = totalMinutes % 60;
+            return displayHours + ":" + minutes.ToString("00") + " hr";
         }
 
         private void ShowEngineError(string title, EngineResponse response)
