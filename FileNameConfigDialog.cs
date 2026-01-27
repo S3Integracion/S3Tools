@@ -10,11 +10,11 @@ namespace S3Integración_programs
         private static readonly (string Label, string Value)[] Prefix1Options =
         {
             ("Vacio", ""),
-            ("01_", "01_"),
-            ("02_", "02_"),
-            ("03_", "03_"),
-            ("04_", "04_"),
-            ("05_", "05_"),
+            ("1_", "1_"),
+            ("2_", "2_"),
+            ("3_", "3_"),
+            ("4_", "4_"),
+            ("5_", "5_"),
         };
 
         private static readonly (string Label, string Value)[] Prefix2Options =

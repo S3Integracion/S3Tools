@@ -50,17 +50,17 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>nDbOCdnKxoXsXNdhdxNC+VwYj0F8hjWEMd9KqT15ayU=</dsig:DigestValue>
+        <dsig:DigestValue>gZz0sFWd1f28pTzX+dnlXo5VMuajD829HIATz2GR/xk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Engines\AsinBatcherEngine\engine.exe" size="7289744">
+  <file name="Engines\AsinBatcherEngine\engine.exe" size="7289875">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>PKMoimuAKjsIcQsQWK1NnAkss1jR4eQsCsrot2hWrFo=</dsig:DigestValue>
+      <dsig:DigestValue>iZnmtrQ2Zx3rtQKB+7DXqHjETZVtkfpLC5Wq/hq75dk=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Engines\AsinBatcherEngine\engine.py" size="13375">
@@ -72,13 +72,13 @@
       <dsig:DigestValue>GbK6l5iMg+0tb8ewgxpfeoH8VNdM9glLf8C3XE3AQAQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Engines\Formato\format.exe" size="7285167">
+  <file name="Engines\Formato\format.exe" size="7284824">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>hTrf4dXfpr6F0Fzhaoh1y2jIoG876sNrvGMJYVLy2hA=</dsig:DigestValue>
+      <dsig:DigestValue>MPYwupHyZnb3iEVYT+SxFmB1RMNLONVPH90o5T3kZTE=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Engines\Formato\format.py" size="8337">
@@ -90,13 +90,13 @@
       <dsig:DigestValue>XMYrTlq8yFygXfwXLqaK9GwsVk/1M6sLB2Pul+PM7lQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Engines\Sitemap\form_site.exe" size="7287616">
+  <file name="Engines\Sitemap\form_site.exe" size="7288218">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>slZrRqii5lUHojHSmUlnKaeZpaWqVpv7/rvCGfYoI5c=</dsig:DigestValue>
+      <dsig:DigestValue>xDq2c5XtxeUYo2Vn8rpAUExucaEEDGznKihLl6N4ySo=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Engines\Sitemap\form_site.py" size="10829">
