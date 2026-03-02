@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['C:\\Users\\Public\\GitHub\\S3Tools\\Engines\\Sitemap\\form_site.py'],
+    ['C:\\Users\\ariel\\GitHub\\S3Tools\\Engines\\Sitemap\\form_site.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\Public\\GitHub\\S3Tools\\Engines\\Sitemap\\PlantillaSitemapsBBvs.json', '.'), ('C:\\Users\\Public\\GitHub\\S3Tools\\Engines\\Sitemap\\PlantillaSitemapsTiendas.json', '.')],
+    datas=[('C:\\Users\\ariel\\GitHub\\S3Tools\\Engines\\Sitemap\\PlantillaSitemapsBBvs.json', '.'), ('C:\\Users\\ariel\\GitHub\\S3Tools\\Engines\\Sitemap\\PlantillaSitemapsTiendas.json', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

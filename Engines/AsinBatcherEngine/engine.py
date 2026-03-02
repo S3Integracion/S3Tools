@@ -196,10 +196,14 @@ def extract_asins_any(path):
     return uniques, dups
 
 
-def to_url(asin, market):
+def to_url(asin, market, show_seller_on_open=False):
     if market == "US":
-        return f"https://www.amazon.com/dp/{asin}?th=1"
-    return f"https://www.amazon.com.mx/dp/{asin}?th=1"
+        url = f"https://www.amazon.com/dp/{asin}?th=1"
+    else:
+        url = f"https://www.amazon.com.mx/dp/{asin}?th=1"
+    if show_seller_on_open:
+        url += "&aod=1"
+    return url
 
 
 def split_in_batches(items, batches):
@@ -232,7 +236,7 @@ def sanitize_filename(text):
     repl = re.sub(r"_+", "_", repl)
     repl = repl.strip("_").strip(".")
     return repl or "archivo"
-def write_batches_as_txt(batches_list, folder, store, market, base_label):
+def write_batches_as_txt(batches_list, folder, store, market, base_label, show_seller_on_open=False):
     out_files = []
     safe_base = sanitize_filename(base_label)
     total = len(batches_list)
@@ -245,7 +249,7 @@ def write_batches_as_txt(batches_list, folder, store, market, base_label):
         with fpath.open("w", encoding="utf-8") as f:
             f.write("start_url\n")
             for asin in batch:
-                f.write(to_url(asin, market) + "\n")
+                f.write(to_url(asin, market, show_seller_on_open) + "\n")
         out_files.append(str(fpath))
     return out_files
 
@@ -372,6 +376,7 @@ def handle_process(data):
         batches = DEFAULT_BATCHES
 
     zip_out = bool(data.get("zip_output"))
+    show_seller_on_open = bool(data.get("show_seller_on_open"))
 
     uniques, dups = extract_asins_any(input_path)
     if not uniques:
@@ -392,7 +397,14 @@ def handle_process(data):
     work_dir = Path(outdir) / folder_name
     ensure_folder(str(work_dir))
     batches_list = split_in_batches(uniques, batches)
-    out_files = write_batches_as_txt(batches_list, str(work_dir), name_store, market, base_label)
+    out_files = write_batches_as_txt(
+        batches_list,
+        str(work_dir),
+        name_store,
+        market,
+        base_label,
+        show_seller_on_open,
+    )
 
     zip_path = ""
     if zip_out:
