@@ -433,6 +433,9 @@ namespace S3Integración_programs
         [DataMember(Name = "zip_output")]
         public bool? ZipOutput { get; set; }
 
+        [DataMember(Name = "show_seller_on_open")]
+        public bool? ShowSellerOnOpen { get; set; }
+
         [DataMember(Name = "file_label")]
         public string FileLabel { get; set; }
 
