@@ -403,6 +403,9 @@ namespace S3Integración_programs
         [DataMember(Name = "zip_output")]
         public bool? ZipOutput { get; set; }
 
+        [DataMember(Name = "template_mode")]
+        public string TemplateMode { get; set; }
+
         [DataMember(Name = "name_prefix_1")]
         public string NamePrefix1 { get; set; }
 

@@ -43,24 +43,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="S3Tools.exe" size="171952">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="S3Tools.exe" size="172976">
       <assemblyIdentity name="S3Tools" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>33nM/yXX2YS0ZaaMC2gcSVpAcClJnv9HdMJvpe/i/l4=</dsig:DigestValue>
+        <dsig:DigestValue>diL0Mks6R3aNMctr59X3YZEmJByroAvNjgeAxWu+pm4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Engines\AsinBatcherEngine\engine.exe" size="45938716">
+  <file name="Engines\AsinBatcherEngine\engine.exe" size="45940183">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>vRmkkqMFffJ1s5IWefz0p83CvNvlRpg9rbuRDSmN+k4=</dsig:DigestValue>
+      <dsig:DigestValue>iEaseOHv8kNt5s0sav/2iYp5d/sk427Oj328G5I+K68=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Engines\AsinBatcherEngine\engine.py" size="13681">
@@ -72,13 +72,13 @@
       <dsig:DigestValue>y7CYLx/n7UPxOwdGKIyDf3QUqmYtrjxJ7VZPPrC8pO4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Engines\Formato\format.exe" size="7310042">
+  <file name="Engines\Formato\format.exe" size="7309021">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>mPoRAPIEcGWyqftrUUmbBI1z/zSrOBYFIKr24Q2omEE=</dsig:DigestValue>
+      <dsig:DigestValue>mHoy4UiIzQ5P245vWhg142CTajbge8k2bR4+zT6ggm8=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Engines\Formato\format.py" size="8337">
@@ -90,22 +90,22 @@
       <dsig:DigestValue>XMYrTlq8yFygXfwXLqaK9GwsVk/1M6sLB2Pul+PM7lQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Engines\Sitemap\form_site.exe" size="7310068">
+  <file name="Engines\Sitemap\form_site.exe" size="7312154">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>aG3RAsx7nw0Jb9nnxp0D4CX5kpaHEfDdlkJESwyAbd4=</dsig:DigestValue>
+      <dsig:DigestValue>yox9PeQqb2NwsclJ5FJVOD56asXA1kV3JMMD5qEPhpc=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Engines\Sitemap\form_site.py" size="10829">
+  <file name="Engines\Sitemap\form_site.py" size="10717">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>0XVZhPuBRER3qh0z52zwM8/PwsmkZr5K/ZNYTwoz6GI=</dsig:DigestValue>
+      <dsig:DigestValue>HbuAubOnlb01XbkXK1ExR0GM/q4R0Zp9SSZvpKFYb/Y=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Engines\Sitemap\PlantillaSitemapsBBvs.json" size="5573">

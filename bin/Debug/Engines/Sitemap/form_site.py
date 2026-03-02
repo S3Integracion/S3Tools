@@ -19,9 +19,8 @@ from pathlib import Path
 
 TEMPLATE_TIENDAS = "PlantillaSitemapsTiendas.json"
 TEMPLATE_BBVS = "PlantillaSitemapsBBvs.json"
-
-STORES_TIENDAS = {"productostx", "holaproducto", "altinor", "hervaztrade", "hervaz trade"}
-STORES_BBVS = {"bbvs_template", "bbvsbb2_2da", "bbvsbb2"}
+TEMPLATE_MODE_NORMAL = "normal"
+TEMPLATE_MODE_NUBE = "nube"
 
 SITEMAP_ID_ALLOWED_RE = re.compile(r"[^a-zA-Z0-9_()+-]")
 URL_RE = re.compile(r'https?://[^\s"\']+', re.IGNORECASE)
@@ -60,13 +59,9 @@ def sanitize_folder_name(text):
     return sanitize_name(text, "sitemap")
 
 
-def normalize_store(value):
-    return re.sub(r"\s+", "", (value or "").strip().lower())
-
-
-def select_template(store):
-    normalized = normalize_store(store)
-    if normalized in STORES_BBVS:
+def select_template(template_mode):
+    mode = (template_mode or "").strip().lower()
+    if mode == TEMPLATE_MODE_NUBE:
         return TEMPLATE_BBVS
     return TEMPLATE_TIENDAS
 
@@ -261,6 +256,7 @@ def handle_process(data):
     output_dir = (data.get("output_dir") or "").strip() or str(Path.home() / "Downloads")
     prefix1 = (data.get("name_prefix_1") or "").strip()
     prefix2 = (data.get("name_prefix_2") or "").strip()
+    template_mode = (data.get("template_mode") or "").strip().lower()
     store_name = (data.get("store_name") or "").strip()
     use_new_name = bool(store_name or prefix1 or prefix2)
 
@@ -278,7 +274,7 @@ def handle_process(data):
         store_label = (data.get("store") or "").strip()
         base_label = f"{store_label}_{base_name}" if store_label else base_name
 
-    template_name = select_template(store_label)
+    template_name = select_template(template_mode)
     template = load_template(template_name)
 
     ddmmaa = datetime.now().strftime("%d%m%y")
