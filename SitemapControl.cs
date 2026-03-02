@@ -36,6 +36,8 @@ namespace S3Integración_programs
         private Label _summaryLabel;
         private Label _urlsPerBatchLabel;
         private Label _timeRangeLabel;
+        private RadioButton _templateNormalRadio;
+        private RadioButton _templateNubeRadio;
         private TextBox _baseNameText;
         private TextBox _outputText;
         private Button _downloadsButton;
@@ -70,7 +72,7 @@ namespace S3Integración_programs
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
-                RowCount = 7,
+                RowCount = 8,
                 Padding = new Padding(10),
             };
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -80,14 +82,16 @@ namespace S3Integración_programs
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             root.Controls.Add(BuildInputSection(), 0, 0);
             root.Controls.Add(BuildFilesSection(), 0, 1);
             root.Controls.Add(BuildStoreSection(), 0, 2);
-            root.Controls.Add(BuildBaseNameSection(), 0, 3);
-            root.Controls.Add(BuildOutputSection(), 0, 4);
-            root.Controls.Add(BuildProcessSection(), 0, 5);
-            root.Controls.Add(BuildHelpSection(), 0, 6);
+            root.Controls.Add(BuildTemplateSection(), 0, 3);
+            root.Controls.Add(BuildBaseNameSection(), 0, 4);
+            root.Controls.Add(BuildOutputSection(), 0, 5);
+            root.Controls.Add(BuildProcessSection(), 0, 6);
+            root.Controls.Add(BuildHelpSection(), 0, 7);
 
             Controls.Add(root);
             ResumeLayout();
@@ -322,6 +326,42 @@ namespace S3Integración_programs
             return layout;
         }
 
+        private Control BuildTemplateSection()
+        {
+            var group = new GroupBox
+            {
+                Text = "Plantilla de sitemap",
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+            };
+
+            var panel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                FlowDirection = FlowDirection.LeftToRight,
+            };
+
+            _templateNormalRadio = new RadioButton
+            {
+                Text = "Normal",
+                AutoSize = true,
+            };
+            _templateNubeRadio = new RadioButton
+            {
+                Text = "Nube",
+                AutoSize = true,
+            };
+
+            panel.Controls.Add(_templateNormalRadio);
+            panel.Controls.Add(_templateNubeRadio);
+            group.Controls.Add(panel);
+
+            _inputControls.Add(_templateNormalRadio);
+            _inputControls.Add(_templateNubeRadio);
+            return group;
+        }
+
         private Control BuildOutputSection()
         {
             var group = new GroupBox
@@ -461,6 +501,7 @@ namespace S3Integración_programs
         private void SetDefaults()
         {
             _modeAllRadio.Checked = true;
+            _templateNormalRadio.Checked = true;
             _outputText.Text = GetDownloadsPath();
             UpdateMode();
             LoadLastAsinBatcherFiles(true);
@@ -683,6 +724,7 @@ namespace S3Integración_programs
                 Store = storeName,
                 StoreName = storeName,
                 ZipOutput = _zipCheck.Checked,
+                TemplateMode = GetSelectedTemplateMode(),
                 NamePrefix1 = _namePrefix1,
                 NamePrefix2 = _namePrefix2,
             };
@@ -725,6 +767,15 @@ namespace S3Integración_programs
             _filesList.Enabled = !busy;
         }
 
+        private string GetSelectedTemplateMode()
+        {
+            if (_templateNubeRadio != null && _templateNubeRadio.Checked)
+            {
+                return "nube";
+            }
+            return "normal";
+        }
+
         private void ShowNameConfigDialog()
         {
             using (var dialog = new FileNameConfigDialog(_namePrefix1, _namePrefix2))
@@ -744,9 +795,10 @@ namespace S3Integración_programs
                 "1) Importa archivos .txt/.csv/.xlsx/.json.\n" +
                 "2) Elige modo: Convertir todos o Seleccionar lotes.\n" +
                 "3) Elige una tienda o escribe un nombre manual.\n" +
-                "4) Configura los prefijos si aplica.\n" +
-                "5) Elige carpeta destino (opcional ZIP).\n" +
-                "6) Presiona Procesar.";
+                "4) Elige plantilla: Normal o Nube.\n" +
+                "5) Configura los prefijos si aplica.\n" +
+                "6) Elige carpeta destino (opcional ZIP).\n" +
+                "7) Presiona Procesar.";
             MessageBox.Show(this, msg, "Ayuda - Sitemap", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
