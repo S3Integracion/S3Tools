@@ -22,7 +22,11 @@ _TEMPLATE_CACHE = {}
 _EXPECTED_CACHE = {}
 
 NORMALIZE_RE = re.compile(r"[^a-zA-Z0-9_']")
-FIRST_HEADERS = ["web_scraper_order", "web_scraper_start_url"]
+HEADER_FORMATS = {
+    "hyphen": ["web-scraper-order", "web-scraper-start-url"],
+    "underscore": ["web_scraper_order", "web_scraper_start_url"],
+}
+DEFAULT_HEADER_FORMAT = "underscore"
 
 
 def _app_dir():
@@ -121,12 +125,13 @@ def resolve_template(choice, headers):
         return choice
     return detect_template(headers)
 
-def apply_first_headers(headers):
+def apply_first_headers(headers, header_format):
     updated = list(headers)
+    selected_headers = HEADER_FORMATS.get(header_format, HEADER_FORMATS[DEFAULT_HEADER_FORMAT])
     if len(updated) >= 1:
-        updated[0] = FIRST_HEADERS[0]
+        updated[0] = selected_headers[0]
     if len(updated) >= 2:
-        updated[1] = FIRST_HEADERS[1]
+        updated[1] = selected_headers[1]
     return updated
 
 
@@ -153,7 +158,7 @@ def detect_csv_delimiter(sample):
         return ","
 
 
-def update_csv_headers(path, template_choice):
+def update_csv_headers(path, template_choice, header_format):
     text, encoding = read_text_with_encoding(path)
     if not text.strip():
         raise RuntimeError("Empty CSV file")
@@ -163,20 +168,21 @@ def update_csv_headers(path, template_choice):
         raise RuntimeError("Empty CSV file")
     headers = rows[0]
     template_key = resolve_template(template_choice, headers)
-    rows[0] = apply_first_headers(headers)
+    rows[0] = apply_first_headers(headers, header_format)
     with open(path, "w", encoding=encoding, newline="") as f:
         writer = csv.writer(f, delimiter=delimiter)
         writer.writerows(rows)
     return template_key
 
 
-def update_xlsx_headers(path, template_choice):
+def update_xlsx_headers(path, template_choice, header_format):
     try:
         from openpyxl import load_workbook
     except Exception as exc:
         raise RuntimeError("openpyxl is required to edit .xlsx files") from exc
     wb = load_workbook(path)
     try:
+        selected_headers = HEADER_FORMATS.get(header_format, HEADER_FORMATS[DEFAULT_HEADER_FORMAT])
         template_key = template_choice
         if (template_choice or "").strip().lower() not in TEMPLATE_FILES:
             template_key = None
@@ -193,21 +199,21 @@ def update_xlsx_headers(path, template_choice):
             if ws.max_column < 1:
                 continue
             if ws.max_column >= 1:
-                ws.cell(row=1, column=1).value = FIRST_HEADERS[0]
+                ws.cell(row=1, column=1).value = selected_headers[0]
             if ws.max_column >= 2:
-                ws.cell(row=1, column=2).value = FIRST_HEADERS[1]
+                ws.cell(row=1, column=2).value = selected_headers[1]
         wb.save(path)
     finally:
         wb.close()
     return template_key
 
 
-def update_headers_in_file(path, template_choice):
+def update_headers_in_file(path, template_choice, header_format):
     ext = Path(path).suffix.lower()
     if ext == ".csv":
-        return update_csv_headers(path, template_choice)
+        return update_csv_headers(path, template_choice, header_format)
     if ext == ".xlsx":
-        return update_xlsx_headers(path, template_choice)
+        return update_xlsx_headers(path, template_choice, header_format)
     raise RuntimeError("Unsupported file extension. Use .csv or .xlsx.")
 
 
@@ -225,6 +231,10 @@ def handle_process(data):
 
     template_choice = (data.get("template") or "").strip().lower()
     template_choice = template_choice if template_choice else "auto"
+    header_format = (data.get("header_format") or "").strip().lower()
+    header_format = header_format if header_format else DEFAULT_HEADER_FORMAT
+    if header_format not in HEADER_FORMATS:
+        return _error("Invalid header_format. Use 'hyphen' or 'underscore'.")
 
     updated_files = []
     template_counts = {}
@@ -233,7 +243,7 @@ def handle_process(data):
         if not Path(fp).exists():
             return _error(f"Input file not found: {fp}")
         try:
-            template_key = update_headers_in_file(fp, template_choice)
+            template_key = update_headers_in_file(fp, template_choice, header_format)
             updated_files.append(fp)
             template_counts[template_key] = template_counts.get(template_key, 0) + 1
         except Exception as exc:

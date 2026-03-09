@@ -393,6 +393,9 @@ namespace S3Integración_programs
 
         [DataMember(Name = "template")]
         public string Template { get; set; }
+
+        [DataMember(Name = "header_format")]
+        public string HeaderFormat { get; set; }
     }
 
     [DataContract]

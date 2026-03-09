@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="S3Tools.exe" version="2.0.0.9" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="S3Tools.exe" version="2.5.0.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="S3Tools.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="S3Tools" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="S3Tools" version="2.5.0.0" language="neutral" processorArchitecture="msil" />
     <commandLine file="S3Tools.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,24 +43,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="S3Tools.exe" size="171440">
-      <assemblyIdentity name="S3Tools" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="S3Tools.exe" size="172464">
+      <assemblyIdentity name="S3Tools" version="2.5.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>gZz0sFWd1f28pTzX+dnlXo5VMuajD829HIATz2GR/xk=</dsig:DigestValue>
+        <dsig:DigestValue>8WvZQHsr9UWHtKWhrxAF4oWw+28qk4+hYKRLlqt4IrE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Engines\AsinBatcherEngine\engine.exe" size="7289875">
+  <file name="Engines\AsinBatcherEngine\engine.exe" size="7291545">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>iZnmtrQ2Zx3rtQKB+7DXqHjETZVtkfpLC5Wq/hq75dk=</dsig:DigestValue>
+      <dsig:DigestValue>IJj6zVcFI7n9ttjmwI53kGXiAKKIHkJ22SgVzGKgtoY=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Engines\AsinBatcherEngine\engine.py" size="13375">
@@ -72,31 +72,31 @@
       <dsig:DigestValue>GbK6l5iMg+0tb8ewgxpfeoH8VNdM9glLf8C3XE3AQAQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Engines\Formato\format.exe" size="7284824">
+  <file name="Engines\Formato\format.exe" size="7286874">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>MPYwupHyZnb3iEVYT+SxFmB1RMNLONVPH90o5T3kZTE=</dsig:DigestValue>
+      <dsig:DigestValue>DOYPcPbrZvetdvgt7VcSikRshUOgMG+05kwTUxKn95Q=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Engines\Formato\format.py" size="8337">
+  <file name="Engines\Formato\format.py" size="9018">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>XMYrTlq8yFygXfwXLqaK9GwsVk/1M6sLB2Pul+PM7lQ=</dsig:DigestValue>
+      <dsig:DigestValue>kLBC5fbG5oiy+PPYP2xXiO2qKrdAap4HFR5ktIyX4U8=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Engines\Sitemap\form_site.exe" size="7288218">
+  <file name="Engines\Sitemap\form_site.exe" size="7288393">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>xDq2c5XtxeUYo2Vn8rpAUExucaEEDGznKihLl6N4ySo=</dsig:DigestValue>
+      <dsig:DigestValue>ql8jFVpH/sCz2MNegYnlpzi5VORLPkarBUZM6nlstkI=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Engines\Sitemap\form_site.py" size="10829">
