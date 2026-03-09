@@ -21,6 +21,8 @@ namespace S3Integración_programs
         private RadioButton _modeSelectRadio;
         private ListBox _filesList;
         private Label _summaryLabel;
+        private RadioButton _headerFormatHyphenRadio;
+        private RadioButton _headerFormatUnderscoreRadio;
         private RadioButton _templateAutoRadio;
         private RadioButton _templateTiendasRadio;
         private RadioButton _templateBbvsRadio;
@@ -120,11 +122,12 @@ namespace S3Integración_programs
             var layout = new TableLayoutPanel
             {
                 ColumnCount = 2,
-                RowCount = 3,
+                RowCount = 4,
                 Dock = DockStyle.Fill,
             };
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
             layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -144,22 +147,44 @@ namespace S3Integración_programs
             layout.Controls.Add(modePanel, 0, 0);
             layout.SetColumnSpan(modePanel, 2);
 
+            var headerFormatGroup = new GroupBox
+            {
+                Text = "Formato de Headers",
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+            };
+            var headerFormatPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                FlowDirection = FlowDirection.LeftToRight,
+            };
+            _headerFormatHyphenRadio = new RadioButton { Text = "Medio -", AutoSize = true };
+            _headerFormatUnderscoreRadio = new RadioButton { Text = "Bajo _", AutoSize = true };
+            headerFormatPanel.Controls.Add(_headerFormatHyphenRadio);
+            headerFormatPanel.Controls.Add(_headerFormatUnderscoreRadio);
+            headerFormatGroup.Controls.Add(headerFormatPanel);
+            layout.Controls.Add(headerFormatGroup, 0, 1);
+            layout.SetColumnSpan(headerFormatGroup, 2);
+
             _filesList = new ListBox
             {
                 Dock = DockStyle.Fill,
                 SelectionMode = SelectionMode.MultiExtended,
             };
-            layout.Controls.Add(_filesList, 0, 1);
+            layout.Controls.Add(_filesList, 0, 2);
             layout.SetColumnSpan(_filesList, 2);
 
             _summaryLabel = new Label { Text = "Archivos: 0", AutoSize = true };
-            layout.Controls.Add(_summaryLabel, 0, 2);
+            layout.Controls.Add(_summaryLabel, 0, 3);
             layout.SetColumnSpan(_summaryLabel, 2);
 
             group.Controls.Add(layout);
 
             _inputControls.Add(_modeAllRadio);
             _inputControls.Add(_modeSelectRadio);
+            _inputControls.Add(_headerFormatHyphenRadio);
+            _inputControls.Add(_headerFormatUnderscoreRadio);
             _inputControls.Add(_filesList);
 
             return group;
@@ -215,7 +240,7 @@ namespace S3Integración_programs
             };
             _noteLabel = new Label
             {
-                Text = "Solo se corrigen las dos primeras columnas; se actualiza en la misma carpeta.",
+                Text = "Solo se corrigen las dos primeras columnas (Medio - o Bajo _); se actualiza en la misma carpeta.",
                 AutoSize = true,
                 Padding = new Padding(10, 8, 0, 0),
             };
@@ -263,6 +288,7 @@ namespace S3Integración_programs
         private void SetDefaults()
         {
             _modeAllRadio.Checked = true;
+            _headerFormatUnderscoreRadio.Checked = true;
             _templateAutoRadio.Checked = true;
             UpdateMode();
         }
@@ -367,6 +393,15 @@ namespace S3Integración_programs
             return "auto";
         }
 
+        private string GetSelectedHeaderFormat()
+        {
+            if (_headerFormatHyphenRadio.Checked)
+            {
+                return "hyphen";
+            }
+            return "underscore";
+        }
+
         private async void ProcessButton_Click(object sender, EventArgs e)
         {
             if (_isBusy)
@@ -385,6 +420,7 @@ namespace S3Integración_programs
             {
                 InputFiles = files,
                 Template = GetSelectedTemplate(),
+                HeaderFormat = GetSelectedHeaderFormat(),
             };
 
             SetBusy(true);
@@ -422,9 +458,10 @@ namespace S3Integración_programs
                 "Formato\n\n" +
                 "1) Importa archivos .csv o .xlsx.\n" +
                 "2) Elige modo: Procesar todos o Seleccionar archivos.\n" +
-                "3) Elige plantilla: Auto, Tiendas o BBvs.\n" +
-                "4) Presiona Procesar.\n\n" +
-                "Se actualizan solo las dos primeras columnas.";
+                "3) Elige formato de headers: Medio - o Bajo _.\n" +
+                "4) Elige plantilla: Auto, Tiendas o BBvs.\n" +
+                "5) Presiona Procesar.\n\n" +
+                "Se actualizan solo las dos primeras columnas con el formato elegido.";
             MessageBox.Show(this, msg, "Ayuda - Formato", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
