@@ -44,6 +44,7 @@ namespace S3Integración_programs
         private Button _downloadsButton;
         private Button _desktopButton;
         private Button _chooseOutputButton;
+        private CheckBox _showSellerOnOpenCheck;
         private CheckBox _zipCheck;
         private Button _processButton;
         private Button _nameConfigButton;
@@ -198,17 +199,19 @@ namespace S3Integración_programs
             var panel = new TableLayoutPanel
             {
                 ColumnCount = 1,
-                RowCount = 3,
+                RowCount = 4,
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             panel.Controls.Add(BuildStoreGroup(), 0, 0);
-            panel.Controls.Add(BuildFileNameRow(), 0, 1);
-            panel.Controls.Add(BuildMarketRow(), 0, 2);
+            panel.Controls.Add(BuildSellerOptionRow(), 0, 1);
+            panel.Controls.Add(BuildFileNameRow(), 0, 2);
+            panel.Controls.Add(BuildMarketRow(), 0, 3);
 
             return panel;
         }
@@ -289,7 +292,28 @@ namespace S3Integración_programs
             return group;
         }
 
-private Control BuildFileNameRow()
+        private Control BuildSellerOptionRow()
+        {
+            var panel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                FlowDirection = FlowDirection.LeftToRight,
+                Margin = new Padding(0, 2, 0, 2),
+            };
+
+            _showSellerOnOpenCheck = new CheckBox
+            {
+                Text = "Mostrar vendedor al abrir",
+                AutoSize = true,
+            };
+
+            panel.Controls.Add(_showSellerOnOpenCheck);
+            _inputControls.Add(_showSellerOnOpenCheck);
+            return panel;
+        }
+
+        private Control BuildFileNameRow()
         {
             var layout = new TableLayoutPanel
             {
@@ -509,6 +533,7 @@ private Control BuildFileNameRow()
                 _orderCombo.SelectedIndex = 0;
             }
             _batchesNumeric.Value = DefaultBatches;
+            _showSellerOnOpenCheck.Checked = false;
             _outputText.Text = GetDownloadsPath();
             _previewText.Text = string.Empty;
             UpdateBatchEstimateLabels();
@@ -654,6 +679,7 @@ private Control BuildFileNameRow()
                 Order = _orderCombo.SelectedItem as string,
                 Batches = requestedBatches,
                 ZipOutput = _zipCheck.Checked,
+                ShowSellerOnOpen = _showSellerOnOpenCheck.Checked,
                 FileLabel = null,
                 NamePrefix1 = _namePrefix1,
                 NamePrefix2 = _namePrefix2,
@@ -742,10 +768,11 @@ private Control BuildFileNameRow()
                 "1) Selecciona un archivo .txt o .xlsx.\n" +
                 "2) Revisa la previsualizacion (totales, unicos, duplicados).\n" +
                 "3) Elige una tienda o escribe un nombre manual.\n" +
-                "4) Configura los prefijos si aplica.\n" +
-                "5) Define Mercado, Lotes y Orden.\n" +
-                "6) Elige carpeta destino (opcional ZIP).\n" +
-                "7) Presiona Procesar.\n\n" +
+                "4) Opcional: marca Mostrar vendedor al abrir.\n" +
+                "5) Configura los prefijos si aplica.\n" +
+                "6) Define Mercado, Lotes y Orden.\n" +
+                "7) Elige carpeta destino (opcional ZIP).\n" +
+                "8) Presiona Procesar.\n\n" +
                 "Extra: Exportar duplicados crea un CSV si hay repetidos.";
             MessageBox.Show(this, msg, "Ayuda - Asin Batcher", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
