@@ -11,6 +11,9 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO.Compression;
+using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace S3Integración_programs
 {
@@ -56,6 +59,25 @@ namespace S3Integración_programs
         }
 
         private EngineResponse Send(EngineRequest request)
+        {
+            try
+            {
+                return AsinBatcherDotNetEngine.Handle(request);
+            }
+            catch (Exception dotnetEx)
+            {
+                var fallback = SendWithPythonEngine(request);
+                if (!fallback.Ok)
+                {
+                    fallback.Traceback = string.IsNullOrWhiteSpace(fallback.Traceback)
+                        ? dotnetEx.ToString()
+                        : fallback.Traceback + Environment.NewLine + Environment.NewLine + "DotNet engine error:" + Environment.NewLine + dotnetEx;
+                }
+                return fallback;
+            }
+        }
+
+        private EngineResponse SendWithPythonEngine(EngineRequest request)
         {
             EngineCommand command = null;
             try
@@ -403,6 +425,590 @@ namespace S3Integración_programs
 
             public string FileName { get; }
             public string Arguments { get; }
+        }
+    }
+
+    internal static class AsinBatcherDotNetEngine
+    {
+        private const int DefaultBatches = 30;
+        private const string DefaultMarket = "US";
+        private static readonly HashSet<string> Markets = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MX", "US" };
+        private static readonly HashSet<string> OrderChoices = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Ordenado", "Inverso", "Aleatorio" };
+        private static readonly string[] AllStores = { "ProductosTX", "Holaproducto", "Altinor", "HervazTrade", "BBvs_Template", "BBvsBB2_2da", "BBvsBB2" };
+        private static readonly Regex NameAllowedRegex = new Regex("[^a-zA-Z0-9_()+-]", RegexOptions.Compiled);
+        private static readonly Regex InventoryReportRegex = new Regex("^Reporte\\+de\\+inventario\\+\\d{2}-\\d{2}-\\d{4}\\.(txt|xlsx|xls)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex AsinRegex = new Regex("\\b[A-Z0-9]{10}\\b", RegexOptions.Compiled);
+
+        public static EngineResponse Handle(EngineRequest request)
+        {
+            var action = (request?.Action ?? string.Empty).Trim().ToLowerInvariant();
+            if (action == "preview")
+            {
+                return HandlePreview(request);
+            }
+            if (action == "process")
+            {
+                return HandleProcess(request);
+            }
+            if (action == "export_duplicates")
+            {
+                return HandleExportDuplicates(request);
+            }
+            return Error("Unknown action");
+        }
+
+        private static EngineResponse HandlePreview(EngineRequest request)
+        {
+            var inputPath = (request?.InputPath ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(inputPath))
+            {
+                return Error("Missing input_path");
+            }
+            if (!File.Exists(inputPath))
+            {
+                return Error("Input file not found");
+            }
+
+            var extraction = ExtractAsinsAny(inputPath);
+            return PreviewResponse(extraction.Uniques, extraction.Duplicates);
+        }
+
+        private static EngineResponse HandleExportDuplicates(EngineRequest request)
+        {
+            var inputPath = (request?.InputPath ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(inputPath))
+            {
+                return Error("Missing input_path");
+            }
+            if (!File.Exists(inputPath))
+            {
+                return Error("Input file not found");
+            }
+
+            var outputDir = (request?.OutputDir ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(outputDir))
+            {
+                outputDir = GetDownloadsPath();
+            }
+
+            var extraction = ExtractAsinsAny(inputPath);
+            var csvPath = ExportDuplicatesCsv(extraction.Duplicates, outputDir);
+            return new EngineResponse
+            {
+                Ok = true,
+                Duplicates = extraction.Duplicates.Count,
+                CsvPath = csvPath,
+            };
+        }
+
+        private static EngineResponse HandleProcess(EngineRequest request)
+        {
+            var inputPath = (request?.InputPath ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(inputPath))
+            {
+                return Error("Missing input_path");
+            }
+            if (!File.Exists(inputPath))
+            {
+                return Error("Input file not found");
+            }
+
+            var outputDir = (request?.OutputDir ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(outputDir))
+            {
+                outputDir = GetDownloadsPath();
+            }
+            Directory.CreateDirectory(outputDir);
+
+            var market = Markets.Contains(request?.Market ?? string.Empty) ? request.Market : DefaultMarket;
+            var order = OrderChoices.Contains(request?.Order ?? string.Empty) ? request.Order : "Ordenado";
+
+            var prefix1 = (request?.NamePrefix1 ?? string.Empty).Trim();
+            var prefix2 = (request?.NamePrefix2 ?? string.Empty).Trim();
+            var storeName = (request?.StoreName ?? string.Empty).Trim();
+            var useNewName = !string.IsNullOrWhiteSpace(storeName) || !string.IsNullOrWhiteSpace(prefix1) || !string.IsNullOrWhiteSpace(prefix2);
+
+            string baseLabel;
+            if (useNewName)
+            {
+                if (string.IsNullOrWhiteSpace(storeName))
+                {
+                    storeName = (request?.Store ?? string.Empty).Trim();
+                }
+                if (string.IsNullOrWhiteSpace(storeName))
+                {
+                    return Error("Missing store_name");
+                }
+                baseLabel = prefix1 + prefix2 + storeName;
+            }
+            else
+            {
+                var store = ComputeStoreFromSelection(request?.Store);
+                var fileLabel = (request?.FileLabel ?? string.Empty).Trim();
+                if (string.IsNullOrWhiteSpace(fileLabel))
+                {
+                    return Error("Missing file_label");
+                }
+                baseLabel = store + "_" + fileLabel;
+            }
+
+            var batches = request?.Batches ?? DefaultBatches;
+            if (batches < 1)
+            {
+                batches = DefaultBatches;
+            }
+
+            var zipOut = request?.ZipOutput ?? false;
+            var showSellerOnOpen = request?.ShowSellerOnOpen ?? false;
+
+            var extraction = ExtractAsinsAny(inputPath);
+            var uniques = extraction.Uniques;
+            var dups = extraction.Duplicates;
+
+            if (uniques.Count == 0)
+            {
+                return Error("No valid ASINs found");
+            }
+
+            if (batches > uniques.Count)
+            {
+                return Error("La cantidad de lotes no puede ser mayor que la cantidad de URLs. URLs: " + uniques.Count + " | Lotes: " + batches);
+            }
+
+            uniques = ReorderAsins(uniques, order);
+
+            var folderName = SanitizeFilename(baseLabel) + "_" + DateTime.Now.ToString("ddMMyy") + "_" + DateTime.Now.ToString("HHmm");
+            var workDir = Path.Combine(outputDir, folderName);
+            Directory.CreateDirectory(workDir);
+
+            var batchesList = SplitInBatches(uniques, batches);
+            var outFiles = WriteBatchesAsTxt(batchesList, workDir, market, baseLabel, showSellerOnOpen);
+
+            var zipPath = string.Empty;
+            if (zipOut)
+            {
+                zipPath = Path.Combine(outputDir, SanitizeFilename(baseLabel) + ".zip");
+                ZipOutputs(outFiles, zipPath);
+                try
+                {
+                    Directory.Delete(workDir, true);
+                }
+                catch
+                {
+                }
+            }
+
+            var response = PreviewResponse(uniques, dups);
+            response.OutputFolder = zipOut ? string.Empty : workDir;
+            response.ZipPath = zipPath;
+            return response;
+        }
+
+        private static ExtractionResult ExtractAsinsAny(string path)
+        {
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            List<string> asins;
+
+            if (ext == ".xlsx")
+            {
+                throw new NotSupportedException("Excel input is handled by Python fallback during transition.");
+            }
+            else if (ext == ".xls")
+            {
+                throw new NotSupportedException("Legacy .xls input is handled by Python fallback durante la transición.");
+            }
+            else if (ext == ".txt")
+            {
+                if (IsInventoryReport(path))
+                {
+                    asins = ReadAsinsFromInventoryTxt(path);
+                }
+                else
+                {
+                    asins = ReadAsinsFromPlainTxt(path);
+                }
+            }
+            else
+            {
+                asins = ReadAsinsFromPlainTxt(path);
+            }
+
+            var uniques = new List<string>();
+            var dups = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var asin in asins)
+            {
+                if (seen.Contains(asin))
+                {
+                    dups.Add(asin);
+                }
+                else
+                {
+                    seen.Add(asin);
+                    uniques.Add(asin);
+                }
+            }
+
+            return new ExtractionResult(uniques, dups);
+        }
+
+        private static bool IsInventoryReport(string fileName)
+        {
+            var baseName = Path.GetFileName(fileName) ?? string.Empty;
+            if (InventoryReportRegex.IsMatch(baseName))
+            {
+                return true;
+            }
+
+            try
+            {
+                using (var reader = new StreamReader(fileName, Encoding.UTF8, true))
+                {
+                    var first = reader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(first) || first.IndexOf('\t') < 0)
+                    {
+                        return false;
+                    }
+                    var headers = first.Split('\t').Select(h => (h ?? string.Empty).Trim().ToLowerInvariant());
+                    return headers.Contains("asin");
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static List<string> ReadAsinsFromInventoryTxt(string path)
+        {
+            var rows = new List<string[]>();
+            foreach (var encName in new[] { "utf-8", "latin1" })
+            {
+                try
+                {
+                    using (var reader = new StreamReader(path, Encoding.GetEncoding(encName), true))
+                    {
+                        rows.Clear();
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            rows.Add((line ?? string.Empty).Split('\t'));
+                        }
+                    }
+                    break;
+                }
+                catch
+                {
+                    rows.Clear();
+                }
+            }
+
+            if (rows.Count == 0)
+            {
+                return new List<string>();
+            }
+
+            var header = rows[0].Select(c => (c ?? string.Empty).Trim().ToLowerInvariant()).ToList();
+            var asins = new List<string>();
+
+            if (header.Contains("asin"))
+            {
+                var idx = header.IndexOf("asin");
+                for (var i = 1; i < rows.Count; i++)
+                {
+                    if (idx >= rows[i].Length)
+                    {
+                        continue;
+                    }
+                    var cell = (rows[i][idx] ?? string.Empty).Trim().ToUpperInvariant();
+                    var m = AsinRegex.Match(cell);
+                    if (m.Success)
+                    {
+                        var clean = CleanAsin(m.Value);
+                        if (!string.IsNullOrWhiteSpace(clean))
+                        {
+                            asins.Add(clean);
+                        }
+                    }
+                }
+                return asins;
+            }
+
+            foreach (var row in rows)
+            {
+                foreach (var cell in row)
+                {
+                    var m = AsinRegex.Match((cell ?? string.Empty).Trim().ToUpperInvariant());
+                    if (!m.Success)
+                    {
+                        continue;
+                    }
+                    var clean = CleanAsin(m.Value);
+                    if (!string.IsNullOrWhiteSpace(clean))
+                    {
+                        asins.Add(clean);
+                    }
+                }
+            }
+
+            return asins;
+        }
+
+        private static List<string> ReadAsinsFromInventoryExcel(string path)
+        {
+            throw new NotSupportedException("Excel input is handled by Python fallback during transition.");
+        }
+
+        private static List<string> ReadAsinsFromFirstExcelColumn(string path)
+        {
+            throw new NotSupportedException("Excel input is handled by Python fallback during transition.");
+        }
+
+        private static string CleanAsin(string value)
+        {
+            var upper = (value ?? string.Empty).Trim().ToUpperInvariant();
+            var chars = upper.Where(char.IsLetterOrDigit).ToArray();
+            return new string(chars);
+        }
+
+        private static int GetColumnIndex(string cellRef)
+        {
+            if (string.IsNullOrWhiteSpace(cellRef))
+            {
+                return 1;
+            }
+            var col = 0;
+            foreach (var ch in cellRef)
+            {
+                if (!char.IsLetter(ch))
+                {
+                    break;
+                }
+                col = (col * 26) + (char.ToUpperInvariant(ch) - 'A' + 1);
+            }
+            return col <= 0 ? 1 : col;
+        }
+
+        private static int GetRowIndex(string cellRef)
+        {
+            if (string.IsNullOrWhiteSpace(cellRef))
+            {
+                return 0;
+            }
+            var digits = new string(cellRef.SkipWhile(c => !char.IsDigit(c)).ToArray());
+            int row;
+            return int.TryParse(digits, out row) ? row : 0;
+        }
+
+        private static List<string> ReadAsinsFromPlainTxt(string path)
+        {
+            string text;
+            if (!TryReadText(path, new UTF8Encoding(true), out text) &&
+                !TryReadText(path, Encoding.GetEncoding("latin1"), out text))
+            {
+                text = File.ReadAllText(path);
+            }
+
+            var lines = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            var output = new List<string>();
+            foreach (var line in lines)
+            {
+                var clean = CleanAsin(line);
+                if (!string.IsNullOrWhiteSpace(clean))
+                {
+                    output.Add(clean);
+                }
+            }
+            return output;
+        }
+
+        private static bool TryReadText(string path, Encoding encoding, out string text)
+        {
+            try
+            {
+                using (var reader = new StreamReader(path, encoding, true))
+                {
+                    text = reader.ReadToEnd();
+                    return true;
+                }
+            }
+            catch
+            {
+                text = null;
+                return false;
+            }
+        }
+
+        private static List<string> ReorderAsins(IEnumerable<string> uniques, string mode)
+        {
+            var normalized = (mode ?? string.Empty).ToLowerInvariant();
+            if (normalized == "inverso")
+            {
+                return uniques.OrderByDescending(x => x, StringComparer.Ordinal).ToList();
+            }
+            if (normalized == "aleatorio")
+            {
+                var shuffled = uniques.ToList();
+                var rng = new Random();
+                for (var i = shuffled.Count - 1; i > 0; i--)
+                {
+                    var j = rng.Next(i + 1);
+                    var tmp = shuffled[i];
+                    shuffled[i] = shuffled[j];
+                    shuffled[j] = tmp;
+                }
+                return shuffled;
+            }
+            return uniques.OrderBy(x => x, StringComparer.Ordinal).ToList();
+        }
+
+        private static string ComputeStoreFromSelection(string selectedStore)
+        {
+            return AllStores.Contains(selectedStore) ? selectedStore : AllStores[0];
+        }
+
+        private static List<List<string>> SplitInBatches(IList<string> items, int batches)
+        {
+            if (batches <= 1)
+            {
+                return new List<List<string>> { items.ToList() };
+            }
+
+            var n = items.Count;
+            if (n == 0)
+            {
+                var empty = new List<List<string>>();
+                for (var i = 0; i < batches; i++)
+                {
+                    empty.Add(new List<string>());
+                }
+                return empty;
+            }
+
+            var baseSize = n / batches;
+            var remainder = n % batches;
+            var outList = new List<List<string>>();
+            var start = 0;
+            for (var i = 0; i < batches; i++)
+            {
+                var count = baseSize + (i < remainder ? 1 : 0);
+                outList.Add(items.Skip(start).Take(count).ToList());
+                start += count;
+            }
+            return outList;
+        }
+
+        private static List<string> WriteBatchesAsTxt(IList<List<string>> batchesList, string folder, string market, string baseLabel, bool showSellerOnOpen)
+        {
+            var output = new List<string>();
+            var safeBase = SanitizeFilename(baseLabel);
+            var total = batchesList.Count;
+            for (var i = 0; i < total; i++)
+            {
+                var fileName = total > 1 ? safeBase + "_" + (i + 1) + ".txt" : safeBase + ".txt";
+                var path = Path.Combine(folder, fileName);
+                using (var writer = new StreamWriter(path, false, new UTF8Encoding(false)))
+                {
+                    writer.WriteLine("start_url");
+                    foreach (var asin in batchesList[i])
+                    {
+                        writer.WriteLine(ToUrl(asin, market, showSellerOnOpen));
+                    }
+                }
+                output.Add(path);
+            }
+            return output;
+        }
+
+        private static string ToUrl(string asin, string market, bool showSellerOnOpen)
+        {
+            var url = string.Equals(market, "US", StringComparison.OrdinalIgnoreCase)
+                ? "https://www.amazon.com/dp/" + asin + "?th=1"
+                : "https://www.amazon.com.mx/dp/" + asin + "?th=1";
+            if (showSellerOnOpen)
+            {
+                url += "&aod=1";
+            }
+            return url;
+        }
+
+        private static void ZipOutputs(IEnumerable<string> files, string targetZip)
+        {
+            throw new NotSupportedException("ZIP output is handled by Python fallback during transition.");
+        }
+
+        private static string ExportDuplicatesCsv(IEnumerable<string> dups, string outdir)
+        {
+            var duplicateList = (dups ?? Enumerable.Empty<string>()).ToList();
+            if (duplicateList.Count == 0)
+            {
+                return string.Empty;
+            }
+            Directory.CreateDirectory(outdir);
+            var file = Path.Combine(outdir, "duplicados_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv");
+            using (var writer = new StreamWriter(file, false, new UTF8Encoding(false)))
+            {
+                writer.WriteLine("asin");
+                var seen = new HashSet<string>(StringComparer.Ordinal);
+                foreach (var asin in duplicateList)
+                {
+                    if (!seen.Add(asin))
+                    {
+                        continue;
+                    }
+                    writer.WriteLine(asin);
+                }
+            }
+            return file;
+        }
+
+        private static string SanitizeFilename(string text)
+        {
+            var repl = (text ?? string.Empty).Trim();
+            repl = repl.Replace(" ", "_").Replace("-", "_");
+            repl = NameAllowedRegex.Replace(repl, "_");
+            repl = Regex.Replace(repl, "_+", "_");
+            repl = repl.Trim('_').Trim('.');
+            return string.IsNullOrWhiteSpace(repl) ? "archivo" : repl;
+        }
+
+        private static string GetDownloadsPath()
+        {
+            var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            return Path.Combine(userProfile, "Downloads");
+        }
+
+        private static EngineResponse PreviewResponse(ICollection<string> uniques, ICollection<string> dups)
+        {
+            return new EngineResponse
+            {
+                Ok = true,
+                Total = uniques.Count + dups.Count,
+                Unique = uniques.Count,
+                Duplicates = dups.Count,
+            };
+        }
+
+        private static EngineResponse Error(string message)
+        {
+            return new EngineResponse
+            {
+                Ok = false,
+                Error = message,
+                Traceback = string.Empty,
+            };
+        }
+
+        private sealed class ExtractionResult
+        {
+            public ExtractionResult(List<string> uniques, List<string> duplicates)
+            {
+                Uniques = uniques;
+                Duplicates = duplicates;
+            }
+
+            public List<string> Uniques { get; }
+            public List<string> Duplicates { get; }
         }
     }
 

@@ -2,7 +2,6 @@
 // Normalizes the first two WebScraper headers in CSV/XLSX files.
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,264 +14,33 @@ namespace S3Integración_programs
         private readonly List<Control> _inputControls;
         private bool _isBusy;
 
-        private Button _importFilesButton;
-        private Button _clearFilesButton;
-        private RadioButton _modeAllRadio;
-        private RadioButton _modeSelectRadio;
-        private ListBox _filesList;
-        private Label _summaryLabel;
-        private RadioButton _headerFormatHyphenRadio;
-        private RadioButton _headerFormatUnderscoreRadio;
-        private RadioButton _templateAutoRadio;
-        private RadioButton _templateTiendasRadio;
-        private RadioButton _templateBbvsRadio;
-        private Button _processButton;
-        private Button _helpButton;
-        private Label _noteLabel;
-
         public FormatoControl()
         {
             InitializeComponent();
             _engineClient = new FormatoEngineClient();
             _inputControls = new List<Control>();
 
-            BuildLayout();
+            PopulateInputControls();
             WireEvents();
             SetDefaults();
         }
 
-        private void BuildLayout()
+        private void PopulateInputControls()
         {
-            SuspendLayout();
-            Dock = DockStyle.Fill;
-            AutoScroll = true;
-
-            var root = new TableLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                ColumnCount = 1,
-                RowCount = 5,
-                Padding = new Padding(10),
-            };
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.Percent, 60f));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            root.Controls.Add(BuildInputSection(), 0, 0);
-            root.Controls.Add(BuildFilesSection(), 0, 1);
-            root.Controls.Add(BuildTemplateSection(), 0, 2);
-            root.Controls.Add(BuildProcessSection(), 0, 3);
-            root.Controls.Add(BuildHelpSection(), 0, 4);
-
-            Controls.Add(root);
-            ResumeLayout();
-        }
-
-        private Control BuildInputSection()
-        {
-            var layout = new TableLayoutPanel
-            {
-                ColumnCount = 1,
-                RowCount = 2,
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            var label = new Label
-            {
-                Text = "Archivos de entrada (.csv / .xlsx):",
-                AutoSize = true,
-                Font = new Font(Font, FontStyle.Bold),
-            };
-            layout.Controls.Add(label, 0, 0);
-
-            var buttonPanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-
-            _importFilesButton = new Button { Text = "Importar archivos...", AutoSize = true };
-            _clearFilesButton = new Button { Text = "Limpiar lista", AutoSize = true };
-
-            buttonPanel.Controls.Add(_importFilesButton);
-            buttonPanel.Controls.Add(_clearFilesButton);
-
-            layout.Controls.Add(buttonPanel, 0, 1);
-
             _inputControls.Add(_importFilesButton);
             _inputControls.Add(_clearFilesButton);
-
-            return layout;
-        }
-
-        private Control BuildFilesSection()
-        {
-            var group = new GroupBox
-            {
-                Text = "Archivos",
-                Dock = DockStyle.Fill,
-            };
-
-            var layout = new TableLayoutPanel
-            {
-                ColumnCount = 2,
-                RowCount = 4,
-                Dock = DockStyle.Fill,
-            };
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            _modeAllRadio = new RadioButton { Text = "Procesar todos", AutoSize = true };
-            _modeSelectRadio = new RadioButton { Text = "Seleccionar archivos", AutoSize = true };
-
-            var modePanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-            modePanel.Controls.Add(_modeAllRadio);
-            modePanel.Controls.Add(_modeSelectRadio);
-
-            layout.Controls.Add(modePanel, 0, 0);
-            layout.SetColumnSpan(modePanel, 2);
-
-            var headerFormatGroup = new GroupBox
-            {
-                Text = "Formato de Headers",
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-            var headerFormatPanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-            _headerFormatHyphenRadio = new RadioButton { Text = "Medio -", AutoSize = true };
-            _headerFormatUnderscoreRadio = new RadioButton { Text = "Bajo _", AutoSize = true };
-            headerFormatPanel.Controls.Add(_headerFormatHyphenRadio);
-            headerFormatPanel.Controls.Add(_headerFormatUnderscoreRadio);
-            headerFormatGroup.Controls.Add(headerFormatPanel);
-            layout.Controls.Add(headerFormatGroup, 0, 1);
-            layout.SetColumnSpan(headerFormatGroup, 2);
-
-            _filesList = new ListBox
-            {
-                Dock = DockStyle.Fill,
-                SelectionMode = SelectionMode.MultiExtended,
-            };
-            layout.Controls.Add(_filesList, 0, 2);
-            layout.SetColumnSpan(_filesList, 2);
-
-            _summaryLabel = new Label { Text = "Archivos: 0", AutoSize = true };
-            layout.Controls.Add(_summaryLabel, 0, 3);
-            layout.SetColumnSpan(_summaryLabel, 2);
-
-            group.Controls.Add(layout);
-
             _inputControls.Add(_modeAllRadio);
             _inputControls.Add(_modeSelectRadio);
             _inputControls.Add(_headerFormatHyphenRadio);
             _inputControls.Add(_headerFormatUnderscoreRadio);
             _inputControls.Add(_filesList);
-
-            return group;
-        }
-
-        private Control BuildTemplateSection()
-        {
-            var group = new GroupBox
-            {
-                Text = "Plantilla",
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-
-            var panel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-
-            _templateAutoRadio = new RadioButton { Text = "Auto", AutoSize = true };
-            _templateTiendasRadio = new RadioButton { Text = "Tiendas", AutoSize = true };
-            _templateBbvsRadio = new RadioButton { Text = "BBvs", AutoSize = true };
-
-            panel.Controls.Add(_templateAutoRadio);
-            panel.Controls.Add(_templateTiendasRadio);
-            panel.Controls.Add(_templateBbvsRadio);
-            group.Controls.Add(panel);
-
             _inputControls.Add(_templateAutoRadio);
             _inputControls.Add(_templateTiendasRadio);
             _inputControls.Add(_templateBbvsRadio);
-
-            return group;
-        }
-
-        private Control BuildProcessSection()
-        {
-            var panel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-
-            _processButton = new Button
-            {
-                Text = "Procesar",
-                AutoSize = true,
-                Font = new Font(Font.FontFamily, 10f, FontStyle.Bold),
-                Padding = new Padding(16, 6, 16, 6),
-            };
-            _noteLabel = new Label
-            {
-                Text = "Solo se corrigen las dos primeras columnas (Medio - o Bajo _); se actualiza en la misma carpeta.",
-                AutoSize = true,
-                Padding = new Padding(10, 8, 0, 0),
-            };
-
-            panel.Controls.Add(_processButton);
-            panel.Controls.Add(_noteLabel);
-
             _inputControls.Add(_processButton);
-
-            return panel;
-        }
-
-        private Control BuildHelpSection()
-        {
-            var panel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.RightToLeft,
-            };
-
-            _helpButton = new Button
-            {
-                Text = "Ayuda",
-                AutoSize = true,
-            };
-
-            panel.Controls.Add(_helpButton);
             _inputControls.Add(_helpButton);
-
-            return panel;
         }
+
 
         private void WireEvents()
         {

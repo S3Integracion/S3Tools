@@ -1,0 +1,754 @@
+﻿// Client wrapper for the Formato Python engine.
+// Resolves the engine executable/script and exchanges JSON via stdin/stdout.
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+namespace S3Integración_programs
+{
+    internal sealed class FormatoEngineClient
+    {
+        private const string EngineScriptName = "format.py";
+        private static readonly string EngineExeName = Path.ChangeExtension(EngineScriptName, ".exe");
+        private const string EngineEnvVar = "FORMATO_ENGINE_PATH";
+        private static readonly string EngineRelativeFolder = Path.Combine("Engines", "Formato");
+
+        public Task<FormatoEngineResponse> ProcessAsync(FormatoEngineRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            request.Action = "process";
+            return Task.Run(() => Send(request));
+        }
+
+        private FormatoEngineResponse Send(FormatoEngineRequest request)
+        {
+            try
+            {
+                return FormatoDotNetEngine.Handle(request);
+            }
+            catch (Exception dotnetEx)
+            {
+                var fallback = SendWithPythonEngine(request);
+                if (!fallback.Ok)
+                {
+                    fallback.Traceback = string.IsNullOrWhiteSpace(fallback.Traceback)
+                        ? dotnetEx.ToString()
+                        : fallback.Traceback + Environment.NewLine + Environment.NewLine + "DotNet engine error:" + Environment.NewLine + dotnetEx;
+                }
+                return fallback;
+            }
+        }
+
+        private FormatoEngineResponse SendWithPythonEngine(FormatoEngineRequest request)
+        {
+            EngineCommand command = null;
+            try
+            {
+                command = ResolveEngine();
+                var json = Serialize(request);
+                var psi = new ProcessStartInfo
+                {
+                    FileName = command.FileName,
+                    Arguments = command.Arguments,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                };
+
+                using (var process = new Process { StartInfo = psi })
+                {
+                    process.Start();
+                    using (var writer = process.StandardInput)
+                    {
+                        writer.Write(json);
+                    }
+                    var stdout = process.StandardOutput.ReadToEnd();
+                    var stderr = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+
+                    stdout = (stdout ?? string.Empty).Trim();
+                    if (string.IsNullOrWhiteSpace(stdout))
+                    {
+                        return new FormatoEngineResponse
+                        {
+                            Ok = false,
+                            Error = "Engine returned no output.",
+                            Traceback = stderr ?? string.Empty,
+                        };
+                    }
+
+                    var response = Deserialize(stdout);
+                    if (response == null)
+                    {
+                        return new FormatoEngineResponse
+                        {
+                            Ok = false,
+                            Error = "Invalid engine response.",
+                            Traceback = stdout + Environment.NewLine + (stderr ?? string.Empty),
+                        };
+                    }
+
+                    if (!response.Ok && string.IsNullOrWhiteSpace(response.Traceback) && !string.IsNullOrWhiteSpace(stderr))
+                    {
+                        response.Traceback = stderr;
+                    }
+                    return response;
+                }
+            }
+            catch (Win32Exception ex)
+            {
+                return new FormatoEngineResponse
+                {
+                    Ok = false,
+                    Error = BuildStartError(ex, command),
+                    Traceback = ex.ToString(),
+                };
+            }
+            catch (Exception ex)
+            {
+                return new FormatoEngineResponse
+                {
+                    Ok = false,
+                    Error = ex.Message,
+                    Traceback = ex.ToString(),
+                };
+            }
+        }
+
+        // Resolution order: env var -> embedded exe -> local exe/script (same base name).
+        private static EngineCommand ResolveEngine()
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var searchRoots = GetSearchRoots(baseDir);
+            var env = Environment.GetEnvironmentVariable(EngineEnvVar);
+            if (TryResolveEngineFromPath(env, searchRoots, out var envCommand))
+            {
+                return envCommand;
+            }
+
+            var extracted = TryExtractEmbeddedEngine();
+            if (!string.IsNullOrWhiteSpace(extracted) && File.Exists(extracted))
+            {
+                return new EngineCommand(extracted, string.Empty);
+            }
+
+            var scriptRelative = Path.Combine(EngineRelativeFolder, EngineScriptName);
+            if (TryResolveEngineFromPath(scriptRelative, searchRoots, out var localCommand))
+            {
+                return localCommand;
+            }
+
+            throw new FileNotFoundException(BuildEngineNotFoundMessage(searchRoots));
+        }
+
+        private static string TryExtractEmbeddedEngine()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = assembly.GetManifestResourceNames()
+                .FirstOrDefault(name => name.EndsWith(EngineExeName, StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(resourceName))
+            {
+                return null;
+            }
+
+            var tempDir = Path.Combine(Path.GetTempPath(), "S3Integracion", "FormatoEngine");
+            Directory.CreateDirectory(tempDir);
+            var targetPath = Path.Combine(tempDir, EngineExeName);
+            if (File.Exists(targetPath))
+            {
+                return targetPath;
+            }
+
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream == null)
+                {
+                    return null;
+                }
+                using (var file = File.Create(targetPath))
+                {
+                    stream.CopyTo(file);
+                }
+            }
+            return targetPath;
+        }
+
+        private static string Serialize(FormatoEngineRequest request)
+        {
+            var serializer = new DataContractJsonSerializer(typeof(FormatoEngineRequest));
+            using (var ms = new MemoryStream())
+            {
+                serializer.WriteObject(ms, request);
+                return Encoding.UTF8.GetString(ms.ToArray());
+            }
+        }
+
+        private static FormatoEngineResponse Deserialize(string json)
+        {
+            var serializer = new DataContractJsonSerializer(typeof(FormatoEngineResponse));
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+            {
+                return serializer.ReadObject(ms) as FormatoEngineResponse;
+            }
+        }
+
+        private static string Quote(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return "\"\"";
+            }
+            return "\"" + value.Replace("\"", "\\\"") + "\"";
+        }
+
+        private static bool TryResolveEngineFromPath(string input, IEnumerable<string> searchRoots, out EngineCommand command)
+        {
+            command = null;
+            foreach (var candidate in GetPathCandidates(input))
+            {
+                if (TryResolveExistingPath(candidate, searchRoots, out var resolved))
+                {
+                    command = CreateCommand(resolved);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static string[] GetPathCandidates(string input)
+        {
+            var trimmed = (input ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(trimmed))
+            {
+                return Array.Empty<string>();
+            }
+
+            var ext = Path.GetExtension(trimmed);
+            if (string.IsNullOrWhiteSpace(ext))
+            {
+                return new[]
+                {
+                    trimmed + ".exe",
+                    trimmed + ".py",
+                    trimmed,
+                };
+            }
+
+            if (ext.Equals(".py", StringComparison.OrdinalIgnoreCase))
+            {
+                return new[]
+                {
+                    Path.ChangeExtension(trimmed, ".exe"),
+                    trimmed,
+                };
+            }
+
+            if (ext.Equals(".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                return new[]
+                {
+                    trimmed,
+                    Path.ChangeExtension(trimmed, ".py"),
+                };
+            }
+
+            return new[]
+            {
+                trimmed,
+            };
+        }
+
+        private static EngineCommand CreateCommand(string resolvedPath)
+        {
+            if (resolvedPath.EndsWith(".py", StringComparison.OrdinalIgnoreCase))
+            {
+                return new EngineCommand("python", Quote(resolvedPath));
+            }
+            return new EngineCommand(resolvedPath, string.Empty);
+        }
+
+        private static bool TryResolveExistingPath(string input, IEnumerable<string> searchRoots, out string resolvedPath)
+        {
+            resolvedPath = null;
+            var candidate = (input ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(candidate))
+            {
+                return false;
+            }
+
+            if (Path.IsPathRooted(candidate))
+            {
+                if (!File.Exists(candidate))
+                {
+                    return false;
+                }
+                resolvedPath = Path.GetFullPath(candidate);
+                return true;
+            }
+
+            if (File.Exists(candidate))
+            {
+                resolvedPath = Path.GetFullPath(candidate);
+                return true;
+            }
+
+            foreach (var root in searchRoots ?? Array.Empty<string>())
+            {
+                var combined = Path.Combine(root, candidate);
+                if (!File.Exists(combined))
+                {
+                    continue;
+                }
+                resolvedPath = Path.GetFullPath(combined);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<string> GetSearchRoots(string baseDir)
+        {
+            var roots = new List<string>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            void AddRoot(string path)
+            {
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    return;
+                }
+                string fullPath;
+                try
+                {
+                    fullPath = Path.GetFullPath(path);
+                }
+                catch
+                {
+                    return;
+                }
+                if (!Directory.Exists(fullPath))
+                {
+                    return;
+                }
+                if (seen.Add(fullPath))
+                {
+                    roots.Add(fullPath);
+                }
+            }
+
+            AddRoot(baseDir);
+            AddRoot(Path.Combine(baseDir, "bin", "Debug"));
+            AddRoot(Path.Combine(baseDir, "bin", "Release"));
+
+            var current = new DirectoryInfo(baseDir);
+            for (var i = 0; i < 3 && current?.Parent != null; i++)
+            {
+                current = current.Parent;
+                if (current == null)
+                {
+                    break;
+                }
+                AddRoot(current.FullName);
+                AddRoot(Path.Combine(current.FullName, "bin", "Debug"));
+                AddRoot(Path.Combine(current.FullName, "bin", "Release"));
+            }
+
+            return roots;
+        }
+
+        private static string BuildEngineNotFoundMessage(IEnumerable<string> searchRoots)
+        {
+            var roots = string.Join(Environment.NewLine, searchRoots.Select(root => " - " + root));
+            var expected = Path.Combine(EngineRelativeFolder, EngineExeName);
+            return "No se encontro el motor de Formato. Esperado: " + expected +
+                   Environment.NewLine + "Rutas buscadas:" + Environment.NewLine + roots +
+                   Environment.NewLine + "Ejecuta build_engines.ps1 o configura " + EngineEnvVar + ".";
+        }
+
+        private static string BuildStartError(Exception ex, EngineCommand command)
+        {
+            if (command == null)
+            {
+                return ex.Message;
+            }
+            return ex.Message + Environment.NewLine + "Comando: " + command.FileName + " " + command.Arguments;
+        }
+
+        private sealed class EngineCommand
+        {
+            public EngineCommand(string fileName, string arguments)
+            {
+                FileName = fileName;
+                Arguments = arguments;
+            }
+
+            public string FileName { get; }
+            public string Arguments { get; }
+        }
+    }
+
+    internal static class FormatoDotNetEngine
+    {
+        private static readonly Dictionary<string, string> TemplateFiles = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "tiendas", "PlantillaSitemapsTiendas.json" },
+            { "bbvs", "PlantillaSitemapsBBvs.json" },
+        };
+
+        private static readonly Dictionary<string, string[]> HeaderFormats = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "hyphen", new[] { "web-scraper-order", "web-scraper-start-url" } },
+            { "underscore", new[] { "web_scraper_order", "web_scraper_start_url" } },
+        };
+
+        private static readonly Regex NormalizeHeaderRegex = new Regex("[^a-zA-Z0-9_']", RegexOptions.Compiled);
+
+        public static FormatoEngineResponse Handle(FormatoEngineRequest request)
+        {
+            var action = (request?.Action ?? string.Empty).Trim().ToLowerInvariant();
+            if (action != "process")
+            {
+                return Error("Unknown action");
+            }
+
+            return HandleProcess(request);
+        }
+
+        private static FormatoEngineResponse HandleProcess(FormatoEngineRequest data)
+        {
+            var inputFiles = (data?.InputFiles ?? Array.Empty<string>())
+                .Where(f => !string.IsNullOrWhiteSpace(f))
+                .ToArray();
+
+            if (inputFiles.Length == 0)
+            {
+                return Error("Missing input_files");
+            }
+
+            var templateChoice = (data?.Template ?? string.Empty).Trim().ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(templateChoice))
+            {
+                templateChoice = "auto";
+            }
+
+            var headerFormat = (data?.HeaderFormat ?? string.Empty).Trim().ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(headerFormat))
+            {
+                headerFormat = "underscore";
+            }
+            if (!HeaderFormats.ContainsKey(headerFormat))
+            {
+                return Error("Invalid header_format. Use 'hyphen' or 'underscore'.");
+            }
+
+            var updatedFiles = new List<string>();
+            var templateCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var fp in inputFiles)
+            {
+                if (!File.Exists(fp))
+                {
+                    return Error("Input file not found: " + fp);
+                }
+
+                var ext = Path.GetExtension(fp).ToLowerInvariant();
+                if (ext == ".xlsx")
+                {
+                    throw new NotSupportedException("XLSX is handled by Python fallback during transition.");
+                }
+                if (ext != ".csv")
+                {
+                    return Error("Failed to update " + fp + ": Unsupported file extension. Use .csv or .xlsx.");
+                }
+
+                var updatedTemplate = UpdateCsvHeaders(fp, templateChoice, headerFormat);
+                updatedFiles.Add(fp);
+                if (!templateCounts.ContainsKey(updatedTemplate))
+                {
+                    templateCounts[updatedTemplate] = 0;
+                }
+                templateCounts[updatedTemplate]++;
+            }
+
+            return new FormatoEngineResponse
+            {
+                Ok = true,
+                UpdatedFiles = updatedFiles.ToArray(),
+                TemplateCounts = templateCounts,
+            };
+        }
+
+        private static string UpdateCsvHeaders(string path, string templateChoice, string headerFormat)
+        {
+            string text;
+            Encoding encoding;
+            ReadTextWithEncoding(path, out text, out encoding);
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                throw new InvalidOperationException("Empty CSV file");
+            }
+
+            var delimiter = DetectCsvDelimiter(text.Length > 4096 ? text.Substring(0, 4096) : text);
+            var lines = SplitLines(text);
+            if (lines.Count == 0)
+            {
+                throw new InvalidOperationException("Empty CSV file");
+            }
+
+            var header = ParseCsvLine(lines[0], delimiter);
+            var templateKey = ResolveTemplate(templateChoice, header);
+            var selected = HeaderFormats[headerFormat];
+            if (header.Count >= 1)
+            {
+                header[0] = selected[0];
+            }
+            if (header.Count >= 2)
+            {
+                header[1] = selected[1];
+            }
+
+            lines[0] = BuildCsvLine(header, delimiter);
+            var output = string.Join(Environment.NewLine, lines);
+            File.WriteAllText(path, output, encoding);
+            return templateKey;
+        }
+
+        private static void ReadTextWithEncoding(string path, out string text, out Encoding encoding)
+        {
+            foreach (var enc in new[] { new UTF8Encoding(true), new UTF8Encoding(false), Encoding.GetEncoding("latin1") })
+            {
+                try
+                {
+                    using (var reader = new StreamReader(path, enc, true))
+                    {
+                        text = reader.ReadToEnd();
+                        encoding = enc;
+                        return;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            text = File.ReadAllText(path);
+            encoding = new UTF8Encoding(false);
+        }
+
+        private static char DetectCsvDelimiter(string sample)
+        {
+            if (sample.Contains(";") && !sample.Contains(","))
+            {
+                return ';';
+            }
+            if (sample.Contains("\t"))
+            {
+                return '\t';
+            }
+            if (sample.Contains("|"))
+            {
+                return '|';
+            }
+            return ',';
+        }
+
+        private static List<string> SplitLines(string text)
+        {
+            return text.Replace("\r\n", "\n").Replace("\r", "\n").Split(new[] { '\n' }, StringSplitOptions.None).ToList();
+        }
+
+        private static List<string> ParseCsvLine(string line, char delimiter)
+        {
+            var values = new List<string>();
+            var sb = new StringBuilder();
+            var inQuotes = false;
+            for (var i = 0; i < (line ?? string.Empty).Length; i++)
+            {
+                var ch = line[i];
+                if (ch == '"')
+                {
+                    if (inQuotes && i + 1 < line.Length && line[i + 1] == '"')
+                    {
+                        sb.Append('"');
+                        i++;
+                        continue;
+                    }
+                    inQuotes = !inQuotes;
+                    continue;
+                }
+
+                if (ch == delimiter && !inQuotes)
+                {
+                    values.Add(sb.ToString());
+                    sb.Clear();
+                    continue;
+                }
+
+                sb.Append(ch);
+            }
+            values.Add(sb.ToString());
+            return values;
+        }
+
+        private static string BuildCsvLine(IEnumerable<string> values, char delimiter)
+        {
+            return string.Join(delimiter.ToString(), values.Select(EscapeCsvCell));
+        }
+
+        private static string EscapeCsvCell(string value)
+        {
+            var text = value ?? string.Empty;
+            if (text.Contains('"'))
+            {
+                text = text.Replace("\"", "\"\"");
+            }
+            if (text.Contains(",") || text.Contains(";") || text.Contains("\t") || text.Contains("|") || text.Contains("\n") || text.Contains("\r") || text.Contains('"'))
+            {
+                return "\"" + text + "\"";
+            }
+            return text;
+        }
+
+        private static string ResolveTemplate(string choice, IList<string> headers)
+        {
+            if (TemplateFiles.ContainsKey(choice))
+            {
+                return choice;
+            }
+            return DetectTemplate(headers);
+        }
+
+        private static string DetectTemplate(IList<string> headers)
+        {
+            var normalizedHeaders = new HashSet<string>(headers.Select(NormalizeHeader).Where(h => !string.IsNullOrWhiteSpace(h)), StringComparer.OrdinalIgnoreCase);
+
+            var best = "tiendas";
+            var bestCount = -1;
+            foreach (var key in TemplateFiles.Keys)
+            {
+                var expected = GetExpectedHeaders(key)
+                    .Select(NormalizeHeader)
+                    .Where(h => !h.StartsWith("web_scraper", StringComparison.OrdinalIgnoreCase))
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                var count = normalizedHeaders.Intersect(expected, StringComparer.OrdinalIgnoreCase).Count();
+                if (count > bestCount)
+                {
+                    bestCount = count;
+                    best = key;
+                }
+            }
+
+            return bestCount <= 0 ? "tiendas" : best;
+        }
+
+        private static IEnumerable<string> GetExpectedHeaders(string templateKey)
+        {
+            var output = new List<string> { "web_scraper_order", "web_scraper_start_url" };
+            var path = ResolveTemplatePath(TemplateFiles[templateKey]);
+            if (!File.Exists(path))
+            {
+                return output;
+            }
+
+            var text = File.ReadAllText(path, new UTF8Encoding(false));
+            foreach (Match match in Regex.Matches(text, "\\\"id\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"", RegexOptions.IgnoreCase))
+            {
+                if (match.Groups.Count > 1)
+                {
+                    output.Add(match.Groups[1].Value);
+                }
+            }
+
+            return output;
+        }
+
+        private static string ResolveTemplatePath(string templateName)
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var candidates = new[]
+            {
+                templateName,
+                Path.Combine(baseDir, templateName),
+                Path.Combine(baseDir, "Engines", "Sitemap", templateName),
+                Path.Combine(baseDir, "bin", "Debug", "Engines", "Sitemap", templateName),
+                Path.Combine(baseDir, "bin", "Release", "Engines", "Sitemap", templateName),
+            };
+            return candidates.FirstOrDefault(File.Exists) ?? templateName;
+        }
+
+        private static string NormalizeHeader(string value)
+        {
+            var text = (value ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return string.Empty;
+            }
+            text = text.Replace("-", "_").Replace(" ", "_");
+            text = NormalizeHeaderRegex.Replace(text, "_");
+            text = Regex.Replace(text, "_+", "_");
+            return text.ToLowerInvariant();
+        }
+
+        private static FormatoEngineResponse Error(string message)
+        {
+            return new FormatoEngineResponse
+            {
+                Ok = false,
+                Error = message,
+                Traceback = string.Empty,
+            };
+        }
+    }
+
+    [DataContract]
+    internal sealed class FormatoEngineRequest
+    {
+        [DataMember(Name = "action")]
+        public string Action { get; set; }
+
+        [DataMember(Name = "input_files")]
+        public string[] InputFiles { get; set; }
+
+        [DataMember(Name = "template")]
+        public string Template { get; set; }
+
+        [DataMember(Name = "header_format")]
+        public string HeaderFormat { get; set; }
+    }
+
+    [DataContract]
+    internal sealed class FormatoEngineResponse
+    {
+        [DataMember(Name = "ok")]
+        public bool Ok { get; set; }
+
+        [DataMember(Name = "error")]
+        public string Error { get; set; }
+
+        [DataMember(Name = "traceback")]
+        public string Traceback { get; set; }
+
+        [DataMember(Name = "updated_files")]
+        public string[] UpdatedFiles { get; set; }
+
+        [DataMember(Name = "template_counts")]
+        public Dictionary<string, int> TemplateCounts { get; set; }
+    }
+}
+

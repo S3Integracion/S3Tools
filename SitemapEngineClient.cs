@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace S3Integración_programs
@@ -32,6 +33,25 @@ namespace S3Integración_programs
         }
 
         private SitemapEngineResponse Send(SitemapEngineRequest request)
+        {
+            try
+            {
+                return SitemapDotNetEngine.Handle(request);
+            }
+            catch (Exception dotnetEx)
+            {
+                var fallback = SendWithPythonEngine(request);
+                if (!fallback.Ok)
+                {
+                    fallback.Traceback = string.IsNullOrWhiteSpace(fallback.Traceback)
+                        ? dotnetEx.ToString()
+                        : fallback.Traceback + Environment.NewLine + Environment.NewLine + "DotNet engine error:" + Environment.NewLine + dotnetEx;
+                }
+                return fallback;
+            }
+        }
+
+        private SitemapEngineResponse SendWithPythonEngine(SitemapEngineRequest request)
         {
             EngineCommand command = null;
             try
@@ -379,6 +399,282 @@ namespace S3Integración_programs
 
             public string FileName { get; }
             public string Arguments { get; }
+        }
+    }
+
+    internal static class SitemapDotNetEngine
+    {
+        private const string TemplateTiendas = "PlantillaSitemapsTiendas.json";
+        private const string TemplateBbvs = "PlantillaSitemapsBBvs.json";
+        private static readonly Regex NameAllowedRegex = new Regex("[^a-zA-Z0-9_()+-]", RegexOptions.Compiled);
+        private static readonly Regex UrlRegex = new Regex("https?://[^\\s\"']+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex TrailingDigitsRegex = new Regex("(\\d+)$", RegexOptions.Compiled);
+        private static readonly Regex IdFieldRegex = new Regex("\"_id\"\\s*:\\s*\".*?\"", RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly Regex StartUrlFieldRegex = new Regex("\"startUrl\"\\s*:\\s*\\[[\\s\\S]*?\\]", RegexOptions.Singleline | RegexOptions.Compiled);
+
+        public static SitemapEngineResponse Handle(SitemapEngineRequest request)
+        {
+            var action = (request?.Action ?? string.Empty).Trim().ToLowerInvariant();
+            if (action != "process")
+            {
+                return Error("Unknown action");
+            }
+
+            return HandleProcess(request);
+        }
+
+        private static SitemapEngineResponse HandleProcess(SitemapEngineRequest data)
+        {
+            var inputFiles = (data?.InputFiles ?? Array.Empty<string>())
+                .Where(f => !string.IsNullOrWhiteSpace(f))
+                .ToArray();
+            if (inputFiles.Length == 0)
+            {
+                return Error("Missing input_files");
+            }
+
+            foreach (var fp in inputFiles)
+            {
+                if (!File.Exists(fp))
+                {
+                    return Error("Input file not found: " + fp);
+                }
+            }
+
+            var outputDir = (data?.OutputDir ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(outputDir))
+            {
+                outputDir = GetDownloadsPath();
+            }
+
+            if (data?.ZipOutput == true)
+            {
+                throw new NotSupportedException("ZIP output is handled by Python fallback during transition.");
+            }
+
+            var prefix1 = (data?.NamePrefix1 ?? string.Empty).Trim();
+            var prefix2 = (data?.NamePrefix2 ?? string.Empty).Trim();
+            var templateMode = (data?.TemplateMode ?? string.Empty).Trim().ToLowerInvariant();
+            var storeName = (data?.StoreName ?? string.Empty).Trim();
+            var useNewName = !string.IsNullOrWhiteSpace(storeName) || !string.IsNullOrWhiteSpace(prefix1) || !string.IsNullOrWhiteSpace(prefix2);
+
+            string baseLabel;
+            if (useNewName)
+            {
+                if (string.IsNullOrWhiteSpace(storeName))
+                {
+                    storeName = (data?.Store ?? string.Empty).Trim();
+                }
+                if (string.IsNullOrWhiteSpace(storeName))
+                {
+                    return Error("Missing store_name");
+                }
+                baseLabel = prefix1 + prefix2 + storeName;
+            }
+            else
+            {
+                var baseName = (data?.BaseName ?? string.Empty).Trim();
+                if (string.IsNullOrWhiteSpace(baseName))
+                {
+                    return Error("Missing base_name");
+                }
+                var store = (data?.Store ?? string.Empty).Trim();
+                baseLabel = string.IsNullOrWhiteSpace(store) ? baseName : (store + "_" + baseName);
+            }
+
+            var templateName = SelectTemplate(templateMode);
+            var templateText = LoadTemplateText(templateName);
+
+            var folderName = SanitizeName(baseLabel, "sitemap") + "_" + DateTime.Now.ToString("ddMMyy") + "_" + DateTime.Now.ToString("HHmm");
+            var workDir = Path.Combine(outputDir, folderName);
+            Directory.CreateDirectory(workDir);
+
+            var baseId = SanitizeName(baseLabel, "sitemap");
+            var outputFiles = new List<string>();
+            var usedTitles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            for (var i = 0; i < inputFiles.Length; i++)
+            {
+                var fp = inputFiles[i];
+                var urls = ReadUrlsFromFile(fp);
+                if (urls.Count == 0)
+                {
+                    return Error("No URLs found in: " + fp);
+                }
+
+                var suffix = ExtractTrailingNumber(fp);
+                string title;
+                if (!string.IsNullOrWhiteSpace(suffix))
+                {
+                    title = baseId + "_" + suffix;
+                }
+                else if (inputFiles.Length > 1)
+                {
+                    title = baseId + "_" + (i + 1);
+                }
+                else
+                {
+                    title = baseId;
+                }
+
+                if (!usedTitles.Add(title))
+                {
+                    title = title + "_" + (i + 1);
+                    usedTitles.Add(title);
+                }
+
+                var jsonPayload = BuildSitemapPayload(templateText, title, urls);
+                var outPath = Path.Combine(workDir, title + ".json");
+                File.WriteAllText(outPath, jsonPayload, new UTF8Encoding(false));
+                outputFiles.Add(outPath);
+            }
+
+            return new SitemapEngineResponse
+            {
+                Ok = true,
+                OutputFolder = workDir,
+                ZipPath = string.Empty,
+                OutputFiles = outputFiles.ToArray(),
+            };
+        }
+
+        private static List<string> ReadUrlsFromFile(string path)
+        {
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            if (ext == ".xlsx" || ext == ".xls")
+            {
+                throw new NotSupportedException("Excel input is handled by Python fallback during transition.");
+            }
+
+            var text = ReadTextFallback(path);
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return new List<string>();
+            }
+
+            var urls = new List<string>();
+            foreach (Match match in UrlRegex.Matches(text))
+            {
+                if (match.Success && !string.IsNullOrWhiteSpace(match.Value))
+                {
+                    urls.Add(match.Value);
+                }
+            }
+
+            return urls;
+        }
+
+        private static string ReadTextFallback(string path)
+        {
+            string text;
+            if (TryRead(path, new UTF8Encoding(true), out text))
+            {
+                return text;
+            }
+            if (TryRead(path, new UTF8Encoding(false), out text))
+            {
+                return text;
+            }
+            if (TryRead(path, Encoding.GetEncoding("latin1"), out text))
+            {
+                return text;
+            }
+            return File.ReadAllText(path);
+        }
+
+        private static bool TryRead(string path, Encoding encoding, out string text)
+        {
+            try
+            {
+                using (var reader = new StreamReader(path, encoding, true))
+                {
+                    text = reader.ReadToEnd();
+                    return true;
+                }
+            }
+            catch
+            {
+                text = null;
+                return false;
+            }
+        }
+
+        private static string SelectTemplate(string templateMode)
+        {
+            return string.Equals(templateMode, "nube", StringComparison.OrdinalIgnoreCase) ? TemplateBbvs : TemplateTiendas;
+        }
+
+        private static string LoadTemplateText(string templateName)
+        {
+            var candidates = new[]
+            {
+                templateName,
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, templateName),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Engines", "Sitemap", templateName),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "Debug", "Engines", "Sitemap", templateName),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "Release", "Engines", "Sitemap", templateName),
+            };
+
+            foreach (var candidate in candidates)
+            {
+                if (File.Exists(candidate))
+                {
+                    return File.ReadAllText(candidate, new UTF8Encoding(false));
+                }
+            }
+
+            throw new FileNotFoundException("Sitemap template not found: " + templateName);
+        }
+
+        private static string BuildSitemapPayload(string templateText, string title, IList<string> urls)
+        {
+            var idJson = "\"_id\":\"" + EscapeJson(title) + "\"";
+            var startUrlsJson = "\"startUrl\":[" + string.Join(",", urls.Select(u => "\"" + EscapeJson(u) + "\"")) + "]";
+
+            var withId = IdFieldRegex.Replace(templateText, idJson, 1);
+            var withStartUrls = StartUrlFieldRegex.Replace(withId, startUrlsJson, 1);
+            return withStartUrls;
+        }
+
+        private static string EscapeJson(string value)
+        {
+            return (value ?? string.Empty)
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"");
+        }
+
+        private static string ExtractTrailingNumber(string path)
+        {
+            var stem = Path.GetFileNameWithoutExtension(path) ?? string.Empty;
+            var match = TrailingDigitsRegex.Match(stem);
+            return match.Success ? match.Groups[1].Value : string.Empty;
+        }
+
+        private static string SanitizeName(string text, string defaultValue)
+        {
+            var repl = (text ?? string.Empty).Trim();
+            repl = repl.Replace(" ", "_").Replace("-", "_");
+            repl = NameAllowedRegex.Replace(repl, "_");
+            repl = Regex.Replace(repl, "_+", "_");
+            repl = repl.Trim('_').Trim('.');
+            return string.IsNullOrWhiteSpace(repl) ? defaultValue : repl;
+        }
+
+        private static string GetDownloadsPath()
+        {
+            var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            return Path.Combine(userProfile, "Downloads");
+        }
+
+        private static SitemapEngineResponse Error(string message)
+        {
+            return new SitemapEngineResponse
+            {
+                Ok = false,
+                Error = message,
+                Traceback = string.Empty,
+                OutputFiles = Array.Empty<string>(),
+            };
         }
     }
 

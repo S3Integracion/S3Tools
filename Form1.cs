@@ -8,11 +8,6 @@ namespace S3Integración_programs
 {
     public partial class Form1 : Form
     {
-        private AsinBatcherControl asinBatcherControl;
-        private SitemapControl sitemapControl;
-        private FormatoControl formatoControl;
-        private ControlRemotoControl controlRemotoControl;
-
         public Form1()
         {
             InitializeComponent();
@@ -22,42 +17,6 @@ namespace S3Integración_programs
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Lazy-create controls to keep designer code minimal.
-            if (asinBatcherControl == null)
-            {
-                asinBatcherControl = new AsinBatcherControl
-                {
-                    Dock = DockStyle.Fill,
-                };
-                asinBatcherPanel.Controls.Add(asinBatcherControl);
-            }
-
-            if (sitemapControl == null)
-            {
-                sitemapControl = new SitemapControl
-                {
-                    Dock = DockStyle.Fill,
-                };
-                sitemapPanel.Controls.Add(sitemapControl);
-            }
-
-            if (formatoControl == null)
-            {
-                formatoControl = new FormatoControl
-                {
-                    Dock = DockStyle.Fill,
-                };
-                formatoPanel.Controls.Add(formatoControl);
-            }
-
-            if (controlRemotoControl == null)
-            {
-                controlRemotoControl = new ControlRemotoControl
-                {
-                    Dock = DockStyle.Fill,
-                };
-                controlRemotoPanel.Controls.Add(controlRemotoControl);
-            }
         }
 
         private void ShowTab(TabPage tabPage)
@@ -92,6 +51,11 @@ namespace S3Integración_programs
             {
                 // Keep default icon if the custom one cannot be loaded.
             }
+        }
+
+        private void asinBatcherControl_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
