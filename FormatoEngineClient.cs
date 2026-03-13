@@ -1,5 +1,4 @@
-// Client wrapper for the Formato Python engine.
-// Resolves the engine executable/script and exchanges JSON via stdin/stdout.
+// Client wrapper for the Formato C# engine.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +18,8 @@ namespace S3Integración_programs
 {
     internal sealed class FormatoEngineClient
     {
+        // C# engine is now the default execution path.
+        // Legacy fallback helpers remain temporarily for transition cleanup.
         private const string EngineScriptName = "format.py";
         private static readonly string EngineExeName = Path.ChangeExtension(EngineScriptName, ".exe");
         private const string EngineEnvVar = "FORMATO_ENGINE_PATH";
@@ -36,21 +37,7 @@ namespace S3Integración_programs
 
         private FormatoEngineResponse Send(FormatoEngineRequest request)
         {
-            try
-            {
-                return FormatoDotNetEngine.Handle(request);
-            }
-            catch (Exception dotnetEx)
-            {
-                var fallback = SendWithPythonEngine(request);
-                if (!fallback.Ok)
-                {
-                    fallback.Traceback = string.IsNullOrWhiteSpace(fallback.Traceback)
-                        ? dotnetEx.ToString()
-                        : fallback.Traceback + Environment.NewLine + Environment.NewLine + "DotNet engine error:" + Environment.NewLine + dotnetEx;
-                }
-                return fallback;
-            }
+            return FormatoDotNetEngine.Handle(request);
         }
 
         private FormatoEngineResponse SendWithPythonEngine(FormatoEngineRequest request)

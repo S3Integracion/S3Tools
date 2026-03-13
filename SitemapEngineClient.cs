@@ -1,5 +1,4 @@
-// Client wrapper for the Sitemap Python engine.
-// Resolves the engine executable/script and exchanges JSON via stdin/stdout.
+// Client wrapper for the Sitemap C# engine.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,11 +11,15 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.IO.Compression;
+using ClosedXML.Excel;
 
 namespace S3Integración_programs
 {
     internal sealed class SitemapEngineClient
     {
+        // C# engine is now the default execution path.
+        // Legacy fallback helpers remain temporarily for transition cleanup.
         private const string EngineScriptName = "form_site.py";
         private static readonly string EngineExeName = Path.ChangeExtension(EngineScriptName, ".exe");
         private const string EngineEnvVar = "SITEMAP_ENGINE_PATH";
@@ -34,21 +37,7 @@ namespace S3Integración_programs
 
         private SitemapEngineResponse Send(SitemapEngineRequest request)
         {
-            try
-            {
-                return SitemapDotNetEngine.Handle(request);
-            }
-            catch (Exception dotnetEx)
-            {
-                var fallback = SendWithPythonEngine(request);
-                if (!fallback.Ok)
-                {
-                    fallback.Traceback = string.IsNullOrWhiteSpace(fallback.Traceback)
-                        ? dotnetEx.ToString()
-                        : fallback.Traceback + Environment.NewLine + Environment.NewLine + "DotNet engine error:" + Environment.NewLine + dotnetEx;
-                }
-                return fallback;
-            }
+            return SitemapDotNetEngine.Handle(request);
         }
 
         private SitemapEngineResponse SendWithPythonEngine(SitemapEngineRequest request)
@@ -447,10 +436,7 @@ namespace S3Integración_programs
                 outputDir = GetDownloadsPath();
             }
 
-            if (data?.ZipOutput == true)
-            {
-                throw new NotSupportedException("ZIP output is handled by Python fallback during transition.");
-            }
+            var zipOutput = data?.ZipOutput == true;
 
             var prefix1 = (data?.NamePrefix1 ?? string.Empty).Trim();
             var prefix2 = (data?.NamePrefix2 ?? string.Empty).Trim();
@@ -529,11 +515,25 @@ namespace S3Integración_programs
                 outputFiles.Add(outPath);
             }
 
+            var zipPath = string.Empty;
+            if (zipOutput)
+            {
+                zipPath = Path.Combine(outputDir, folderName + ".zip");
+                ZipOutputs(outputFiles, zipPath);
+                try
+                {
+                    Directory.Delete(workDir, true);
+                }
+                catch
+                {
+                }
+            }
+
             return new SitemapEngineResponse
             {
                 Ok = true,
-                OutputFolder = workDir,
-                ZipPath = string.Empty,
+                OutputFolder = zipOutput ? string.Empty : workDir,
+                ZipPath = zipPath,
                 OutputFiles = outputFiles.ToArray(),
             };
         }
@@ -541,9 +541,13 @@ namespace S3Integración_programs
         private static List<string> ReadUrlsFromFile(string path)
         {
             var ext = Path.GetExtension(path).ToLowerInvariant();
-            if (ext == ".xlsx" || ext == ".xls")
+            if (ext == ".xlsx")
             {
-                throw new NotSupportedException("Excel input is handled by Python fallback during transition.");
+                return ReadUrlsFromExcel(path);
+            }
+            if (ext == ".xls")
+            {
+                throw new NotSupportedException("Legacy .xls input is not supported in .NET mode. Convert to .xlsx or .txt.");
             }
 
             var text = ReadTextFallback(path);
@@ -562,6 +566,67 @@ namespace S3Integración_programs
             }
 
             return urls;
+        }
+
+        private static List<string> ReadUrlsFromExcel(string path)
+        {
+            var urls = new List<string>();
+            using (var wb = new XLWorkbook(path))
+            {
+                foreach (var ws in wb.Worksheets)
+                {
+                    var lastRow = ws.LastRowUsed()?.RowNumber() ?? 0;
+                    var lastCol = ws.LastColumnUsed()?.ColumnNumber() ?? 0;
+                    for (var r = 1; r <= lastRow; r++)
+                    {
+                        for (var c = 1; c <= lastCol; c++)
+                        {
+                            var value = ws.Cell(r, c).GetString();
+                            if (string.IsNullOrWhiteSpace(value))
+                            {
+                                continue;
+                            }
+
+                            foreach (Match match in UrlRegex.Matches(value))
+                            {
+                                if (match.Success && !string.IsNullOrWhiteSpace(match.Value))
+                                {
+                                    urls.Add(match.Value);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return urls;
+        }
+
+        private static void ZipOutputs(IEnumerable<string> files, string targetZip)
+        {
+            var list = (files ?? Enumerable.Empty<string>()).Where(File.Exists).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (list.Count == 0)
+            {
+                return;
+            }
+
+            var parent = Path.GetDirectoryName(targetZip);
+            if (!string.IsNullOrWhiteSpace(parent))
+            {
+                Directory.CreateDirectory(parent);
+            }
+
+            if (File.Exists(targetZip))
+            {
+                File.Delete(targetZip);
+            }
+
+            using (var archive = ZipFile.Open(targetZip, ZipArchiveMode.Create))
+            {
+                foreach (var file in list)
+                {
+                    archive.CreateEntryFromFile(file, Path.GetFileName(file));
+                }
+            }
         }
 
         private static string ReadTextFallback(string path)

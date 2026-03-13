@@ -1,5 +1,4 @@
-// Client wrapper for the Asin Batcher Python engine.
-// Resolves the engine executable/script and exchanges JSON via stdin/stdout.
+// Client wrapper for the Asin Batcher C# engine.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,11 +13,14 @@ using System.Threading.Tasks;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 using System.Xml;
+using ClosedXML.Excel;
 
 namespace S3Integración_programs
 {
     internal sealed class AsinBatcherEngineClient
     {
+        // C# engine is now the default execution path.
+        // Legacy fallback helpers remain temporarily for transition cleanup.
         private const string EngineScriptName = "engine.py";
         private static readonly string EngineExeName = Path.ChangeExtension(EngineScriptName, ".exe");
         private const string EngineEnvVar = "ASIN_BATCHER_ENGINE_PATH";
@@ -60,21 +62,7 @@ namespace S3Integración_programs
 
         private EngineResponse Send(EngineRequest request)
         {
-            try
-            {
-                return AsinBatcherDotNetEngine.Handle(request);
-            }
-            catch (Exception dotnetEx)
-            {
-                var fallback = SendWithPythonEngine(request);
-                if (!fallback.Ok)
-                {
-                    fallback.Traceback = string.IsNullOrWhiteSpace(fallback.Traceback)
-                        ? dotnetEx.ToString()
-                        : fallback.Traceback + Environment.NewLine + Environment.NewLine + "DotNet engine error:" + Environment.NewLine + dotnetEx;
-                }
-                return fallback;
-            }
+            return AsinBatcherDotNetEngine.Handle(request);
         }
 
         private EngineResponse SendWithPythonEngine(EngineRequest request)
@@ -611,11 +599,18 @@ namespace S3Integración_programs
 
             if (ext == ".xlsx")
             {
-                throw new NotSupportedException("Excel input is handled by Python fallback during transition.");
+                if (IsInventoryReport(path))
+                {
+                    asins = ReadAsinsFromInventoryExcel(path);
+                }
+                else
+                {
+                    asins = ReadAsinsFromFirstExcelColumn(path);
+                }
             }
             else if (ext == ".xls")
             {
-                throw new NotSupportedException("Legacy .xls input is handled by Python fallback durante la transición.");
+                throw new NotSupportedException("Legacy .xls input is not supported in .NET mode. Convert to .xlsx or .txt.");
             }
             else if (ext == ".txt")
             {
@@ -756,12 +751,106 @@ namespace S3Integración_programs
 
         private static List<string> ReadAsinsFromInventoryExcel(string path)
         {
-            throw new NotSupportedException("Excel input is handled by Python fallback during transition.");
+            var asins = new List<string>();
+            using (var wb = new XLWorkbook(path))
+            {
+                var ws = wb.Worksheets.FirstOrDefault();
+                if (ws == null)
+                {
+                    return asins;
+                }
+
+                var lastRow = ws.LastRowUsed()?.RowNumber() ?? 0;
+                var lastCol = ws.LastColumnUsed()?.ColumnNumber() ?? 0;
+                if (lastRow <= 0 || lastCol <= 0)
+                {
+                    return asins;
+                }
+
+                var asinCol = -1;
+                for (var c = 1; c <= lastCol; c++)
+                {
+                    var header = (ws.Cell(1, c).GetString() ?? string.Empty).Trim().ToLowerInvariant();
+                    if (header == "asin")
+                    {
+                        asinCol = c;
+                        break;
+                    }
+                }
+
+                if (asinCol > 0)
+                {
+                    for (var r = 2; r <= lastRow; r++)
+                    {
+                        var cell = (ws.Cell(r, asinCol).GetString() ?? string.Empty).Trim().ToUpperInvariant();
+                        var m = AsinRegex.Match(cell);
+                        if (!m.Success)
+                        {
+                            continue;
+                        }
+                        var clean = CleanAsin(m.Value);
+                        if (!string.IsNullOrWhiteSpace(clean))
+                        {
+                            asins.Add(clean);
+                        }
+                    }
+                    return asins;
+                }
+
+                for (var r = 1; r <= lastRow; r++)
+                {
+                    for (var c = 1; c <= lastCol; c++)
+                    {
+                        var cell = (ws.Cell(r, c).GetString() ?? string.Empty).Trim().ToUpperInvariant();
+                        var m = AsinRegex.Match(cell);
+                        if (!m.Success)
+                        {
+                            continue;
+                        }
+                        var clean = CleanAsin(m.Value);
+                        if (!string.IsNullOrWhiteSpace(clean))
+                        {
+                            asins.Add(clean);
+                        }
+                    }
+                }
+            }
+            return asins;
         }
 
         private static List<string> ReadAsinsFromFirstExcelColumn(string path)
         {
-            throw new NotSupportedException("Excel input is handled by Python fallback during transition.");
+            var asins = new List<string>();
+            using (var wb = new XLWorkbook(path))
+            {
+                var ws = wb.Worksheets.FirstOrDefault();
+                if (ws == null)
+                {
+                    return asins;
+                }
+
+                var lastRow = ws.LastRowUsed()?.RowNumber() ?? 0;
+                if (lastRow <= 0)
+                {
+                    return asins;
+                }
+
+                for (var r = 1; r <= lastRow; r++)
+                {
+                    var cell = (ws.Cell(r, 1).GetString() ?? string.Empty).Trim().ToUpperInvariant();
+                    var m = AsinRegex.Match(cell);
+                    if (!m.Success)
+                    {
+                        continue;
+                    }
+                    var clean = CleanAsin(m.Value);
+                    if (!string.IsNullOrWhiteSpace(clean))
+                    {
+                        asins.Add(clean);
+                    }
+                }
+            }
+            return asins;
         }
 
         private static string CleanAsin(string value)
@@ -934,7 +1023,30 @@ namespace S3Integración_programs
 
         private static void ZipOutputs(IEnumerable<string> files, string targetZip)
         {
-            throw new NotSupportedException("ZIP output is handled by Python fallback during transition.");
+            var list = (files ?? Enumerable.Empty<string>()).Where(File.Exists).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (list.Count == 0)
+            {
+                return;
+            }
+
+            var parent = Path.GetDirectoryName(targetZip);
+            if (!string.IsNullOrWhiteSpace(parent))
+            {
+                Directory.CreateDirectory(parent);
+            }
+
+            if (File.Exists(targetZip))
+            {
+                File.Delete(targetZip);
+            }
+
+            using (var archive = ZipFile.Open(targetZip, ZipArchiveMode.Create))
+            {
+                foreach (var file in list)
+                {
+                    archive.CreateEntryFromFile(file, Path.GetFileName(file));
+                }
+            }
         }
 
         private static string ExportDuplicatesCsv(IEnumerable<string> dups, string outdir)
