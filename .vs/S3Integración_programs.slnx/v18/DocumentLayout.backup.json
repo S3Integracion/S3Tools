@@ -3,20 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\ariel\\GitHub\\S3Tools\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\ariel\\github\\s3tools\\asinbatchercontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:asinbatchercontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ariel\\GitHub\\S3Tools\\Form1.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Form1.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\ariel\\github\\s3tools\\sitemapcontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:sitemapcontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ariel\\GitHub\\S3Tools\\.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\ariel\\github\\s3tools\\formatocontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:formatocontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ariel\\GitHub\\S3Tools\\.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\assessment.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownPreview",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\assessment.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownPreview"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\ariel\\github\\s3tools\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj.new||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:S3Integraci\u00F3n_programs.csproj.new||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:S3Integraci\u00F3n_programs.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ariel\\GitHub\\S3Tools\\FormatoDotNetEngine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:FormatoDotNetEngine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,51 +42,84 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Form1.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\Form1.cs [Dise\u00F1o]",
-              "RelativeToolTip": "Form1.cs [Dise\u00F1o]",
+              "DocumentIndex": 0,
+              "Title": "Form1.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\Form1.Designer.cs",
+              "RelativeDocumentMoniker": "Form1.Designer.cs",
+              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\Form1.Designer.cs",
+              "RelativeToolTip": "Form1.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:25:42.411Z",
-              "EditorCaption": " [Dise\u00F1o]"
+              "WhenOpened": "2026-03-13T00:21:37.822Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AsinBatcherControl.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\AsinBatcherControl.cs",
-              "RelativeDocumentMoniker": "AsinBatcherControl.cs",
-              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\AsinBatcherControl.cs [Dise\u00F1o]",
-              "RelativeToolTip": "AsinBatcherControl.cs [Dise\u00F1o]",
+              "DocumentIndex": 5,
+              "Title": "FormatoDotNetEngine.cs",
+              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\FormatoDotNetEngine.cs",
+              "RelativeDocumentMoniker": "FormatoDotNetEngine.cs",
+              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\FormatoDotNetEngine.cs",
+              "RelativeToolTip": "FormatoDotNetEngine.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcCAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:06:15.146Z",
-              "EditorCaption": " [Dise\u00F1o]"
+              "WhenOpened": "2026-03-13T00:08:23.813Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "S3Integraci\u00F3n_programs.csproj",
+              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
+              "RelativeDocumentMoniker": "S3Integraci\u00F3n_programs.csproj",
+              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
+              "RelativeToolTip": "S3Integraci\u00F3n_programs.csproj",
+              "ViewState": "AgIAAA0AAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-03-13T00:06:12.799Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "S3Integraci\u00F3n_programs.csproj.new",
+              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj.new",
+              "RelativeDocumentMoniker": "S3Integraci\u00F3n_programs.csproj.new",
+              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj.new",
+              "RelativeToolTip": "S3Integraci\u00F3n_programs.csproj.new",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-03-13T00:04:15.551Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "SitemapControl.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\SitemapControl.cs",
-              "RelativeDocumentMoniker": "SitemapControl.cs",
-              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\SitemapControl.cs [Dise\u00F1o]*",
-              "RelativeToolTip": "SitemapControl.cs [Dise\u00F1o]*",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:19:07.241Z",
-              "EditorCaption": " [Dise\u00F1o]"
+              "Title": "tasks.md",
+              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md",
+              "RelativeDocumentMoniker": ".github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md",
+              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md",
+              "RelativeToolTip": ".github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-03-13T00:00:50.467Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "FormatoControl.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\FormatoControl.cs",
-              "RelativeDocumentMoniker": "FormatoControl.cs",
-              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\FormatoControl.cs [Dise\u00F1o]*",
-              "RelativeToolTip": "FormatoControl.cs [Dise\u00F1o]*",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:25:57.463Z",
-              "EditorCaption": " [Dise\u00F1o]"
+              "Title": "assessment.md [Versi\u00F3n preliminar]",
+              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\assessment.md",
+              "RelativeDocumentMoniker": ".github\\upgrades\\scenarios\\new-dotnet-version_450b88\\assessment.md",
+              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\assessment.md [Versi\u00F3n preliminar]",
+              "RelativeToolTip": ".github\\upgrades\\scenarios\\new-dotnet-version_450b88\\assessment.md [Versi\u00F3n preliminar]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-03-12T23:37:31.837Z",
+              "EditorCaption": " [Versi\u00F3n preliminar]"
             }
           ]
         }

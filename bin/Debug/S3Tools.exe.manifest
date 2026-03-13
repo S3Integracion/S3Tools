@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="S3Tools.exe" size="226224">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="S3Tools.exe" size="311728">
       <assemblyIdentity name="S3Tools" version="2.5.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>hYIHjzOEIj7mH5i4OI3vXSc8HXdqn3i1g25oIJlt21w=</dsig:DigestValue>
+        <dsig:DigestValue>oV1ta4fuE9pPwghSlHpa6EL6Ikf9V39mP3TJegtwIiI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

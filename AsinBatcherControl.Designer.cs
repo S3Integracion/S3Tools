@@ -86,7 +86,6 @@ namespace S3Integración_programs
             this.outputRow.SuspendLayout();
             this.outputButtonPanel.SuspendLayout();
             this.processPanel.SuspendLayout();
-            this.helpPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // rootLayout
@@ -97,19 +96,21 @@ namespace S3Integración_programs
             this.rootLayout.Controls.Add(this.previewGroup, 0, 1);
             this.rootLayout.Controls.Add(this.optionsLayout, 0, 2);
             this.rootLayout.Controls.Add(this.outputGroup, 0, 3);
-            this.rootLayout.Controls.Add(this.processPanel, 0, 4);
+            this.rootLayout.Controls.Add(this.processPanel, 1, 4);
             this.rootLayout.Controls.Add(this.helpPanel, 0, 5);
+            this.rootLayout.Controls.Add(this._helpButton, 0, 6);
             this.rootLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rootLayout.Location = new System.Drawing.Point(0, 0);
             this.rootLayout.Name = "rootLayout";
             this.rootLayout.Padding = new System.Windows.Forms.Padding(10);
-            this.rootLayout.RowCount = 6;
+            this.rootLayout.RowCount = 7;
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
             this.rootLayout.Size = new System.Drawing.Size(900, 740);
             this.rootLayout.TabIndex = 0;
             // 
@@ -697,18 +698,18 @@ namespace S3Integración_programs
             // helpPanel
             // 
             this.helpPanel.AutoSize = true;
-            this.helpPanel.Controls.Add(this._helpButton);
             this.helpPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.helpPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.helpPanel.Location = new System.Drawing.Point(13, 694);
             this.helpPanel.Name = "helpPanel";
-            this.helpPanel.Size = new System.Drawing.Size(874, 33);
+            this.helpPanel.Size = new System.Drawing.Size(874, 1);
             this.helpPanel.TabIndex = 5;
             // 
             // _helpButton
             // 
+            this._helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this._helpButton.AutoSize = true;
-            this._helpButton.Location = new System.Drawing.Point(803, 3);
+            this._helpButton.Location = new System.Drawing.Point(819, 700);
             this._helpButton.Name = "_helpButton";
             this._helpButton.Size = new System.Drawing.Size(68, 27);
             this._helpButton.TabIndex = 0;
@@ -759,8 +760,6 @@ namespace S3Integración_programs
             this.outputButtonPanel.PerformLayout();
             this.processPanel.ResumeLayout(false);
             this.processPanel.PerformLayout();
-            this.helpPanel.ResumeLayout(false);
-            this.helpPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }

@@ -129,7 +129,7 @@ namespace S3Integración_programs
             this.inputLayout.RowCount = 2;
             this.inputLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.inputLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.inputLayout.Size = new System.Drawing.Size(994, 56);
+            this.inputLayout.Size = new System.Drawing.Size(994, 52);
             this.inputLayout.TabIndex = 0;
             // 
             // inputLabel
@@ -138,7 +138,7 @@ namespace S3Integración_programs
             this.inputLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.inputLabel.Location = new System.Drawing.Point(3, 0);
             this.inputLabel.Name = "inputLabel";
-            this.inputLabel.Size = new System.Drawing.Size(338, 17);
+            this.inputLabel.Size = new System.Drawing.Size(273, 13);
             this.inputLabel.TabIndex = 0;
             this.inputLabel.Text = "Archivos de entrada (.txt / .csv / .xlsx / .json):";
             this.inputLabel.Click += new System.EventHandler(this.inputLabel_Click);
@@ -149,7 +149,7 @@ namespace S3Integración_programs
             this.inputButtonsPanel.Controls.Add(this._importFilesButton);
             this.inputButtonsPanel.Controls.Add(this._clearFilesButton);
             this.inputButtonsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.inputButtonsPanel.Location = new System.Drawing.Point(3, 20);
+            this.inputButtonsPanel.Location = new System.Drawing.Point(3, 16);
             this.inputButtonsPanel.Name = "inputButtonsPanel";
             this.inputButtonsPanel.Size = new System.Drawing.Size(988, 33);
             this.inputButtonsPanel.TabIndex = 1;
@@ -178,9 +178,9 @@ namespace S3Integración_programs
             // 
             this.filesGroup.Controls.Add(this.filesLayout);
             this.filesGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.filesGroup.Location = new System.Drawing.Point(13, 75);
+            this.filesGroup.Location = new System.Drawing.Point(13, 71);
             this.filesGroup.Name = "filesGroup";
-            this.filesGroup.Size = new System.Drawing.Size(994, 83);
+            this.filesGroup.Size = new System.Drawing.Size(994, 119);
             this.filesGroup.TabIndex = 1;
             this.filesGroup.TabStop = false;
             this.filesGroup.Text = "Lotes de links";
@@ -195,14 +195,14 @@ namespace S3Integración_programs
             this.filesLayout.Controls.Add(this._summaryLabel, 0, 2);
             this.filesLayout.Controls.Add(this.filesInfoLayout, 0, 3);
             this.filesLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.filesLayout.Location = new System.Drawing.Point(3, 18);
+            this.filesLayout.Location = new System.Drawing.Point(3, 16);
             this.filesLayout.Name = "filesLayout";
             this.filesLayout.RowCount = 4;
             this.filesLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.filesLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.filesLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.filesLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.filesLayout.Size = new System.Drawing.Size(988, 62);
+            this.filesLayout.Size = new System.Drawing.Size(988, 100);
             this.filesLayout.TabIndex = 0;
             // 
             // filesHeaderPanel
@@ -224,7 +224,7 @@ namespace S3Integración_programs
             this.modePanel.Controls.Add(this._modeSelectRadio);
             this.modePanel.Location = new System.Drawing.Point(3, 3);
             this.modePanel.Name = "modePanel";
-            this.modePanel.Size = new System.Drawing.Size(274, 27);
+            this.modePanel.Size = new System.Drawing.Size(214, 23);
             this.modePanel.TabIndex = 0;
             // 
             // _modeAllRadio
@@ -232,7 +232,7 @@ namespace S3Integración_programs
             this._modeAllRadio.AutoSize = true;
             this._modeAllRadio.Location = new System.Drawing.Point(3, 3);
             this._modeAllRadio.Name = "_modeAllRadio";
-            this._modeAllRadio.Size = new System.Drawing.Size(125, 21);
+            this._modeAllRadio.Size = new System.Drawing.Size(96, 17);
             this._modeAllRadio.TabIndex = 0;
             this._modeAllRadio.TabStop = true;
             this._modeAllRadio.Text = "Convertir todos";
@@ -241,9 +241,9 @@ namespace S3Integración_programs
             // _modeSelectRadio
             // 
             this._modeSelectRadio.AutoSize = true;
-            this._modeSelectRadio.Location = new System.Drawing.Point(134, 3);
+            this._modeSelectRadio.Location = new System.Drawing.Point(105, 3);
             this._modeSelectRadio.Name = "_modeSelectRadio";
-            this._modeSelectRadio.Size = new System.Drawing.Size(137, 21);
+            this._modeSelectRadio.Size = new System.Drawing.Size(106, 17);
             this._modeSelectRadio.TabIndex = 1;
             this._modeSelectRadio.TabStop = true;
             this._modeSelectRadio.Text = "Seleccionar lotes";
@@ -252,7 +252,7 @@ namespace S3Integración_programs
             // _refreshButton
             // 
             this._refreshButton.AutoSize = true;
-            this._refreshButton.Location = new System.Drawing.Point(283, 3);
+            this._refreshButton.Location = new System.Drawing.Point(223, 3);
             this._refreshButton.Name = "_refreshButton";
             this._refreshButton.Size = new System.Drawing.Size(129, 27);
             this._refreshButton.TabIndex = 1;
@@ -264,20 +264,19 @@ namespace S3Integración_programs
             this.filesLayout.SetColumnSpan(this._filesList, 2);
             this._filesList.Dock = System.Windows.Forms.DockStyle.Fill;
             this._filesList.FormattingEnabled = true;
-            this._filesList.ItemHeight = 16;
             this._filesList.Location = new System.Drawing.Point(3, 42);
             this._filesList.Name = "_filesList";
             this._filesList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this._filesList.Size = new System.Drawing.Size(982, 1);
+            this._filesList.Size = new System.Drawing.Size(982, 10);
             this._filesList.TabIndex = 1;
             // 
             // _summaryLabel
             // 
             this._summaryLabel.AutoSize = true;
             this.filesLayout.SetColumnSpan(this._summaryLabel, 2);
-            this._summaryLabel.Location = new System.Drawing.Point(3, 5);
+            this._summaryLabel.Location = new System.Drawing.Point(3, 55);
             this._summaryLabel.Name = "_summaryLabel";
-            this._summaryLabel.Size = new System.Drawing.Size(140, 17);
+            this._summaryLabel.Size = new System.Drawing.Size(107, 13);
             this._summaryLabel.TabIndex = 2;
             this._summaryLabel.Text = "Archivos: 0 | URLs: 0";
             // 
@@ -290,12 +289,12 @@ namespace S3Integración_programs
             this.filesInfoLayout.Controls.Add(this._urlsPerBatchLabel, 0, 0);
             this.filesInfoLayout.Controls.Add(this._timeRangeLabel, 0, 1);
             this.filesInfoLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.filesInfoLayout.Location = new System.Drawing.Point(3, 25);
+            this.filesInfoLayout.Location = new System.Drawing.Point(3, 71);
             this.filesInfoLayout.Name = "filesInfoLayout";
             this.filesInfoLayout.RowCount = 2;
             this.filesInfoLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.filesInfoLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.filesInfoLayout.Size = new System.Drawing.Size(982, 34);
+            this.filesInfoLayout.Size = new System.Drawing.Size(982, 26);
             this.filesInfoLayout.TabIndex = 3;
             // 
             // _urlsPerBatchLabel
@@ -303,16 +302,16 @@ namespace S3Integración_programs
             this._urlsPerBatchLabel.AutoSize = true;
             this._urlsPerBatchLabel.Location = new System.Drawing.Point(3, 0);
             this._urlsPerBatchLabel.Name = "_urlsPerBatchLabel";
-            this._urlsPerBatchLabel.Size = new System.Drawing.Size(108, 17);
+            this._urlsPerBatchLabel.Size = new System.Drawing.Size(81, 13);
             this._urlsPerBatchLabel.TabIndex = 0;
             this._urlsPerBatchLabel.Text = "URLs por lote: -";
             // 
             // _timeRangeLabel
             // 
             this._timeRangeLabel.AutoSize = true;
-            this._timeRangeLabel.Location = new System.Drawing.Point(3, 17);
+            this._timeRangeLabel.Location = new System.Drawing.Point(3, 13);
             this._timeRangeLabel.Name = "_timeRangeLabel";
-            this._timeRangeLabel.Size = new System.Drawing.Size(206, 17);
+            this._timeRangeLabel.Size = new System.Drawing.Size(154, 13);
             this._timeRangeLabel.TabIndex = 1;
             this._timeRangeLabel.Text = "Rango de tiempo aproximado: -";
             // 
@@ -321,9 +320,9 @@ namespace S3Integración_programs
             this.storeGroup.AutoSize = true;
             this.storeGroup.Controls.Add(this.storeOuterLayout);
             this.storeGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.storeGroup.Location = new System.Drawing.Point(13, 164);
+            this.storeGroup.Location = new System.Drawing.Point(13, 196);
             this.storeGroup.Name = "storeGroup";
-            this.storeGroup.Size = new System.Drawing.Size(994, 174);
+            this.storeGroup.Size = new System.Drawing.Size(994, 156);
             this.storeGroup.TabIndex = 2;
             this.storeGroup.TabStop = false;
             this.storeGroup.Text = "Tienda";
@@ -336,12 +335,12 @@ namespace S3Integración_programs
             this.storeOuterLayout.Controls.Add(this.storeHeaderPanel, 0, 0);
             this.storeOuterLayout.Controls.Add(this.storeGrid, 0, 1);
             this.storeOuterLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.storeOuterLayout.Location = new System.Drawing.Point(3, 18);
+            this.storeOuterLayout.Location = new System.Drawing.Point(3, 16);
             this.storeOuterLayout.Name = "storeOuterLayout";
             this.storeOuterLayout.RowCount = 2;
             this.storeOuterLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.storeOuterLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.storeOuterLayout.Size = new System.Drawing.Size(988, 153);
+            this.storeOuterLayout.Size = new System.Drawing.Size(988, 137);
             this.storeOuterLayout.TabIndex = 0;
             // 
             // storeHeaderPanel
@@ -385,7 +384,7 @@ namespace S3Integración_programs
             this.storeGrid.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.storeGrid.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.storeGrid.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.storeGrid.Size = new System.Drawing.Size(982, 108);
+            this.storeGrid.Size = new System.Drawing.Size(982, 92);
             this.storeGrid.TabIndex = 1;
             // 
             // _storeProductosTxRadio
@@ -394,7 +393,7 @@ namespace S3Integración_programs
             this._storeProductosTxRadio.Checked = true;
             this._storeProductosTxRadio.Location = new System.Drawing.Point(3, 3);
             this._storeProductosTxRadio.Name = "_storeProductosTxRadio";
-            this._storeProductosTxRadio.Size = new System.Drawing.Size(111, 21);
+            this._storeProductosTxRadio.Size = new System.Drawing.Size(87, 17);
             this._storeProductosTxRadio.TabIndex = 0;
             this._storeProductosTxRadio.TabStop = true;
             this._storeProductosTxRadio.Text = "ProductosTX";
@@ -405,7 +404,7 @@ namespace S3Integración_programs
             this._storeBbvsTemplateRadio.AutoSize = true;
             this._storeBbvsTemplateRadio.Location = new System.Drawing.Point(494, 3);
             this._storeBbvsTemplateRadio.Name = "_storeBbvsTemplateRadio";
-            this._storeBbvsTemplateRadio.Size = new System.Drawing.Size(128, 21);
+            this._storeBbvsTemplateRadio.Size = new System.Drawing.Size(100, 17);
             this._storeBbvsTemplateRadio.TabIndex = 1;
             this._storeBbvsTemplateRadio.Text = "BBvs_Template";
             this._storeBbvsTemplateRadio.UseVisualStyleBackColor = true;
@@ -413,9 +412,9 @@ namespace S3Integración_programs
             // _storeHolaproductoRadio
             // 
             this._storeHolaproductoRadio.AutoSize = true;
-            this._storeHolaproductoRadio.Location = new System.Drawing.Point(3, 30);
+            this._storeHolaproductoRadio.Location = new System.Drawing.Point(3, 26);
             this._storeHolaproductoRadio.Name = "_storeHolaproductoRadio";
-            this._storeHolaproductoRadio.Size = new System.Drawing.Size(114, 21);
+            this._storeHolaproductoRadio.Size = new System.Drawing.Size(89, 17);
             this._storeHolaproductoRadio.TabIndex = 2;
             this._storeHolaproductoRadio.Text = "Holaproducto";
             this._storeHolaproductoRadio.UseVisualStyleBackColor = true;
@@ -423,9 +422,9 @@ namespace S3Integración_programs
             // _storeBbvs2daRadio
             // 
             this._storeBbvs2daRadio.AutoSize = true;
-            this._storeBbvs2daRadio.Location = new System.Drawing.Point(494, 30);
+            this._storeBbvs2daRadio.Location = new System.Drawing.Point(494, 26);
             this._storeBbvs2daRadio.Name = "_storeBbvs2daRadio";
-            this._storeBbvs2daRadio.Size = new System.Drawing.Size(119, 21);
+            this._storeBbvs2daRadio.Size = new System.Drawing.Size(94, 17);
             this._storeBbvs2daRadio.TabIndex = 3;
             this._storeBbvs2daRadio.Text = "BBvsBB2_2da";
             this._storeBbvs2daRadio.UseVisualStyleBackColor = true;
@@ -433,9 +432,9 @@ namespace S3Integración_programs
             // _storeAltinorRadio
             // 
             this._storeAltinorRadio.AutoSize = true;
-            this._storeAltinorRadio.Location = new System.Drawing.Point(3, 57);
+            this._storeAltinorRadio.Location = new System.Drawing.Point(3, 49);
             this._storeAltinorRadio.Name = "_storeAltinorRadio";
-            this._storeAltinorRadio.Size = new System.Drawing.Size(69, 21);
+            this._storeAltinorRadio.Size = new System.Drawing.Size(54, 17);
             this._storeAltinorRadio.TabIndex = 4;
             this._storeAltinorRadio.Text = "Altinor";
             this._storeAltinorRadio.UseVisualStyleBackColor = true;
@@ -443,9 +442,9 @@ namespace S3Integración_programs
             // _storeBbvsRadio
             // 
             this._storeBbvsRadio.AutoSize = true;
-            this._storeBbvsRadio.Location = new System.Drawing.Point(494, 57);
+            this._storeBbvsRadio.Location = new System.Drawing.Point(494, 49);
             this._storeBbvsRadio.Name = "_storeBbvsRadio";
-            this._storeBbvsRadio.Size = new System.Drawing.Size(87, 21);
+            this._storeBbvsRadio.Size = new System.Drawing.Size(70, 17);
             this._storeBbvsRadio.TabIndex = 5;
             this._storeBbvsRadio.Text = "BBvsBB2";
             this._storeBbvsRadio.UseVisualStyleBackColor = true;
@@ -453,9 +452,9 @@ namespace S3Integración_programs
             // _storeHervazTradeRadio
             // 
             this._storeHervazTradeRadio.AutoSize = true;
-            this._storeHervazTradeRadio.Location = new System.Drawing.Point(3, 84);
+            this._storeHervazTradeRadio.Location = new System.Drawing.Point(3, 72);
             this._storeHervazTradeRadio.Name = "_storeHervazTradeRadio";
-            this._storeHervazTradeRadio.Size = new System.Drawing.Size(112, 21);
+            this._storeHervazTradeRadio.Size = new System.Drawing.Size(87, 17);
             this._storeHervazTradeRadio.TabIndex = 6;
             this._storeHervazTradeRadio.Text = "HervazTrade";
             this._storeHervazTradeRadio.UseVisualStyleBackColor = true;
@@ -465,9 +464,9 @@ namespace S3Integración_programs
             this.templateGroup.AutoSize = true;
             this.templateGroup.Controls.Add(this.templatePanel);
             this.templateGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.templateGroup.Location = new System.Drawing.Point(13, 344);
+            this.templateGroup.Location = new System.Drawing.Point(13, 358);
             this.templateGroup.Name = "templateGroup";
-            this.templateGroup.Size = new System.Drawing.Size(994, 48);
+            this.templateGroup.Size = new System.Drawing.Size(994, 42);
             this.templateGroup.TabIndex = 3;
             this.templateGroup.TabStop = false;
             this.templateGroup.Text = "Plantilla de sitemap";
@@ -478,9 +477,9 @@ namespace S3Integración_programs
             this.templatePanel.Controls.Add(this._templateNormalRadio);
             this.templatePanel.Controls.Add(this._templateNubeRadio);
             this.templatePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.templatePanel.Location = new System.Drawing.Point(3, 18);
+            this.templatePanel.Location = new System.Drawing.Point(3, 16);
             this.templatePanel.Name = "templatePanel";
-            this.templatePanel.Size = new System.Drawing.Size(988, 27);
+            this.templatePanel.Size = new System.Drawing.Size(988, 23);
             this.templatePanel.TabIndex = 0;
             // 
             // _templateNormalRadio
@@ -488,7 +487,7 @@ namespace S3Integración_programs
             this._templateNormalRadio.AutoSize = true;
             this._templateNormalRadio.Location = new System.Drawing.Point(3, 3);
             this._templateNormalRadio.Name = "_templateNormalRadio";
-            this._templateNormalRadio.Size = new System.Drawing.Size(74, 21);
+            this._templateNormalRadio.Size = new System.Drawing.Size(58, 17);
             this._templateNormalRadio.TabIndex = 0;
             this._templateNormalRadio.TabStop = true;
             this._templateNormalRadio.Text = "Normal";
@@ -497,9 +496,9 @@ namespace S3Integración_programs
             // _templateNubeRadio
             // 
             this._templateNubeRadio.AutoSize = true;
-            this._templateNubeRadio.Location = new System.Drawing.Point(83, 3);
+            this._templateNubeRadio.Location = new System.Drawing.Point(67, 3);
             this._templateNubeRadio.Name = "_templateNubeRadio";
-            this._templateNubeRadio.Size = new System.Drawing.Size(63, 21);
+            this._templateNubeRadio.Size = new System.Drawing.Size(51, 17);
             this._templateNubeRadio.TabIndex = 1;
             this._templateNubeRadio.TabStop = true;
             this._templateNubeRadio.Text = "Nube";
@@ -514,11 +513,11 @@ namespace S3Integración_programs
             this.baseNameLayout.Controls.Add(this.baseNameLabel, 0, 0);
             this.baseNameLayout.Controls.Add(this._baseNameText, 1, 0);
             this.baseNameLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.baseNameLayout.Location = new System.Drawing.Point(13, 398);
+            this.baseNameLayout.Location = new System.Drawing.Point(13, 406);
             this.baseNameLayout.Name = "baseNameLayout";
             this.baseNameLayout.RowCount = 1;
             this.baseNameLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.baseNameLayout.Size = new System.Drawing.Size(994, 28);
+            this.baseNameLayout.Size = new System.Drawing.Size(994, 26);
             this.baseNameLayout.TabIndex = 4;
             // 
             // baseNameLabel
@@ -527,16 +526,16 @@ namespace S3Integración_programs
             this.baseNameLabel.Location = new System.Drawing.Point(3, 6);
             this.baseNameLabel.Margin = new System.Windows.Forms.Padding(3, 6, 6, 0);
             this.baseNameLabel.Name = "baseNameLabel";
-            this.baseNameLabel.Size = new System.Drawing.Size(155, 17);
+            this.baseNameLabel.Size = new System.Drawing.Size(115, 13);
             this.baseNameLabel.TabIndex = 0;
             this.baseNameLabel.Text = "Nombre para sitemaps:";
             // 
             // _baseNameText
             // 
             this._baseNameText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._baseNameText.Location = new System.Drawing.Point(167, 3);
+            this._baseNameText.Location = new System.Drawing.Point(127, 3);
             this._baseNameText.Name = "_baseNameText";
-            this._baseNameText.Size = new System.Drawing.Size(824, 22);
+            this._baseNameText.Size = new System.Drawing.Size(864, 20);
             this._baseNameText.TabIndex = 1;
             // 
             // outputGroup
@@ -544,9 +543,9 @@ namespace S3Integración_programs
             this.outputGroup.AutoSize = true;
             this.outputGroup.Controls.Add(this.outputLayout);
             this.outputGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.outputGroup.Location = new System.Drawing.Point(13, 432);
+            this.outputGroup.Location = new System.Drawing.Point(13, 438);
             this.outputGroup.Name = "outputGroup";
-            this.outputGroup.Size = new System.Drawing.Size(994, 93);
+            this.outputGroup.Size = new System.Drawing.Size(994, 87);
             this.outputGroup.TabIndex = 5;
             this.outputGroup.TabStop = false;
             this.outputGroup.Text = "Carpeta destino";
@@ -559,12 +558,12 @@ namespace S3Integración_programs
             this.outputLayout.Controls.Add(this.outputRowLayout, 0, 0);
             this.outputLayout.Controls.Add(this._zipCheck, 0, 1);
             this.outputLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.outputLayout.Location = new System.Drawing.Point(3, 18);
+            this.outputLayout.Location = new System.Drawing.Point(3, 16);
             this.outputLayout.Name = "outputLayout";
             this.outputLayout.RowCount = 2;
             this.outputLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.outputLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.outputLayout.Size = new System.Drawing.Size(988, 72);
+            this.outputLayout.Size = new System.Drawing.Size(988, 68);
             this.outputLayout.TabIndex = 0;
             // 
             // outputRowLayout
@@ -588,7 +587,7 @@ namespace S3Integración_programs
             this._outputText.Dock = System.Windows.Forms.DockStyle.Fill;
             this._outputText.Location = new System.Drawing.Point(3, 3);
             this._outputText.Name = "_outputText";
-            this._outputText.Size = new System.Drawing.Size(722, 22);
+            this._outputText.Size = new System.Drawing.Size(722, 20);
             this._outputText.TabIndex = 0;
             // 
             // outputButtonsPanel
@@ -638,7 +637,7 @@ namespace S3Integración_programs
             this._zipCheck.AutoSize = true;
             this._zipCheck.Location = new System.Drawing.Point(3, 48);
             this._zipCheck.Name = "_zipCheck";
-            this._zipCheck.Size = new System.Drawing.Size(146, 21);
+            this._zipCheck.Size = new System.Drawing.Size(114, 17);
             this._zipCheck.TabIndex = 1;
             this._zipCheck.Text = "Exportar como ZIP";
             this._zipCheck.UseVisualStyleBackColor = true;

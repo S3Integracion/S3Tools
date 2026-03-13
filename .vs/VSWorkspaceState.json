@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\Engines",
-    "\\Engines\\AsinBatcherEngine"
+    "\\Engines\\AsinBatcherEngine",
+    "\\Engines\\Formato",
+    "\\Engines\\Sitemap"
   ],
-  "SelectedNode": "\\Form1.cs",
   "PreviewInSolutionExplorer": false
 }

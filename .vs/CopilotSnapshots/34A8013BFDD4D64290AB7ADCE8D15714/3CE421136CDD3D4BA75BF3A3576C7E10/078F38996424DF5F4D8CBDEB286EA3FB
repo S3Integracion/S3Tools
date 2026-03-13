@@ -1,0 +1,535 @@
+﻿// FormatoDotNetEngine.cs
+// C# implementation of the Formato engine (replaces format.py)
+// Normalizes the first two WebScraper headers in CSV/XLSX files.
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using ClosedXML.Excel;
+
+namespace S3Integración_programs
+{
+    /// <summary>
+    /// Formato engine - normalizes WebScraper headers in CSV/XLSX files
+    /// </summary>
+    internal static class FormatoDotNetEngine
+    {
+        // Constants
+        private static readonly Dictionary<string, string> TemplateFiles = new Dictionary<string, string>
+        {
+            { "tiendas", "PlantillaSitemapsTiendas.json" },
+            { "bbvs", "PlantillaSitemapsBBvs.json" }
+        };
+
+        private const string DefaultTemplate = "tiendas";
+        private const string DefaultHeaderFormat = "underscore";
+
+        // Caches
+        private static readonly Dictionary<string, JsonDocument> TemplateCache = new Dictionary<string, JsonDocument>();
+        private static readonly Dictionary<string, List<string>> ExpectedCache = new Dictionary<string, List<string>>();
+
+        // Regex patterns
+        private static readonly Regex NormalizeRegex = new Regex(@"[^a-zA-Z0-9_']", RegexOptions.Compiled);
+        private static readonly Regex MultipleUnderscoresRegex = new Regex(@"_+", RegexOptions.Compiled);
+
+        // Header formats
+        private static readonly Dictionary<string, string[]> HeaderFormats = new Dictionary<string, string[]>
+        {
+            { "hyphen", new[] { "web-scraper-order", "web-scraper-start-url" } },
+            { "underscore", new[] { "web_scraper_order", "web_scraper_start_url" } }
+        };
+
+        /// <summary>
+        /// Main entry point - handles Formato engine requests
+        /// </summary>
+        public static FormatoEngineResponse Handle(FormatoEngineRequest request)
+        {
+            try
+            {
+                if (request?.Action?.ToLower() == "process")
+                {
+                    return HandleProcess(request);
+                }
+                return Error("Unknown action");
+            }
+            catch (Exception ex)
+            {
+                return Error(ex.Message, ex.ToString());
+            }
+        }
+
+        private static FormatoEngineResponse HandleProcess(FormatoEngineRequest request)
+        {
+            // Validate input
+            var inputFiles = request.InputFiles?.Where(f => !string.IsNullOrWhiteSpace(f)).ToList();
+            if (inputFiles == null || !inputFiles.Any())
+            {
+                return Error("Missing input_files");
+            }
+
+            var templateChoice = string.IsNullOrWhiteSpace(request.Template) ? "auto" : request.Template.Trim().ToLower();
+            var headerFormat = string.IsNullOrWhiteSpace(request.HeaderFormat) ? DefaultHeaderFormat : request.HeaderFormat.Trim().ToLower();
+
+            if (!HeaderFormats.ContainsKey(headerFormat))
+            {
+                return Error("Invalid header_format. Use 'hyphen' or 'underscore'.");
+            }
+
+            var updatedFiles = new List<string>();
+            var templateCounts = new Dictionary<string, int>();
+
+            // Process each file
+            foreach (var filePath in inputFiles)
+            {
+                if (!File.Exists(filePath))
+                {
+                    return Error($"Input file not found: {filePath}");
+                }
+
+                try
+                {
+                    string templateKey = UpdateHeadersInFile(filePath, templateChoice, headerFormat);
+                    updatedFiles.Add(filePath);
+                    if (!templateCounts.ContainsKey(templateKey))
+                    {
+                        templateCounts[templateKey] = 0;
+                    }
+                    templateCounts[templateKey]++;
+                }
+                catch (Exception ex)
+                {
+                    return Error($"Failed to update {filePath}: {ex.Message}", ex.ToString());
+                }
+            }
+
+            return new FormatoEngineResponse
+            {
+                Ok = true,
+                UpdatedFiles = updatedFiles,
+                TemplateCounts = templateCounts
+            };
+        }
+
+        private static string UpdateHeadersInFile(string path, string templateChoice, string headerFormat)
+        {
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            switch (ext)
+            {
+                case ".csv":
+                    return UpdateCsvHeaders(path, templateChoice, headerFormat);
+                case ".xlsx":
+                    return UpdateXlsxHeaders(path, templateChoice, headerFormat);
+                default:
+                    throw new InvalidOperationException("Unsupported file extension. Use .csv or .xlsx.");
+            }
+        }
+
+        private static string UpdateCsvHeaders(string path, string templateChoice, string headerFormat)
+        {
+            // Read file with encoding detection
+            var (text, encoding) = ReadTextWithEncoding(path);
+            
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                throw new InvalidOperationException("Empty CSV file");
+            }
+
+            // Detect delimiter
+            var delimiter = DetectCsvDelimiter(text.Length > 4096 ? text.Substring(0, 4096) : text);
+
+            // Parse CSV
+            var rows = ParseCsv(text, delimiter);
+            if (rows.Count == 0)
+            {
+                throw new InvalidOperationException("Empty CSV file");
+            }
+
+            var headers = rows[0];
+            var templateKey = ResolveTemplate(templateChoice, headers);
+            rows[0] = ApplyFirstHeaders(headers, headerFormat);
+
+            // Write back
+            WriteCsv(path, rows, delimiter, encoding);
+
+            return templateKey;
+        }
+
+        private static string UpdateXlsxHeaders(string path, string templateChoice, string headerFormat)
+        {
+            using var workbook = new XLWorkbook(path);
+            var selectedHeaders = HeaderFormats[headerFormat];
+
+            string templateKey = templateChoice;
+            if (!TemplateFiles.ContainsKey(templateChoice?.ToLower() ?? ""))
+            {
+                // Auto-detect from first worksheet
+                templateKey = DefaultTemplate;
+                var firstWorksheet = workbook.Worksheets.FirstOrDefault();
+                if (firstWorksheet != null)
+                {
+                    var columnCount = firstWorksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
+                    if (columnCount > 0)
+                    {
+                        var headers = new List<string>();
+                        for (int col = 1; col <= columnCount; col++)
+                        {
+                            headers.Add(firstWorksheet.Cell(1, col).GetValue<string>());
+                        }
+                        if (headers.Any())
+                        {
+                            templateKey = DetectTemplate(headers);
+                        }
+                    }
+                }
+            }
+
+            // Update first two headers in all worksheets
+            foreach (var worksheet in workbook.Worksheets)
+            {
+                var columnCount = worksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
+                if (columnCount >= 1)
+                {
+                    worksheet.Cell(1, 1).Value = selected_headers[0];
+                }
+                if (columnCount >= 2)
+                {
+                    worksheet.Cell(1, 2).Value = selected_headers[1];
+                }
+            }
+
+            workbook.Save();
+            return templateKey;
+        }
+
+        private static string ResolveTemplate(string choice, List<string> headers)
+        {
+            choice = (choice ?? "").Trim().ToLower();
+            if (TemplateFiles.ContainsKey(choice))
+            {
+                return choice;
+            }
+            return DetectTemplate(headers);
+        }
+
+        private static string DetectTemplate(List<string> headers)
+        {
+            var normalizedHeaders = new HashSet<string>(
+                headers.Where(h => h != null).Select(h => NormalizeHeader(h))
+            );
+
+            string best = DefaultTemplate;
+            int bestCount = -1;
+
+            foreach (var key in TemplateFiles.Keys)
+            {
+                var expected = ExpectedHeaders(key);
+                var expectedNorm = new HashSet<string>(
+                    expected.Where(h => !h.ToLower().StartsWith("web_scraper"))
+                           .Select(h => NormalizeHeader(h))
+                );
+
+                int count = normalizedHeaders.Intersect(expectedNorm).Count();
+                if (count > bestCount)
+                {
+                    bestCount = count;
+                    best = key;
+                }
+            }
+
+            return bestCount > 0 ? best : DefaultTemplate;
+        }
+
+        private static List<string> ExpectedHeaders(string templateKey)
+        {
+            if (ExpectedCache.ContainsKey(templateKey))
+            {
+                return ExpectedCache[templateKey];
+            }
+
+            var template = LoadTemplate(templateKey);
+            var headers = new List<string> { "web_scraper_order", "web_scraper_start_url" };
+
+            if (template.RootElement.TryGetProperty("selectors", out var selectorsElement))
+            {
+                foreach (var selector in selectorsElement.EnumerateArray())
+                {
+                    if (selector.TryGetProperty("type", out var typeElement))
+                    {
+                        var selectorType = typeElement.GetString()?.ToLower() ?? "";
+                        if (selectorType.Contains("elementclick"))
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (selector.TryGetProperty("id", out var idElement))
+                    {
+                        var selectorId = idElement.GetString();
+                        if (!string.IsNullOrEmpty(selectorId))
+                        {
+                            headers.Add(selectorId);
+                        }
+                    }
+                }
+            }
+
+            ExpectedCache[templateKey] = headers;
+            return headers;
+        }
+
+        private static JsonDocument LoadTemplate(string templateKey)
+        {
+            if (TemplateCache.ContainsKey(templateKey))
+            {
+                return TemplateCache[templateKey];
+            }
+
+            if (!TemplateFiles.ContainsKey(templateKey))
+            {
+                throw new ArgumentException($"Unknown template key: {templateKey}");
+            }
+
+            var templateName = TemplateFiles[templateKey];
+            var path = FindTemplatePath(templateName);
+            if (path == null)
+            {
+                throw new FileNotFoundException($"Sitemap template not found: {templateName}");
+            }
+
+            var json = File.ReadAllText(path, Encoding.UTF8);
+            var template = JsonDocument.Parse(json);
+            TemplateCache[templateKey] = template;
+            return template;
+        }
+
+        private static string FindTemplatePath(string templateName)
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var candidates = new[]
+            {
+                templateName,
+                Path.Combine(baseDir, "Engines", "Sitemap", templateName),
+                Path.Combine(baseDir, templateName),
+                Path.Combine(baseDir, "Sitemap", templateName),
+                Path.Combine(Directory.GetParent(baseDir)?.FullName ?? baseDir, "Sitemap", templateName),
+                Path.Combine(Directory.GetParent(baseDir)?.FullName ?? baseDir, "Engines", "Sitemap", templateName)
+            };
+
+            foreach (var candidate in candidates)
+            {
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+
+            return null;
+        }
+
+        private static string NormalizeHeader(string value)
+        {
+            var text = (value ?? "").Trim();
+            if (string.IsNullOrEmpty(text))
+            {
+                return "";
+            }
+
+            text = text.Replace("-", "_").Replace(" ", "_");
+            text = NormalizeRegex.Replace(text, "_");
+            text = MultipleUnderscoresRegex.Replace(text, "_");
+            return text.ToLower();
+        }
+
+        private static List<string> ApplyFirstHeaders(List<string> headers, string headerFormat)
+        {
+            var updated = new List<string>(headers);
+            var selectedHeaders = HeaderFormats[headerFormat];
+
+            if (updated.Count >= 1)
+            {
+                updated[0] = selectedHeaders[0];
+            }
+            if (updated.Count >= 2)
+            {
+                updated[1] = selectedHeaders[1];
+            }
+
+            return updated;
+        }
+
+        private static (string text, Encoding encoding) ReadTextWithEncoding(string path)
+        {
+            var encodings = new[]
+            {
+                new UTF8Encoding(true),   // UTF-8 with BOM
+                new UTF8Encoding(false),  // UTF-8 without BOM
+                Encoding.GetEncoding("ISO-8859-1") // Latin-1
+            };
+
+            foreach (var encoding in encodings)
+            {
+                try
+                {
+                    var text = File.ReadAllText(path, encoding);
+                    return (text, encoding);
+                }
+                catch
+                {
+                    // Try next encoding
+                }
+            }
+
+            // Fallback with error handling
+            var fallbackText = File.ReadAllText(path, new UTF8Encoding(false));
+            return (fallbackText, new UTF8Encoding(false));
+        }
+
+        private static char DetectCsvDelimiter(string sample)
+        {
+            // Count occurrences of common delimiters
+            var semicolonCount = sample.Count(c => c == ';');
+            var commaCount = sample.Count(c => c == ',');
+            var tabCount = sample.Count(c => c == '\t');
+            var pipeCount = sample.Count(c => c == '|');
+
+            // Simple heuristic: semicolon if present and no commas
+            if (semicolonCount > 0 && commaCount == 0)
+            {
+                return ';';
+            }
+
+            // Tab delimiter
+            if (tabCount > 0)
+            {
+                return '\t';
+            }
+
+            // Pipe delimiter
+            if (pipeCount > 0)
+            {
+                return '|';
+            }
+
+            // Default to comma
+            return ',';
+        }
+
+        private static List<List<string>> ParseCsv(string text, char delimiter)
+        {
+            var rows = new List<List<string>>();
+            using var reader = new StringReader(text);
+            
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                var fields = SplitCsvLine(line, delimiter);
+                rows.Add(fields);
+            }
+
+            return rows;
+        }
+
+        private static List<string> SplitCsvLine(string line, char delimiter)
+        {
+            var fields = new List<string>();
+            var currentField = new StringBuilder();
+            bool inQuotes = false;
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                char c = line[i];
+
+                if (c == '"')
+                {
+                    if (inQuotes && i + 1 < line.Length && line[i + 1] == '"')
+                    {
+                        // Escaped quote
+                        currentField.Append('"');
+                        i++;
+                    }
+                    else
+                    {
+                        // Toggle quote state
+                        inQuotes = !inQuotes;
+                    }
+                }
+                else if (c == delimiter && !inQuotes)
+                {
+                    fields.Add(currentField.ToString());
+                    currentField.Clear();
+                }
+                else
+                {
+                    currentField.Append(c);
+                }
+            }
+
+            fields.Add(currentField.ToString());
+            return fields;
+        }
+
+        private static void WriteCsv(string path, List<List<string>> rows, char delimiter, Encoding encoding)
+        {
+            using var writer = new StreamWriter(path, false, encoding);
+            
+            foreach (var row in rows)
+            {
+                var escapedFields = row.Select(field => EscapeCsvField(field, delimiter));
+                writer.WriteLine(string.Join(delimiter.ToString(), escapedFields));
+            }
+        }
+
+        private static string EscapeCsvField(string field, char delimiter)
+        {
+            if (string.IsNullOrEmpty(field))
+            {
+                return field;
+            }
+
+            // Quote if contains delimiter, quotes, or newlines
+            if (field.Contains(delimiter) || field.Contains('"') || field.Contains('\n') || field.Contains('\r'))
+            {
+                return "\"" + field.Replace("\"", "\"\"") + "\"";
+            }
+
+            return field;
+        }
+
+        private static FormatoEngineResponse Error(string message, string traceback = "")
+        {
+            return new FormatoEngineResponse
+            {
+                Ok = false,
+                Error = message,
+                Traceback = traceback
+            };
+        }
+    }
+
+    /// <summary>
+    /// Request model for Formato engine (matches Python JSON contract)
+    /// </summary>
+    public class FormatoEngineRequest
+    {
+        public string Action { get; set; }
+        public List<string> InputFiles { get; set; }
+        public string Template { get; set; }
+        public string HeaderFormat { get; set; }
+    }
+
+    /// <summary>
+    /// Response model for Formato engine (matches Python JSON contract)
+    /// </summary>
+    public class FormatoEngineResponse
+    {
+        public bool Ok { get; set; }
+        public List<string> UpdatedFiles { get; set; }
+        public Dictionary<string, int> TemplateCounts { get; set; }
+        public string Error { get; set; }
+        public string Traceback { get; set; }
+    }
+}
