@@ -13,4 +13,24 @@
   <PropertyGroup>
     <EnableSecurityDebugging>false</EnableSecurityDebugging>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="AsinBatcherControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ControlRemotoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="FileNameConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormatoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SitemapControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>
