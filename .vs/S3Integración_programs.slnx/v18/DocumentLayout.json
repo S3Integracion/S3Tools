@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\ariel\\GitHub\\S3Tools\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\ariel\\github\\s3tools\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|c:\\users\\ariel\\github\\s3tools\\sitemapcontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{77A781E7-F9BA-448C-8918-7B4A67C2AC10}|S3Integraci\u00F3n_programs.csproj|solutionrelative:sitemapcontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -82,19 +86,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\README.md",
+              "RelativeDocumentMoniker": "README.md",
+              "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\README.md",
+              "RelativeToolTip": "README.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-03-13T18:14:21.158Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "SitemapControl.cs",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\SitemapControl.cs",
               "RelativeDocumentMoniker": "SitemapControl.cs",
               "ToolTip": "C:\\Users\\ariel\\GitHub\\S3Tools\\SitemapControl.cs",
               "RelativeToolTip": "SitemapControl.cs",
-              "ViewState": "AgIAAMIAAAAAAAAAAAAUwCMAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAACIAAAAAAAAAAAAkwCMAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-13T18:07:05.124Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Microsoft.Common.CurrentVersion.targets",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
@@ -102,12 +119,11 @@
               "RelativeToolTip": "..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "ViewState": "AgIAAPsUAAAAAAAAAAAwwBIVAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-03-13T18:06:35.107Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-13T18:06:35.107Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "s3tools-ui-validator-37a40fb5b70e4de39d2aea4ea1fa2374.csproj",
               "DocumentMoniker": "C:\\Users\\ariel\\AppData\\Local\\Temp\\s3tools-ui-validator-37a40fb5b70e4de39d2aea4ea1fa2374\\s3tools-ui-validator-37a40fb5b70e4de39d2aea4ea1fa2374.csproj",
               "RelativeDocumentMoniker": "..\\..\\AppData\\Local\\Temp\\s3tools-ui-validator-37a40fb5b70e4de39d2aea4ea1fa2374\\s3tools-ui-validator-37a40fb5b70e4de39d2aea4ea1fa2374.csproj",
@@ -119,7 +135,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "format.py",
               "DocumentMoniker": "C:\\Users\\ariel\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1464970831\\format.py",
               "RelativeDocumentMoniker": "..\\..\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1464970831\\format.py",
@@ -131,7 +147,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "form_site.py",
               "DocumentMoniker": "C:\\Users\\ariel\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\-461040574\\form_site.py",
               "RelativeDocumentMoniker": "..\\..\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\-461040574\\form_site.py",
@@ -143,7 +159,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "engine.py",
               "DocumentMoniker": "C:\\Users\\ariel\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\446528043\\engine.py",
               "RelativeDocumentMoniker": "..\\..\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\446528043\\engine.py",
@@ -155,7 +171,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "form_site.py",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\Engines\\Sitemap\\form_site.py",
               "RelativeDocumentMoniker": "Engines\\Sitemap\\form_site.py",
@@ -167,7 +183,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "format.py",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\Engines\\Formato\\format.py",
               "RelativeDocumentMoniker": "Engines\\Formato\\format.py",
@@ -179,7 +195,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "engine.py",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\Engines\\AsinBatcherEngine\\engine.py",
               "RelativeDocumentMoniker": "Engines\\AsinBatcherEngine\\engine.py",
@@ -191,7 +207,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "AsinBatcherEngineClient.cs",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\AsinBatcherEngineClient.cs",
               "RelativeDocumentMoniker": "AsinBatcherEngineClient.cs",
@@ -199,12 +215,11 @@
               "RelativeToolTip": "AsinBatcherEngineClient.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T00:27:21.473Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-13T00:27:21.473Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "SitemapEngineClient.cs",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\SitemapEngineClient.cs",
               "RelativeDocumentMoniker": "SitemapEngineClient.cs",
@@ -212,12 +227,11 @@
               "RelativeToolTip": "SitemapEngineClient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T00:27:20.923Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-13T00:27:20.923Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "FormatoEngineClient.cs",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\FormatoEngineClient.cs",
               "RelativeDocumentMoniker": "FormatoEngineClient.cs",
@@ -229,7 +243,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "Form1.Designer.cs",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\Form1.Designer.cs",
               "RelativeDocumentMoniker": "Form1.Designer.cs",
@@ -241,7 +255,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "FormatoDotNetEngine.cs",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\FormatoDotNetEngine.cs",
               "RelativeDocumentMoniker": "FormatoDotNetEngine.cs",
@@ -253,7 +267,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "S3Integraci\u00F3n_programs.csproj",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj",
               "RelativeDocumentMoniker": "S3Integraci\u00F3n_programs.csproj",
@@ -261,12 +275,11 @@
               "RelativeToolTip": "S3Integraci\u00F3n_programs.csproj",
               "ViewState": "AgIAABgAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-03-13T00:06:12.799Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-13T00:06:12.799Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "S3Integraci\u00F3n_programs.csproj.new",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\S3Integraci\u00F3n_programs.csproj.new",
               "RelativeDocumentMoniker": "S3Integraci\u00F3n_programs.csproj.new",
@@ -277,7 +290,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "tasks.md",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md",
               "RelativeDocumentMoniker": ".github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md",
@@ -285,12 +298,11 @@
               "RelativeToolTip": ".github\\upgrades\\scenarios\\new-dotnet-version_450b88\\tasks.md",
               "ViewState": "AgIAAFgAAAAAAAAAAAAAAH4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2026-03-13T00:00:50.467Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-13T00:00:50.467Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "assessment.md [Versi\u00F3n preliminar]",
               "DocumentMoniker": "C:\\Users\\ariel\\GitHub\\S3Tools\\.github\\upgrades\\scenarios\\new-dotnet-version_450b88\\assessment.md",
               "RelativeDocumentMoniker": ".github\\upgrades\\scenarios\\new-dotnet-version_450b88\\assessment.md",
