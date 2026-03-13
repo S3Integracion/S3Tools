@@ -1,0 +1,598 @@
+﻿// Asin Batcher tab UI.
+// Loads ASIN files, previews counts/duplicates, and generates URL batches.
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace S3Integración_programs
+{
+    internal sealed partial class AsinBatcherControl : UserControl
+    {
+        private static readonly string[] StoresLeft = { "ProductosTX", "Holaproducto", "Altinor", "HervazTrade" };
+        private static readonly string[] StoresRight = { "BBvs_Template", "BBvsBB2_2da", "BBvsBB2" };
+        private static readonly string[] Markets = { "MX", "US" };
+        private static readonly string[] OrderChoices = { "Ordenado", "Inverso", "Aleatorio" };
+        private const int DefaultBatches = 30;
+        private const double UrlsPerHourEstimate = 600d;
+        private const double TimeEstimateRangeFactor = 1.5d;
+
+        private readonly AsinBatcherEngineClient _engineClient;
+        private readonly Timer _previewTimer;
+        private readonly List<Control> _inputControls;
+        private int _previewRequestId;
+        private int _lastDuplicates;
+        private int _lastUnique;
+        private string _lastPreviewPath;
+        private bool _isBusy;
+        private bool _suppressStoreSync;
+
+        private RadioButton[] _storeRadios;
+        private string _namePrefix1 = string.Empty;
+        private string _namePrefix2 = string.Empty;
+
+        public AsinBatcherControl()
+        {
+            InitializeComponent();
+            _engineClient = new AsinBatcherEngineClient();
+            // Debounce preview requests while the user edits the input.
+            _previewTimer = new Timer { Interval = 350 };
+            _previewTimer.Tick += PreviewTimer_Tick;
+            _inputControls = new List<Control>();
+
+            PopulateInputControls();
+            WireEvents();
+            SetDefaults();
+        }
+
+        private void PopulateInputControls()
+        {
+            _storeRadios = new[]
+            {
+                _storeProductosTxRadio,
+                _storeHolaproductoRadio,
+                _storeAltinorRadio,
+                _storeHervazTradeRadio,
+                _storeBbvsTemplateRadio,
+                _storeBbvs2daRadio,
+                _storeBbvsRadio,
+            };
+
+            _inputControls.Add(_inputText);
+            _inputControls.Add(_browseButton);
+            _inputControls.Add(_exportDuplicatesButton);
+            _inputControls.Add(_nameConfigButton);
+            _inputControls.AddRange(_storeRadios);
+            _inputControls.Add(_showSellerOnOpenCheck);
+            _inputControls.Add(_fileNameText);
+            _inputControls.Add(_marketCombo);
+            _inputControls.Add(_batchesNumeric);
+            _inputControls.Add(_orderCombo);
+            _inputControls.Add(_outputText);
+            _inputControls.Add(_downloadsButton);
+            _inputControls.Add(_desktopButton);
+            _inputControls.Add(_chooseOutputButton);
+            _inputControls.Add(_zipCheck);
+            _inputControls.Add(_processButton);
+            _inputControls.Add(_helpButton);
+        }
+
+        private void WireEvents()
+        {
+            _inputText.TextChanged += (s, e) =>
+            {
+                if (_isBusy)
+                {
+                    return;
+                }
+                _previewTimer.Stop();
+                _previewTimer.Start();
+            };
+            _browseButton.Click += BrowseButton_Click;
+            _downloadsButton.Click += (s, e) => _outputText.Text = GetDownloadsPath();
+            _desktopButton.Click += (s, e) => _outputText.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            _chooseOutputButton.Click += ChooseOutputButton_Click;
+            _exportDuplicatesButton.Click += ExportDuplicatesButton_Click;
+            _processButton.Click += ProcessButton_Click;
+            _nameConfigButton.Click += (s, e) => ShowNameConfigDialog();
+            _helpButton.Click += (s, e) => ShowHelp();
+            _fileNameText.TextChanged += FileNameText_TextChanged;
+            _batchesNumeric.ValueChanged += (s, e) => UpdateBatchEstimateLabels();
+            foreach (var radio in _storeRadios)
+            {
+                radio.CheckedChanged += StoreRadio_CheckedChanged;
+            }
+        }
+
+        private void SetDefaults()
+        {
+            if (_marketCombo.Items.Contains("US"))
+            {
+                _marketCombo.SelectedItem = "US";
+            }
+            else if (_marketCombo.Items.Count > 0)
+            {
+                _marketCombo.SelectedIndex = 0;
+            }
+            if (_orderCombo.Items.Count > 0)
+            {
+                _orderCombo.SelectedIndex = 0;
+            }
+            _batchesNumeric.Value = DefaultBatches;
+            _showSellerOnOpenCheck.Checked = false;
+            _outputText.Text = GetDownloadsPath();
+            _previewText.Text = string.Empty;
+            UpdateBatchEstimateLabels();
+        }
+
+        private async void PreviewTimer_Tick(object sender, EventArgs e)
+        {
+            _previewTimer.Stop();
+            await RunPreviewAsync();
+        }
+
+        private async Task RunPreviewAsync()
+        {
+            var inputPath = (_inputText.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(inputPath) || !File.Exists(inputPath))
+            {
+                _lastDuplicates = 0;
+                _lastUnique = 0;
+                _lastPreviewPath = null;
+                _previewText.Text = string.Empty;
+                UpdateExportDuplicatesButton();
+                UpdateBatchEstimateLabels();
+                return;
+            }
+
+            var requestId = ++_previewRequestId;
+            _previewText.Text = "Leyendo archivo...";
+
+            var response = await _engineClient.PreviewAsync(inputPath);
+            if (requestId != _previewRequestId)
+            {
+                return;
+            }
+
+            if (!response.Ok)
+            {
+                _lastDuplicates = 0;
+                _lastUnique = 0;
+                _lastPreviewPath = null;
+                _previewText.Text = string.Empty;
+                UpdateExportDuplicatesButton();
+                UpdateBatchEstimateLabels();
+                ShowEngineError("No se pudo leer el archivo.", response);
+                return;
+            }
+
+            _previewText.Text = FormatPreview(response);
+            _lastDuplicates = response.Duplicates ?? 0;
+            _lastUnique = response.Unique ?? 0;
+            _lastPreviewPath = inputPath;
+            UpdateExportDuplicatesButton();
+            UpdateBatchEstimateLabels();
+        }
+
+        private async void ExportDuplicatesButton_Click(object sender, EventArgs e)
+        {
+            if (_isBusy)
+            {
+                return;
+            }
+
+            var inputPath = (_inputText.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(inputPath) || !File.Exists(inputPath))
+            {
+                MessageBox.Show(this, "Selecciona un archivo valido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var outputDir = (_outputText.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(outputDir))
+            {
+                outputDir = GetDownloadsPath();
+                _outputText.Text = outputDir;
+            }
+
+            SetBusy(true);
+            var response = await _engineClient.ExportDuplicatesAsync(inputPath, outputDir);
+            SetBusy(false);
+
+            if (!response.Ok)
+            {
+                ShowEngineError("No se pudo exportar duplicados.", response);
+                return;
+            }
+
+            _lastDuplicates = response.Duplicates ?? 0;
+            UpdateExportDuplicatesButton();
+
+            if (_lastDuplicates <= 0)
+            {
+                MessageBox.Show(this, "No se detectaron duplicados.", "Duplicados", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(response.CsvPath))
+            {
+                MessageBox.Show(this, "CSV de duplicados creado:\n" + response.CsvPath, "Duplicados", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                OpenInExplorer(Path.GetDirectoryName(response.CsvPath));
+            }
+        }
+
+        private async void ProcessButton_Click(object sender, EventArgs e)
+        {
+            if (_isBusy)
+            {
+                return;
+            }
+
+            var inputPath = (_inputText.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(inputPath) || !File.Exists(inputPath))
+            {
+                MessageBox.Show(this, "Selecciona un archivo valido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var storeName = GetStoreNameForFiles();
+            if (string.IsNullOrWhiteSpace(storeName))
+            {
+                MessageBox.Show(this, "Selecciona una tienda o escribe un nombre.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var outputDir = (_outputText.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(outputDir))
+            {
+                outputDir = GetDownloadsPath();
+                _outputText.Text = outputDir;
+            }
+
+            var requestedBatches = (int)_batchesNumeric.Value;
+            if (!await ValidateBatchCountAsync(inputPath, requestedBatches))
+            {
+                return;
+            }
+
+            var request = new EngineRequest
+            {
+                InputPath = inputPath,
+                OutputDir = outputDir,
+                Market = _marketCombo.SelectedItem as string,
+                Store = storeName,
+                StoreName = storeName,
+                Order = _orderCombo.SelectedItem as string,
+                Batches = requestedBatches,
+                ZipOutput = _zipCheck.Checked,
+                ShowSellerOnOpen = _showSellerOnOpenCheck.Checked,
+                FileLabel = null,
+                NamePrefix1 = _namePrefix1,
+                NamePrefix2 = _namePrefix2,
+            };
+
+            SetBusy(true);
+            var response = await _engineClient.ProcessAsync(request);
+            SetBusy(false);
+
+            if (!response.Ok)
+            {
+                ShowEngineError("No se pudo procesar el archivo.", response);
+                return;
+            }
+
+            _lastDuplicates = response.Duplicates ?? 0;
+            _lastUnique = response.Unique ?? _lastUnique;
+            _previewText.Text = FormatPreview(response);
+            UpdateExportDuplicatesButton();
+            UpdateBatchEstimateLabels();
+
+            if (!string.IsNullOrWhiteSpace(response.OutputFolder) && Directory.Exists(response.OutputFolder))
+            {
+                // Persist output folder for Sitemap defaults.
+                AppState.SetLastAsinOutputDir(response.OutputFolder);
+            }
+
+            var message = "Listo!\n";
+            if (!string.IsNullOrWhiteSpace(response.ZipPath))
+            {
+                message += "ZIP creado:\n" + response.ZipPath;
+                OpenInExplorer(Path.GetDirectoryName(response.ZipPath));
+            }
+            else
+            {
+                message += "Carpeta creada:\n" + response.OutputFolder;
+                OpenInExplorer(response.OutputFolder);
+            }
+
+            MessageBox.Show(this, message, "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void BrowseButton_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new OpenFileDialog
+            {
+                Title = "Selecciona archivo",
+                Filter = "TXT (*.txt)|*.txt|Excel (*.xlsx;*.xls)|*.xlsx;*.xls|Todos (*.*)|*.*",
+            })
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _inputText.Text = dialog.FileName;
+                }
+            }
+        }
+
+        private void ChooseOutputButton_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new FolderBrowserDialog())
+            {
+                dialog.SelectedPath = (_outputText.Text ?? string.Empty).Trim();
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _outputText.Text = dialog.SelectedPath;
+                }
+            }
+        }
+
+        private void ShowNameConfigDialog()
+        {
+            using (var dialog = new FileNameConfigDialog(_namePrefix1, _namePrefix2))
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _namePrefix1 = dialog.Prefix1;
+                    _namePrefix2 = dialog.Prefix2;
+                }
+            }
+        }
+
+        private void ShowHelp()
+        {
+            var msg =
+                "ASIN Batcher\n\n" +
+                "1) Selecciona un archivo .txt o .xlsx.\n" +
+                "2) Revisa la previsualizacion (totales, unicos, duplicados).\n" +
+                "3) Elige una tienda o escribe un nombre manual.\n" +
+                "4) Opcional: marca Mostrar vendedor al abrir.\n" +
+                "5) Configura los prefijos si aplica.\n" +
+                "6) Define Mercado, Lotes y Orden.\n" +
+                "7) Elige carpeta destino (opcional ZIP).\n" +
+                "8) Presiona Procesar.\n\n" +
+                "Extra: Exportar duplicados crea un CSV si hay repetidos.";
+            MessageBox.Show(this, msg, "Ayuda - Asin Batcher", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void FileNameText_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressStoreSync)
+            {
+                return;
+            }
+
+            var manual = (_fileNameText.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(manual))
+            {
+                if (_storeRadios.Length > 0 && Array.TrueForAll(_storeRadios, r => !r.Checked))
+                {
+                    _suppressStoreSync = true;
+                    _storeRadios[0].Checked = true;
+                    _suppressStoreSync = false;
+                }
+                return;
+            }
+
+            _suppressStoreSync = true;
+            foreach (var radio in _storeRadios)
+            {
+                radio.Checked = false;
+            }
+            _suppressStoreSync = false;
+        }
+
+        private void StoreRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressStoreSync)
+            {
+                return;
+            }
+
+            var radio = sender as RadioButton;
+            if (radio == null || !radio.Checked)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(_fileNameText.Text))
+            {
+                return;
+            }
+
+            _suppressStoreSync = true;
+            _fileNameText.Text = string.Empty;
+            _suppressStoreSync = false;
+        }
+
+        private async Task<bool> ValidateBatchCountAsync(string inputPath, int batches)
+        {
+            if (!string.Equals(_lastPreviewPath, inputPath, StringComparison.OrdinalIgnoreCase))
+            {
+                SetBusy(true);
+                var preview = await _engineClient.PreviewAsync(inputPath);
+                SetBusy(false);
+
+                if (!preview.Ok)
+                {
+                    ShowEngineError("No se pudo leer el archivo.", preview);
+                    return false;
+                }
+
+                _previewText.Text = FormatPreview(preview);
+                _lastDuplicates = preview.Duplicates ?? 0;
+                _lastUnique = preview.Unique ?? 0;
+                _lastPreviewPath = inputPath;
+                UpdateExportDuplicatesButton();
+                UpdateBatchEstimateLabels();
+            }
+
+            if (_lastUnique > 0 && batches > _lastUnique)
+            {
+                MessageBox.Show(
+                    this,
+                    "La cantidad de lotes no puede ser mayor que la cantidad de URLs.\n" +
+                    "URLs: " + _lastUnique + "\n" +
+                    "Lotes: " + batches,
+                    "Aviso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true;
+        }
+
+        private void SetBusy(bool busy)
+        {
+            _isBusy = busy;
+            UseWaitCursor = busy;
+            foreach (var control in _inputControls)
+            {
+                if (control == _exportDuplicatesButton)
+                {
+                    control.Enabled = !busy && _lastDuplicates > 0;
+                    continue;
+                }
+                control.Enabled = !busy;
+            }
+        }
+
+        private void UpdateExportDuplicatesButton()
+        {
+            _exportDuplicatesButton.Enabled = !_isBusy && _lastDuplicates > 0;
+        }
+
+        private string GetStoreNameForFiles()
+        {
+            var manual = (_fileNameText.Text ?? string.Empty).Trim();
+            if (!string.IsNullOrWhiteSpace(manual))
+            {
+                return manual;
+            }
+
+            foreach (var radio in _storeRadios)
+            {
+                if (radio.Checked)
+                {
+                    return radio.Text;
+                }
+            }
+            return StoresLeft[0];
+        }
+
+        private static string FormatPreview(EngineResponse response)
+        {
+            var total = response.Total ?? 0;
+            var unique = response.Unique ?? 0;
+            var duplicates = response.Duplicates ?? 0;
+            return "ASIN totales (incl. duplicados): " + total + Environment.NewLine +
+                   "Unicos: " + unique + Environment.NewLine +
+                   "Duplicados: " + duplicates;
+        }
+
+        private void UpdateBatchEstimateLabels()
+        {
+            UpdateBatchEstimateLabels(_lastUnique, (int)_batchesNumeric.Value);
+        }
+
+        private void UpdateBatchEstimateLabels(int totalUrls, int batches)
+        {
+            if (_urlsPerBatchLabel == null || _timeRangeLabel == null)
+            {
+                return;
+            }
+
+            if (totalUrls <= 0 || batches <= 0)
+            {
+                _urlsPerBatchLabel.Text = "URLs por lote: -";
+                _timeRangeLabel.Text = "Rango de tiempo aproximado: -";
+                return;
+            }
+
+            var urlsPerBatch = totalUrls / (double)batches;
+            var approxHours = urlsPerBatch / UrlsPerHourEstimate;
+            var approxText = FormatHours(approxHours);
+            var rangeText = FormatHours(approxHours * TimeEstimateRangeFactor);
+
+            _urlsPerBatchLabel.Text = "URLs por lote: " + FormatUrlCount(urlsPerBatch);
+            _timeRangeLabel.Text = "Rango de tiempo aproximado: " + approxText + " : " + rangeText;
+        }
+
+        private static string FormatUrlCount(double value)
+        {
+            if (Math.Abs(value - Math.Round(value)) < 0.005)
+            {
+                return ((int)Math.Round(value)).ToString();
+            }
+            return value.ToString("0.##");
+        }
+
+        private static string FormatHours(double hours)
+        {
+            if (hours < 0)
+            {
+                hours = 0;
+            }
+
+            var totalMinutes = (int)Math.Round(hours * 60, MidpointRounding.AwayFromZero);
+            if (totalMinutes < 0)
+            {
+                totalMinutes = 0;
+            }
+
+            var displayHours = totalMinutes / 60;
+            var minutes = totalMinutes % 60;
+            return displayHours + ":" + minutes.ToString("00") + " hr";
+        }
+
+        private void ShowEngineError(string title, EngineResponse response)
+        {
+            var message = response.Error ?? "Error desconocido.";
+            if (!string.IsNullOrWhiteSpace(response.Traceback))
+            {
+                message += Environment.NewLine + Environment.NewLine + response.Traceback;
+            }
+            MessageBox.Show(this, message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private static string GetDownloadsPath()
+        {
+            var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            return Path.Combine(userProfile, "Downloads");
+        }
+
+        private static void OpenInExplorer(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            var target = path;
+            if (File.Exists(path))
+            {
+                target = Path.GetDirectoryName(path);
+            }
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                return;
+            }
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = target,
+                UseShellExecute = true,
+            });
+        }
+    }
+}

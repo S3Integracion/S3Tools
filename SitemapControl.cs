@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -27,26 +26,6 @@ namespace S3Integración_programs
         private bool _isBusy;
         private bool _suppressStoreSync;
 
-        private Button _importFilesButton;
-        private Button _clearFilesButton;
-        private RadioButton _modeAllRadio;
-        private RadioButton _modeSelectRadio;
-        private ListBox _filesList;
-        private Button _refreshButton;
-        private Label _summaryLabel;
-        private Label _urlsPerBatchLabel;
-        private Label _timeRangeLabel;
-        private RadioButton _templateNormalRadio;
-        private RadioButton _templateNubeRadio;
-        private TextBox _baseNameText;
-        private TextBox _outputText;
-        private Button _downloadsButton;
-        private Button _desktopButton;
-        private Button _chooseOutputButton;
-        private CheckBox _zipCheck;
-        private Button _processButton;
-        private Button _nameConfigButton;
-        private Button _helpButton;
         private RadioButton[] _storeRadios;
         private string _namePrefix1 = string.Empty;
         private string _namePrefix2 = string.Empty;
@@ -57,416 +36,42 @@ namespace S3Integración_programs
             _engineClient = new SitemapEngineClient();
             _inputControls = new List<Control>();
 
-            BuildLayout();
+            PopulateInputControls();
             WireEvents();
             SetDefaults();
         }
 
-        private void BuildLayout()
+        private void PopulateInputControls()
         {
-            SuspendLayout();
-            Dock = DockStyle.Fill;
-            AutoScroll = true;
-
-            var root = new TableLayoutPanel
+            _storeRadios = new[]
             {
-                Dock = DockStyle.Fill,
-                ColumnCount = 1,
-                RowCount = 8,
-                Padding = new Padding(10),
+                _storeProductosTxRadio,
+                _storeHolaproductoRadio,
+                _storeAltinorRadio,
+                _storeHervazTradeRadio,
+                _storeBbvsTemplateRadio,
+                _storeBbvs2daRadio,
+                _storeBbvsRadio,
             };
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            root.Controls.Add(BuildInputSection(), 0, 0);
-            root.Controls.Add(BuildFilesSection(), 0, 1);
-            root.Controls.Add(BuildStoreSection(), 0, 2);
-            root.Controls.Add(BuildTemplateSection(), 0, 3);
-            root.Controls.Add(BuildBaseNameSection(), 0, 4);
-            root.Controls.Add(BuildOutputSection(), 0, 5);
-            root.Controls.Add(BuildProcessSection(), 0, 6);
-            root.Controls.Add(BuildHelpSection(), 0, 7);
-
-            Controls.Add(root);
-            ResumeLayout();
-        }
-
-        private Control BuildInputSection()
-        {
-            var layout = new TableLayoutPanel
-            {
-                ColumnCount = 1,
-                RowCount = 2,
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            var label = new Label
-            {
-                Text = "Archivos de entrada (.txt / .csv / .xlsx / .json):",
-                AutoSize = true,
-                Font = new Font(Font, FontStyle.Bold),
-            };
-            layout.Controls.Add(label, 0, 0);
-
-            var buttonPanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-
-            _importFilesButton = new Button { Text = "Importar archivos...", AutoSize = true };
-            _clearFilesButton = new Button { Text = "Limpiar lista", AutoSize = true };
-
-            buttonPanel.Controls.Add(_importFilesButton);
-            buttonPanel.Controls.Add(_clearFilesButton);
-
-            layout.Controls.Add(buttonPanel, 0, 1);
 
             _inputControls.Add(_importFilesButton);
             _inputControls.Add(_clearFilesButton);
-
-            return layout;
-        }
-
-        private Control BuildFilesSection()
-        {
-            var group = new GroupBox
-            {
-                Text = "Lotes de links",
-                Dock = DockStyle.Fill,
-            };
-
-            var layout = new TableLayoutPanel
-            {
-                ColumnCount = 2,
-                RowCount = 4,
-                Dock = DockStyle.Fill,
-            };
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            _modeAllRadio = new RadioButton { Text = "Convertir todos", AutoSize = true };
-            _modeSelectRadio = new RadioButton { Text = "Seleccionar lotes", AutoSize = true };
-
-            var modePanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-            modePanel.Controls.Add(_modeAllRadio);
-            modePanel.Controls.Add(_modeSelectRadio);
-
-            _refreshButton = new Button { Text = "Cargar ultimo lote", AutoSize = true };
-
-            var headerPanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-            headerPanel.Controls.Add(modePanel);
-            headerPanel.Controls.Add(_refreshButton);
-
-            layout.Controls.Add(headerPanel, 0, 0);
-            layout.SetColumnSpan(headerPanel, 2);
-
-            _filesList = new ListBox
-            {
-                Dock = DockStyle.Fill,
-                SelectionMode = SelectionMode.MultiExtended,
-            };
-            layout.Controls.Add(_filesList, 0, 1);
-            layout.SetColumnSpan(_filesList, 2);
-
-            _summaryLabel = new Label { Text = "Archivos: 0 | URLs: 0", AutoSize = true };
-            layout.Controls.Add(_summaryLabel, 0, 2);
-            layout.SetColumnSpan(_summaryLabel, 2);
-
-            var infoPanel = new TableLayoutPanel
-            {
-                ColumnCount = 1,
-                RowCount = 2,
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                Margin = new Padding(0, 6, 0, 0),
-            };
-            _urlsPerBatchLabel = new Label { Text = "URLs por lote: -", AutoSize = true };
-            _timeRangeLabel = new Label { Text = "Rango de tiempo aproximado: -", AutoSize = true };
-            infoPanel.Controls.Add(_urlsPerBatchLabel, 0, 0);
-            infoPanel.Controls.Add(_timeRangeLabel, 0, 1);
-
-            layout.Controls.Add(infoPanel, 0, 3);
-            layout.SetColumnSpan(infoPanel, 2);
-
-            group.Controls.Add(layout);
-
             _inputControls.Add(_modeAllRadio);
             _inputControls.Add(_modeSelectRadio);
             _inputControls.Add(_refreshButton);
             _inputControls.Add(_filesList);
-
-            return group;
-        }
-
-        private Control BuildStoreSection()
-        {
-            var group = new GroupBox
-            {
-                Text = "Tienda",
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-
-            var outer = new TableLayoutPanel
-            {
-                ColumnCount = 1,
-                RowCount = 2,
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-            outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            var header = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-                WrapContents = false,
-            };
-            _nameConfigButton = new Button { Text = "Configurar nombre...", AutoSize = true };
-            header.Controls.Add(_nameConfigButton);
-            outer.Controls.Add(header, 0, 0);
-
-            var layout = new TableLayoutPanel
-            {
-                ColumnCount = 2,
-                RowCount = Math.Max(StoresLeft.Length, StoresRight.Length),
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-
-            var radios = new List<RadioButton>();
-
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
-            for (var i = 0; i < layout.RowCount; i++)
-            {
-                layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-                if (i < StoresLeft.Length)
-                {
-                    var rb = new RadioButton { Text = StoresLeft[i], AutoSize = true, Anchor = AnchorStyles.Left };
-                    layout.Controls.Add(rb, 0, i);
-                    radios.Add(rb);
-                }
-
-                if (i < StoresRight.Length)
-                {
-                    var rb = new RadioButton { Text = StoresRight[i], AutoSize = true, Anchor = AnchorStyles.Left };
-                    layout.Controls.Add(rb, 1, i);
-                    radios.Add(rb);
-                }
-            }
-
-            if (radios.Count > 0)
-            {
-                radios[0].Checked = true;
-            }
-
-            outer.Controls.Add(layout, 0, 1);
-            group.Controls.Add(outer);
-
-            _storeRadios = radios.ToArray();
             _inputControls.Add(_nameConfigButton);
             _inputControls.AddRange(_storeRadios);
-
-            return group;
-        }
-
-        private Control BuildBaseNameSection()
-        {
-            var layout = new TableLayoutPanel
-            {
-                ColumnCount = 2,
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-
-            var label = new Label
-            {
-                Text = "Nombre para sitemaps:",
-                AutoSize = true,
-                Padding = new Padding(0, 6, 6, 0),
-            };
-            _baseNameText = new TextBox { Dock = DockStyle.Fill };
-
-            layout.Controls.Add(label, 0, 0);
-            layout.Controls.Add(_baseNameText, 1, 0);
-
-            _inputControls.Add(_baseNameText);
-
-            return layout;
-        }
-
-        private Control BuildTemplateSection()
-        {
-            var group = new GroupBox
-            {
-                Text = "Plantilla de sitemap",
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-
-            var panel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-
-            _templateNormalRadio = new RadioButton
-            {
-                Text = "Normal",
-                AutoSize = true,
-            };
-            _templateNubeRadio = new RadioButton
-            {
-                Text = "Nube",
-                AutoSize = true,
-            };
-
-            panel.Controls.Add(_templateNormalRadio);
-            panel.Controls.Add(_templateNubeRadio);
-            group.Controls.Add(panel);
-
             _inputControls.Add(_templateNormalRadio);
             _inputControls.Add(_templateNubeRadio);
-            return group;
-        }
-
-        private Control BuildOutputSection()
-        {
-            var group = new GroupBox
-            {
-                Text = "Carpeta destino",
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-
-            var layout = new TableLayoutPanel
-            {
-                ColumnCount = 1,
-                RowCount = 2,
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            var row = new TableLayoutPanel
-            {
-                ColumnCount = 2,
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-            };
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-            row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-
-            _outputText = new TextBox { Dock = DockStyle.Fill };
-            var buttonPanel = new FlowLayoutPanel
-            {
-                FlowDirection = FlowDirection.LeftToRight,
-                AutoSize = true,
-                WrapContents = false,
-            };
-            _downloadsButton = new Button { Text = "Descargas", AutoSize = true };
-            _desktopButton = new Button { Text = "Escritorio", AutoSize = true };
-            _chooseOutputButton = new Button { Text = "Otra...", AutoSize = true };
-
-            buttonPanel.Controls.Add(_downloadsButton);
-            buttonPanel.Controls.Add(_desktopButton);
-            buttonPanel.Controls.Add(_chooseOutputButton);
-
-            row.Controls.Add(_outputText, 0, 0);
-            row.Controls.Add(buttonPanel, 1, 0);
-
-            _zipCheck = new CheckBox { Text = "Exportar como ZIP", AutoSize = true };
-
-            layout.Controls.Add(row, 0, 0);
-            layout.Controls.Add(_zipCheck, 0, 1);
-
-            group.Controls.Add(layout);
-
+            _inputControls.Add(_baseNameText);
             _inputControls.Add(_outputText);
             _inputControls.Add(_downloadsButton);
             _inputControls.Add(_desktopButton);
             _inputControls.Add(_chooseOutputButton);
             _inputControls.Add(_zipCheck);
-
-            return group;
-        }
-
-        private Control BuildProcessSection()
-        {
-            var panel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.LeftToRight,
-            };
-
-            _processButton = new Button
-            {
-                Text = "Procesar",
-                AutoSize = true,
-                Font = new Font(Font.FontFamily, 10f, FontStyle.Bold),
-                Padding = new Padding(16, 6, 16, 6),
-            };
-            panel.Controls.Add(_processButton);
-
             _inputControls.Add(_processButton);
-
-            return panel;
-        }
-
-        private Control BuildHelpSection()
-        {
-            var panel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                AutoSize = true,
-                FlowDirection = FlowDirection.RightToLeft,
-            };
-
-            _helpButton = new Button
-            {
-                Text = "Ayuda",
-                AutoSize = true,
-            };
-
-            panel.Controls.Add(_helpButton);
-
             _inputControls.Add(_helpButton);
-
-            return panel;
         }
 
         private void WireEvents()
@@ -973,6 +578,11 @@ namespace S3Integración_programs
             {
                 return Name;
             }
+        }
+
+        private void inputLabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

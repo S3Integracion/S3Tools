@@ -1,0 +1,676 @@
+﻿# S3Tools Migration Plan: .NET Framework 4.8 → .NET 10.0 + Python Engine Migration
+
+## Table of Contents
+
+- [Executive Summary](#executive-summary)
+- [Migration Strategy](#migration-strategy)
+- [Detailed Dependency Analysis](#detailed-dependency-analysis)
+- [Python Engine Migration Strategy](#python-engine-migration-strategy)
+- [Project-by-Project Plans](#project-by-project-plans)
+- [Package Update Reference](#package-update-reference)
+- [Breaking Changes Catalog](#breaking-changes-catalog)
+- [Risk Management](#risk-management)
+- [Testing & Validation Strategy](#testing--validation-strategy)
+- [Complexity & Effort Assessment](#complexity--effort-assessment)
+- [Source Control Strategy](#source-control-strategy)
+- [Success Criteria](#success-criteria)
+
+---
+
+## Executive Summary
+
+### Scenario Description
+
+This migration plan addresses **two critical objectives**:
+
+1. **Framework Migration**: Upgrade from .NET Framework 4.8 to .NET 10.0-windows
+2. **Python Engine Elimination**: Migrate all Python engine logic (format.py, form_site.py, engine.py) to native C# implementations
+
+The solution currently consists of a single Windows Forms desktop application with three functional modules (Asin Batcher, Sitemap, Formato), each supported by external Python engines invoked via process execution.
+
+### Scope
+
+**Projects Affected**: 1
+- `S3Integración_programs.csproj` (net48 → net10.0-windows)
+
+**Current State**:
+- Framework: .NET Framework 4.8
+- Architecture: Classic (non-SDK-style) project
+- Codebase: 7,421 lines of code
+- Python Dependencies: 3 engines (Formato, Sitemap, Asin Batcher)
+- UI Technology: Windows Forms
+- Current Branch: `MigraciónDotNet`
+- Migration Branch: `upgrade-to-NET10`
+
+**Target State**:
+- Framework: .NET 10.0-windows (LTS)
+- Architecture: SDK-style project
+- Codebase: All functionality in C#, zero Python dependencies
+- UI Technology: Windows Forms (modern .NET)
+- New Capabilities: Direct Visual Studio designer editing for all tabs
+
+### Selected Strategy
+
+**All-At-Once Strategy** - Single coordinated migration combining framework upgrade and Python elimination.
+
+**Rationale**:
+- ✅ Single-project solution (simple dependency structure)
+- ✅ User requirement: Complete Python elimination, not gradual
+- ✅ Starting with Fase 3 (Formato) as pilot, but full migration required
+- ✅ C# as default engine with Python fallback during transition already partially implemented (`FormatoEngineClient.cs` shows try/catch pattern)
+- ✅ No intermediate multi-targeting complexity needed
+- ✅ Clear validation: existing test files in `.\Assets\`
+
+### Complexity Classification
+
+**Medium-High Complexity**
+
+**Discovered Metrics**:
+- **Projects**: 1 (simple)
+- **Dependency Depth**: 0 (no internal dependencies)
+- **Risk Indicators**: 
+  - 🔴 High LOC Impact: 5,761+ lines require changes (77.6%)
+  - 🟡 API Incompatibility: 5,718 binary incompatible APIs
+  - 🟡 Python Migration: 3 engines to reimplement (~800 lines Python → C#)
+  - 🟢 No Security Vulnerabilities detected
+  - 🟢 No NuGet package conflicts (zero packages currently)
+- **Target Technology**: Windows Forms (well-supported in modern .NET)
+
+**Complexity Factors**:
+1. **Windows Forms Migration**: 5,708 issues (mostly mechanical, high volume)
+2. **Python Logic Migration**: Requires functional equivalence validation
+   - Formato: CSV/XLSX header normalization, template matching
+   - Sitemap: XML generation, URL processing
+   - Asin Batcher: Excel manipulation, duplicate detection
+3. **Excel Library Introduction**: ClosedXML integration (user-approved)
+4. **Project Structure Change**: Classic → SDK-style
+
+### Critical Issues
+
+**Framework Migration**:
+- Convert project to SDK-style format
+- Update Windows Forms APIs (5,708 instances)
+- Migrate from System.Configuration to Microsoft.Extensions.Configuration
+- Add System.Drawing.Common NuGet package (40 GDI+ usages)
+
+**Python Engine Migration** (Priority Order):
+1. **Fase 3 - Formato** (`format.py` → `FormatoDotNetEngine.cs`)
+   - ✅ Partial stub exists (`FormatoEngineClient.cs` has try/catch fallback pattern)
+   - Functions: Header normalization, template detection, CSV/XLSX processing
+   - Dependencies: JSON template loading, regex normalization, file encoding detection
+
+2. **Sitemap** (`form_site.py` → `SitemapDotNetEngine.cs`)
+   - Functions: Sitemap XML generation, URL validation, template processing
+
+3. **Asin Batcher** (`engine.py` → `AsinBatcherDotNetEngine.cs`)
+   - ✅ Client exists (`AsinBatcherEngineClient.cs`)
+   - Functions: Excel preview, duplicate export, batch processing
+
+### Recommended Approach
+
+**Phase 0: Prerequisites**
+- Convert project to SDK-style
+- Update TargetFramework to net10.0-windows
+- Add required NuGet packages (ClosedXML, System.Drawing.Common, System.Configuration.ConfigurationManager)
+
+**Phase 1: Formato Engine Migration** (Pilot)
+- Implement `FormatoDotNetEngine.cs` with complete parity to `format.py`
+- Validate with test files from `.\Assets\`
+- Keep Python fallback active
+
+**Phase 2: Sitemap + Asin Batcher Engines**
+- Implement both engines in parallel (independent functionality)
+- Validate each against production scenarios
+- Maintain Python fallbacks
+
+**Phase 3: Windows Forms API Updates**
+- Fix compilation errors from framework migration
+- Update designer-generated code
+- Verify UI rendering and behavior
+
+**Phase 4: Testing & Python Removal**
+- Comprehensive validation with all test files
+- Performance comparison (C# should be faster)
+- Remove Python engine files and fallback code
+
+### Expected Iterations
+
+This plan uses **6 detailed iterations**:
+1. ✅ **Skeleton** - Structure created
+2. ✅ **Discovery** - Metrics analyzed
+3. ✅ **Strategy** - Approach documented
+4. **Foundation** - Dependency analysis, migration strategy details
+5. **Formato Engine Details** - Detailed implementation plan for Fase 3
+6. **Sitemap + Asin Batcher + WinForms Details** - Complete remaining migrations
+7. **Risk, Testing, Success Criteria** - Final sections
+
+---
+
+## Migration Strategy
+
+### Approach Selection
+
+**All-At-Once Strategy** with **Functional Phasing**
+
+### Justification
+
+**Why All-At-Once?**
+1. **Single Project**: No complex dependency graph to manage
+2. **User Requirement**: Complete Python elimination (not gradual), functional parity mandatory
+3. **No Intermediate States**: User wants final state = 100% C# in .NET 10, no multi-targeting
+4. **Faster Completion**: One migration cycle vs incremental project-by-project
+5. **Clean Validation**: Test files in Assets folder provide clear pass/fail criteria
+
+**Why Functional Phasing?**
+1. **Risk Management**: Implement one engine at a time, validate before next
+2. **Fallback Safety**: Python engines remain active until C# validated
+3. **Incremental Progress**: Formato → Sitemap → Asin Batcher allows course correction
+4. **Logical Grouping**: Framework changes separate from engine implementations
+
+### Strategy Application
+
+#### Simultaneous Operations (Single Task)
+
+**Phase 0 - Project Modernization** will execute atomically:
+- Convert project file to SDK-style
+- Update `<TargetFramework>net48</TargetFramework>` → `<TargetFramework>net10.0-windows</TargetFramework>`
+- Add `<PackageReference>` elements for ClosedXML, System.Drawing.Common, System.Configuration.ConfigurationManager
+- Restore dependencies
+- Build (expect compilation errors from API changes)
+
+**Rationale**: These operations are interdependent; cannot test project file without building, cannot build without packages.
+
+#### Sequential Engine Implementations
+
+**Formato → Sitemap → Asin Batcher** (one at a time)
+
+Each engine implementation follows this pattern:
+1. Create new C# engine class
+2. Migrate Python logic function-by-function
+3. Update client class to call C# first, Python fallback on exception
+4. Validate with test files
+5. Move to next engine
+
+**Rationale**: Allows validation of each engine independently before moving forward.
+
+### Dependency-Based Ordering
+
+**No inter-project dependencies**, but logical execution order:
+
+1. **Phase 0** - Foundation (must complete first)
+2. **Phase 1** - Formato (pilot, user priority "Fase 3")
+3. **Phase 2** - Sitemap + Asin Batcher (parallel possible)
+4. **Phase 3** - Windows Forms API fixes (requires all C# code present)
+5. **Phase 4** - Python removal (requires successful testing)
+
+### Parallel vs Sequential Decisions
+
+| Operation | Execution | Reason |
+|-----------|-----------|--------|
+| Project conversion + framework update + package adds | **Parallel (atomic task)** | Interdependent, tested together |
+| Formato implementation | **Sequential** | Pilot phase, learn patterns |
+| Sitemap + Asin Batcher implementations | **Can be parallel** | Independent classes, no shared state |
+| WinForms API fixes | **Sequential after engines** | Requires all code present to identify full scope |
+| Testing + Python removal | **Sequential after compilation** | Requires working build |
+
+### Rollback Strategy
+
+**Git Branch Safety**:
+- Source branch: `MigraciónDotNet` (preserved, no changes)
+- Work branch: `upgrade-to-NET10` (all changes here)
+- Rollback: `git checkout MigraciónDotNet` if needed
+
+**Phase-Level Rollback**:
+- Each phase creates logical commit checkpoint
+- Can revert individual engine implementations without affecting others
+- Python fallback code remains until Phase 4, allowing easy revert
+
+**Validation Gates**:
+- Phase 0: Project builds (may have errors, but compiles)
+- Phase 1: Formato engine produces identical output to Python for test files
+- Phase 2: Sitemap and Asin Batcher produce identical outputs
+- Phase 3: Solution builds with zero errors
+- Phase 4: All test files pass, Python engines deleted
+
+### Risk Mitigation Principles
+
+1. **Fallback Pattern**: C# engine tries first, Python catches exceptions (already in FormatoEngineClient.cs)
+2. **Incremental Testing**: Validate each engine independently before integration
+3. **Preservation**: Python code remains until full validation
+4. **Automated Validation**: Use existing test files in Assets folder for regression checks
+5. **Explicit Comparison**: Manual verification of C# vs Python outputs for identical behavior
+
+---
+
+## Detailed Dependency Analysis
+
+### Project Structure
+
+**Single-Project Solution**: `S3Integración_programs.csproj`
+
+```
+S3Tools/
+├── S3Integración_programs.csproj (net48 → net10.0-windows)
+│   ├── UI Components (Windows Forms)
+│   │   ├── FormatoControl.cs + Designer
+│   │   ├── SitemapControl.cs + Designer
+│   │   ├── AsinBatcherControl.cs + Designer
+│   │   └── MainForm.cs (TabControl host)
+│   ├── Engine Clients (Current)
+│   │   ├── FormatoEngineClient.cs → calls format.py
+│   │   ├── SitemapEngineClient.cs → calls form_site.py
+│   │   └── AsinBatcherEngineClient.cs → calls engine.py
+│   ├── Shared Utilities
+│   │   ├── FileNameConfigDialog.cs
+│   │   └── [other helpers]
+│   └── [To be created]
+│       ├── FormatoDotNetEngine.cs
+│       ├── SitemapDotNetEngine.cs
+│       └── AsinBatcherDotNetEngine.cs
+├── Engines/ (Python - to be deprecated)
+│   ├── Formato/format.py (~300 LOC)
+│   ├── Sitemap/form_site.py (~400 LOC)
+│   └── AsinBatcherEngine/engine.py (~100 LOC)
+└── Assets/ (Test files for validation)
+```
+
+### Dependency Graph
+
+**No Internal Dependencies**: Single project means no build order constraints.
+
+**External Dependencies (Current)**:
+- None (zero NuGet packages)
+
+**External Dependencies (Target)**:
+- `ClosedXML` (Excel .xlsx manipulation)
+- `System.Drawing.Common` (GDI+ compatibility)
+- `System.Configuration.ConfigurationManager` (legacy config bridge)
+
+**Python Engine Dependencies (To Eliminate)**:
+- Python runtime (external process execution)
+- `format.py` - CSV/Excel header normalization
+- `form_site.py` - Sitemap XML generation
+- `engine.py` - Asin batch processing
+
+### Migration Phases
+
+Since this is a single-project solution with All-At-Once strategy, phases are **functional groupings**, not separate build/deploy cycles.
+
+**Phase 0: Project Modernization** (Foundation)
+- Convert to SDK-style project
+- Update TargetFramework
+- Add NuGet packages
+- No code execution yet
+
+**Phase 1: Formato Engine** (Pilot Implementation)
+- Create `FormatoDotNetEngine.cs`
+- Migrate Python logic: template loading, header normalization, CSV/XLSX processing
+- Integration: Update `FormatoEngineClient.cs` to call C# first
+- Validation: Test with Assets files
+- Python fallback remains active
+
+**Phase 2: Sitemap + Asin Batcher Engines** (Parallel Implementation)
+- Create `SitemapDotNetEngine.cs` and `AsinBatcherDotNetEngine.cs`
+- Migrate respective Python logic
+- Integration: Update client classes
+- Validation: Test both modules
+- Python fallbacks remain active
+
+**Phase 3: Framework API Updates** (Compilation Fix)
+- Fix Windows Forms API incompatibilities (5,708 issues)
+- Update System.Drawing usages (40 issues)
+- Migrate configuration system (2 issues)
+- Build solution with zero errors
+
+**Phase 4: Validation & Cleanup** (Python Elimination)
+- Comprehensive testing with all Assets files
+- Performance benchmarking (C# vs Python)
+- Remove Python engine files
+- Remove fallback code from clients
+- Final validation
+
+### Critical Path
+
+```mermaid
+graph TB
+    A[Phase 0: SDK Conversion<br/>+ TargetFramework Update<br/>+ NuGet Packages] --> B[Phase 1: Formato Engine<br/>C# Implementation]
+    A --> C[Phase 2: Sitemap + Asin<br/>C# Implementations]
+    B --> D[Phase 3: Fix WinForms APIs<br/>5,708 issues]
+    C --> D
+    D --> E[Phase 4: Testing + Python Removal]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#fff4e1
+    style D fill:#ffe1e1
+    style E fill:#e1ffe1
+```
+
+**Sequential Constraints**:
+1. Phase 0 must complete before any other work (project must build)
+2. Phases 1-2 can proceed in parallel (independent engines)
+3. Phase 3 requires Phases 0-2 (all C# code present for API fixes)
+4. Phase 4 requires Phase 3 (solution must compile)
+
+### Circular Dependency Check
+
+✅ **No circular dependencies** - single project solution.
+
+### Parallel Execution Opportunities
+
+- **Phase 2**: Sitemap and Asin Batcher engines can be implemented simultaneously (different classes, no shared state)
+- **Testing**: Each engine can be validated independently using specific test files from Assets folder
+
+---
+
+## Python Engine Migration Strategy
+
+### Overview
+
+This migration eliminates **all Python engine dependencies** by reimplementing engine logic in C#. The current architecture uses `*EngineClient.cs` classes that launch Python processes via stdin/stdout JSON communication. The target architecture replaces Python engines with native C# classes while preserving the same JSON contract.
+
+### Current Architecture
+
+```
+UI Layer (WinForms)
+    ↓
+Engine Client Layer (C#)
+├── FormatoEngineClient.cs
+├── SitemapEngineClient.cs
+└── AsinBatcherEngineClient.cs
+    ↓ (Process.Start + JSON via stdin/stdout)
+Python Engine Layer
+├── format.py (~300 LOC)
+├── form_site.py (~400 LOC)
+└── engine.py (~100 LOC)
+```
+
+### Target Architecture
+
+```
+UI Layer (WinForms)
+    ↓
+Engine Client Layer (C#)
+├── FormatoEngineClient.cs
+├── SitemapEngineClient.cs
+└── AsinBatcherEngineClient.cs
+    ↓ (Direct method call)
+C# Engine Layer (NEW)
+├── FormatoDotNetEngine.cs
+├── SitemapDotNetEngine.cs
+└── AsinBatcherDotNetEngine.cs
+```
+
+### Migration Priority & Status
+
+| Engine | Priority | Current Status | LOC | Complexity | Dependencies |
+|--------|----------|----------------|-----|------------|--------------|
+| **Formato** | 1 (Fase 3) | Client has try/catch stub | ~300 | Medium | CSV parsing, XLSX (openpyxl→ClosedXML), JSON templates, regex |
+| **Sitemap** | 2 | Client exists | ~400 | Medium-High | XML generation, URL validation, template processing |
+| **Asin Batcher** | 3 | Client exists | ~100 | Low-Medium | Excel read, ASIN cleaning, batch generation |
+
+### Engine-Specific Migration Plans
+
+#### 1. Formato Engine (`format.py` → `FormatoDotNetEngine.cs`)
+
+**Functionality**:
+- Normalize first two WebScraper headers in CSV/XLSX files
+- Auto-detect template (tiendas/bbvs) based on header matching
+- Support hyphen/underscore header formats
+- Process multiple files in batch
+
+**Python Dependencies**:
+- `csv` → C# `System.IO` + manual parsing or `CsvHelper` library
+- `openpyxl` → `ClosedXML` (user-approved)
+- `json` → `System.Text.Json` or `Newtonsoft.Json`
+- `re` → `System.Text.RegularExpressions`
+
+**Key Functions to Migrate**:
+1. `load_template(template_key)` - Load JSON templates from `Engines/Sitemap/PlantillaSitemap*.json`
+2. `expected_headers(template_key)` - Extract expected headers from template
+3. `normalize_header(value)` - Regex-based normalization (hyphen→underscore, lowercase, strip special chars)
+4. `detect_template(headers)` - Match headers against templates to auto-detect
+5. `apply_first_headers(headers, header_format)` - Update first two headers
+6. `read_text_with_encoding(path)` - Try utf-8-sig, utf-8, latin-1 encodings
+7. `detect_csv_delimiter(sample)` - Sniff delimiter from sample (priority: detected, `;`, `\t`, `|`, `,`)
+8. `update_csv_headers(path, template_choice, header_format)` - Main CSV processing
+9. `update_xlsx_headers(path, template_choice, header_format)` - Main XLSX processing (ClosedXML)
+10. `handle_process(data)` - Top-level dispatcher, returns JSON response
+
+**JSON Contract** (preserve exactly):
+```json
+// Request
+{
+  "action": "process",
+  "input_files": ["C:\\path\\file1.csv", "C:\\path\\file2.xlsx"],
+  "template": "auto" | "tiendas" | "bbvs",
+  "header_format": "underscore" | "hyphen"
+}
+
+// Response (success)
+{
+  "ok": true,
+  "updated_files": ["C:\\path\\file1.csv"],
+  "template_counts": {"tiendas": 1, "bbvs": 0}
+}
+
+// Response (error)
+{
+  "ok": false,
+  "error": "Error message",
+  "traceback": "Stack trace"
+}
+```
+
+**Implementation Plan**:
+1. Create `FormatoDotNetEngine.cs` class
+2. Define request/response classes matching JSON contract
+3. Implement helper methods (normalize, detect delimiter, encoding detection)
+4. Implement CSV processing with .NET CSV parser or CsvHelper
+5. Implement XLSX processing with ClosedXML
+6. Implement template loading/matching
+7. Create `Handle(FormatoEngineRequest req)` method as entry point
+8. Update `FormatoEngineClient.cs`: call C# first, Python fallback on exception
+9. Test with files from `Assets\` folder
+
+**Validation Criteria**:
+- ✅ CSV files: Identical output to Python (byte-for-byte comparison)
+- ✅ XLSX files: Identical header values (formatting may differ, values must match)
+- ✅ Template detection: Same template detected as Python
+- ✅ Error handling: Equivalent error messages
+- ✅ Performance: C# should be faster (no process startup overhead)
+
+---
+
+#### 2. Sitemap Engine (`form_site.py` → `SitemapDotNetEngine.cs`)
+
+**Functionality**:
+- Generate sitemap XML files from templates
+- Process URLs and validate structure
+- Apply template-based transformations
+- Support multiple sitemap types (tiendas, bbvs)
+
+**Python Dependencies**:
+- XML libraries → `System.Xml.Linq` (XDocument, XElement)
+- URL processing → `System.Uri`
+- Template processing → same as Formato (JSON templates)
+
+**Key Functions to Migrate** (analysis from `form_site.py`):
+- Template loading (shared with Formato)
+- URL validation and normalization
+- XML generation with proper structure
+- Selector processing from template
+- File output with encoding
+
+**JSON Contract**: (To be determined from `SitemapEngineClient.cs`)
+
+**Implementation Plan**:
+1. Analyze `form_site.py` in detail
+2. Create `SitemapDotNetEngine.cs`
+3. Implement XML generation with XDocument
+4. Implement URL processing
+5. Integrate template system (may share code with Formato)
+6. Update `SitemapEngineClient.cs` for C# call with fallback
+7. Test with sitemap-specific files from Assets
+
+---
+
+#### 3. Asin Batcher Engine (`engine.py` → `AsinBatcherDotNetEngine.cs`)
+
+**Functionality**:
+- Read ASIN lists from Excel/text files
+- Remove duplicates
+- Build Amazon URLs for different markets (MX, US)
+- Split into configurable batch sizes
+- Support ordering options (ordered, reverse, random)
+- Export duplicates separately
+
+**Python Dependencies**:
+- `pandas`/`openpyxl` → `ClosedXML`
+- File I/O → `System.IO`
+- Random → `System.Random`
+
+**Key Functions to Migrate**:
+1. `clean_asin(s)` - Strip/uppercase ASIN
+2. `is_inventory_report(filename)` - Detect inventory report format
+3. ASIN reading from multiple formats (txt, xlsx, inventory reports)
+4. Duplicate detection and export
+5. URL generation per market
+6. Batch splitting with ordering
+7. ZIP file creation for outputs
+
+**JSON Contract**: (To be determined from `AsinBatcherEngineClient.cs`)
+
+**Implementation Plan**:
+1. Analyze `engine.py` in detail
+2. Create `AsinBatcherDotNetEngine.cs`
+3. Implement ASIN cleaning/validation
+4. Implement Excel reading with ClosedXML
+5. Implement duplicate detection (HashSet<string>)
+6. Implement batch generation algorithms
+7. Implement ZIP creation with `System.IO.Compression`
+8. Update `AsinBatcherEngineClient.cs` for C# call with fallback
+9. Test with ASIN files from Assets
+
+---
+
+### Shared Infrastructure
+
+**Template System** (used by Formato and Sitemap):
+- Templates located: `Engines/Sitemap/PlantillaSitemapsTiendas.json`, `PlantillaSitemapsBBvs.json`
+- Consider creating `TemplateManager.cs` as shared utility
+- Cache templates in memory (static dictionary)
+- Handle missing template files gracefully
+
+**Encoding Detection**:
+- Try UTF-8 with BOM, UTF-8, Latin-1 (same order as Python)
+- Fallback to UTF-8 with ignore errors
+- Preserve detected encoding for output
+
+**Error Handling**:
+- All engines return same JSON structure: `{ "ok": bool, "error": string, "traceback": string }`
+- Preserve error messages for compatibility
+- Include full stack trace in traceback field
+
+### Fallback Pattern (Already Partially Implemented)
+
+**Current in `FormatoEngineClient.cs`**:
+```csharp
+try
+{
+    return FormatoDotNetEngine.Handle(request);
+}
+catch (Exception dotnetEx)
+{
+    var fallback = SendWithPythonEngine(request);
+    if (!fallback.Ok)
+    {
+        fallback.Traceback = dotnetEx.ToString() + "\n" + fallback.Traceback;
+    }
+    return fallback;
+}
+```
+
+**To Apply to All Engines**:
+1. Sitemap and Asin Batcher clients adopt same pattern
+2. Try C# engine first (fast, no process overhead)
+3. On any exception, fall back to Python engine
+4. Append C# exception to traceback if both fail
+5. Log which engine was used (for monitoring transition)
+
+### Testing Strategy for Engines
+
+**Unit Tests** (per engine):
+- Test individual functions (normalize, detect template, etc.)
+- Mock file I/O where appropriate
+- Validate edge cases (empty files, malformed data)
+
+**Integration Tests**:
+- Process real files from `Assets\` folder
+- Compare C# output to Python output (byte-by-byte for CSV, value-by-value for XLSX)
+- Validate JSON responses match exactly
+- Test error scenarios (missing files, corrupted data)
+
+**Performance Tests**:
+- Measure C# vs Python processing time
+- Expected: C# 5-10x faster (no process startup, native execution)
+- Monitor memory usage (should be lower without Python runtime)
+
+### Success Criteria for Engine Migration
+
+For each engine, migration is complete when:
+1. ✅ All Python functions have C# equivalents
+2. ✅ JSON contract preserved exactly (request/response structure)
+3. ✅ Integration tests pass (identical outputs)
+4. ✅ Error handling produces equivalent messages
+5. ✅ Performance meets or exceeds Python (C# should be faster)
+6. ✅ Client class uses C# engine by default, Python fallback works
+7. ✅ No compilation errors in engine or client classes
+
+---
+
+## Project-by-Project Plans
+
+[To be filled]
+
+---
+
+## Package Update Reference
+
+[To be filled]
+
+---
+
+## Breaking Changes Catalog
+
+[To be filled]
+
+---
+
+## Risk Management
+
+[To be filled]
+
+---
+
+## Testing & Validation Strategy
+
+[To be filled]
+
+---
+
+## Complexity & Effort Assessment
+
+[To be filled]
+
+---
+
+## Source Control Strategy
+
+[To be filled]
+
+---
+
+## Success Criteria
+
+[To be filled]

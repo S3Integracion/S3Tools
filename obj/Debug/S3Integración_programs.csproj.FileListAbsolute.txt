@@ -56,3 +56,7 @@ C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Tools.exe
 C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Tools.pdb
 C:\Users\ariel\GitHub\S3Tools\bin\Debug\S3Tools.ico
 C:\Users\Public\GitHub\S3Tools\bin\Debug\S3Tools.ico
+C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Integración_programs.AsinBatcherControl.resources
+C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Integración_programs.SitemapControl.resources
+C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Integración_programs.FormatoControl.resources
+C:\Users\ariel\GitHub\S3Tools\obj\Debug\S3Integración_programs.FileNameConfigDialog.resources
