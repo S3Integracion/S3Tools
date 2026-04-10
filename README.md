@@ -5,6 +5,7 @@ Aplicación de escritorio en `WinForms` sobre `.NET 10` que integra tres herrami
 - `Asin Batcher`
 - `Sitemap`
 - `Formato`
+- `Asin no Report`
 
 El objetivo es centralizar el flujo de trabajo de preparación de datos para WebScraper en un único ejecutable, con lógica 100% en C#.
 
@@ -98,6 +99,29 @@ Normaliza encabezados en archivos exportados por WebScraper.
 
 ### Salidas
 - Modificación del archivo de entrada en la misma ubicación
+
+---
+
+## 4) Asin no Report
+
+Compara un archivo base (`.csv`/`.xlsx`) contra uno o más reportes tabulados de Amazon (`.txt`) y devuelve los ASINs que están en la base pero no aparecen en ningún reporte.
+
+### Entradas
+- Base: `.csv` o `.xlsx` (con columna `asin`, `asins` o `asin1`)
+- Reportes: múltiples `.txt` (tabulados con encabezado)
+
+### Capacidades
+- Selección de hoja para archivos base `.xlsx`
+- Importación múltiple de reportes `.txt`
+- Detección de ASIN en encabezados `asin`, `asins` y `asin1`
+- Conserva orden original del archivo base
+- Elimina duplicados del base en la salida final
+- Excluye valores puramente numéricos (ASIN inválido)
+- Resultado en texto para copiar/pegar y exportar a `.txt`
+
+### Salidas
+- Lista de ASINs faltantes en reportes (uno por línea)
+- Resumen de conteos del análisis en la interfaz
 
 ---
 

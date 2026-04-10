@@ -34,7 +34,7 @@ namespace S3Integración_programs
 
         private void controlRemotoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowTab(tabControlRemoto);
+            ShowTab(tabPage5);
         }
 
         private void TrySetAppIcon()

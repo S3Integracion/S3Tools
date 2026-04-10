@@ -17,6 +17,9 @@
     <Compile Update="AsinBatcherControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="AsinNoReportControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="ControlRemotoControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
