@@ -1,11 +1,12 @@
 # S3Tools
 
-Aplicación de escritorio en `WinForms` sobre `.NET 10` que integra tres herramientas operativas en una sola interfaz:
+Aplicación de escritorio en `WinForms` sobre `.NET 10` que integra cinco herramientas operativas en una sola interfaz:
 
 - `Asin Batcher`
 - `Sitemap`
 - `Formato`
 - `Asin no Report`
+- `Categorías`
 
 El objetivo es centralizar el flujo de trabajo de preparación de datos para WebScraper en un único ejecutable, con lógica 100% en C#.
 
@@ -28,9 +29,10 @@ Flujo principal del programa:
 - UI: `Windows Forms`
 - Motores Python: **eliminados**
 - Lógica de negocio: **C# nativo**
-- Plantillas sitemap: en raíz del proyecto:
+- Plantillas en raíz del proyecto:
   - `PlantillaSitemapsTiendas.json`
   - `PlantillaSitemapsBBvs.json`
+  - `PlantillaCategoriasAmazon.json`
 
 ---
 
@@ -125,22 +127,64 @@ Compara un archivo base (`.csv`/`.xlsx`) contra uno o más reportes tabulados de
 
 ---
 
+## 5) Categorías
+
+Genera URLs de categorías de Amazon México a partir de una URL de tienda. Extrae el identificador de tienda (`p_6`) y lo combina con plantillas predefinidas por categoría y un rango de páginas.
+
+### Entradas
+- URL absoluta de `amazon.com.mx` que contenga el filtro `p_6` (codificado o decodificado)
+- Catálogo de categorías desde `PlantillaCategoriasAmazon.json`
+
+### Capacidades
+- Extracción robusta del identificador de tienda (`p_6`) en URLs codificadas o decodificadas
+- Validación del dominio (`amazon.com.mx`) y del formato del identificador
+- 18 categorías predefinidas (configurables sin recompilar)
+- Selección por casillas con filtro por texto, **Seleccionar todas** y **Ninguna**
+- Tabla de **Verificación** con una URL `page=2` por categoría seleccionada (clickeable)
+- Generación de **una sola URL por categoría** con el placeholder de rango `[1-N]` reemplazando el valor de `page` y `ref=sr_pg_` (tope de N: `1000`)
+- Conserva la estructura específica de cada plantilla; reemplaza únicamente `{store}` y `{page}` (incluido `ref=sr_pg_{page}`)
+- Apertura directa de URLs en el navegador (doble clic o `Ctrl+clic`)
+- Copiar todas / copiar selección al portapapeles
+- Exportación a `.txt` (una URL por línea) y `.csv` (Categoría, Página, Tienda, URL)
+
+### Salidas
+- Tabla de URLs generadas en pantalla
+- `.txt` o `.csv` exportado a la ruta elegida
+
+### Configuración de categorías
+El archivo `PlantillaCategoriasAmazon.json` (raíz del proyecto, copiado al output en cada build) contiene un arreglo de objetos con:
+
+- `Nombre`: nombre visible de la categoría
+- `Departamento`: código `i=` de Amazon (ej. `electronics`, `kitchen`, `pets`)
+- `Nodo`: identificador `n:` interno de la categoría
+- `Plantilla`: URL plantilla con marcadores `{store}` y `{page}`
+- `Activo`: `true`/`false`
+- `Orden`: entero para orden de visualización
+
+Las plantillas que no contengan ambos marcadores (`{store}` y `{page}`) se omiten al cargar y se reportan como advertencia. Para añadir o ajustar categorías solo edita el JSON y presiona **Recargar categorías** en la pestaña.
+
+---
+
 ## Estructura principal del código
 
 - `Form1.cs`: contenedor principal con pestañas
 - `AsinBatcherControl.cs`: UI de Asin Batcher
 - `SitemapControl.cs`: UI de Sitemap
 - `FormatoControl.cs`: UI de Formato
-- `ControlRemotoControl.cs`: pestaña visible, sin lógica de negocio activa
+- `AsinNoReportControl.cs`: UI de Asin no Report
+- `CategoriasControl.cs`: UI de Categorías
 - `AsinBatcherEngineClient.cs`: lógica de procesamiento Asin Batcher en C#
 - `SitemapEngineClient.cs`: lógica de generación de sitemap en C#
 - `FormatoEngineClient.cs`: lógica de normalización en C#
+- `AsinNoReportEngineClient.cs`: lógica de comparación base/reportes en C#
+- `CategoriasEngineClient.cs`: análisis de URL, carga de plantillas y generación de URLs en C#
 - `AppState.cs`: persistencia local de estado
 - `FileNameConfigDialog.cs`: configuración de prefijos para nombres de salida
 
 Recursos:
 - `PlantillaSitemapsTiendas.json`
 - `PlantillaSitemapsBBvs.json`
+- `PlantillaCategoriasAmazon.json`
 
 ---
 
@@ -173,11 +217,11 @@ dotnet run --project .\S3Integración_programs.csproj
 ## Uso rápido
 
 1. Abrir la aplicación.
-2. Elegir una pestaña (`Asin Batcher`, `Sitemap`, `Formato`).
-3. Cargar archivos de entrada.
+2. Elegir una pestaña (`Asin Batcher`, `Sitemap`, `Formato`, `Asin no Report`, `Categorías`).
+3. Cargar archivos de entrada o pegar la URL (en `Categorías`).
 4. Configurar parámetros de salida.
-5. Pulsar **Procesar**.
-6. Revisar carpeta/ZIP generado.
+5. Pulsar **Procesar** o **Generar**.
+6. Revisar carpeta/ZIP/archivo generado.
 
 Para guía detallada de operación, revisar `ManualUsuario.md`.
 
@@ -204,5 +248,4 @@ Esto permite a `Sitemap` precargar automáticamente archivos recientes.
 
 ## Alcance actual
 
-- `Asin Batcher`, `Sitemap` y `Formato`: funcionales en C#.
-- `Control Remoto`: pestaña disponible en UI, sin lógica operativa incluida en esta fase.
+- `Asin Batcher`, `Sitemap`, `Formato`, `Asin no Report` y `Categorías`: funcionales en C#.

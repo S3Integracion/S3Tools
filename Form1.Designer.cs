@@ -42,6 +42,9 @@
             tabPage5 = new System.Windows.Forms.TabPage();
             asinNoReportPanel = new System.Windows.Forms.Panel();
             asinNoReportControl = new AsinNoReportControl();
+            tabCategorias = new System.Windows.Forms.TabPage();
+            categoriasPanel = new System.Windows.Forms.Panel();
+            categoriasControl = new CategoriasControl();
             tabControlPrograms.SuspendLayout();
             tabAsinBatcher.SuspendLayout();
             asinBatcherPanel.SuspendLayout();
@@ -51,6 +54,8 @@
             formatoPanel.SuspendLayout();
             tabPage5.SuspendLayout();
             asinNoReportPanel.SuspendLayout();
+            tabCategorias.SuspendLayout();
+            categoriasPanel.SuspendLayout();
             SuspendLayout();
             // 
             // tabControlPrograms
@@ -59,6 +64,7 @@
             tabControlPrograms.Controls.Add(tabSitemap);
             tabControlPrograms.Controls.Add(tabFormato);
             tabControlPrograms.Controls.Add(tabPage5);
+            tabControlPrograms.Controls.Add(tabCategorias);
             tabControlPrograms.Dock = System.Windows.Forms.DockStyle.Fill;
             tabControlPrograms.Location = new System.Drawing.Point(0, 0);
             tabControlPrograms.Name = "tabControlPrograms";
@@ -102,7 +108,7 @@
             tabSitemap.Location = new System.Drawing.Point(4, 24);
             tabSitemap.Name = "tabSitemap";
             tabSitemap.Padding = new System.Windows.Forms.Padding(3);
-            tabSitemap.Size = new System.Drawing.Size(192, 72);
+            tabSitemap.Size = new System.Drawing.Size(829, 757);
             tabSitemap.TabIndex = 1;
             tabSitemap.Text = "Sitemap";
             tabSitemap.UseVisualStyleBackColor = true;
@@ -113,7 +119,7 @@
             sitemapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             sitemapPanel.Location = new System.Drawing.Point(3, 3);
             sitemapPanel.Name = "sitemapPanel";
-            sitemapPanel.Size = new System.Drawing.Size(186, 66);
+            sitemapPanel.Size = new System.Drawing.Size(823, 751);
             sitemapPanel.TabIndex = 0;
             // 
             // sitemapControl
@@ -122,7 +128,7 @@
             sitemapControl.Dock = System.Windows.Forms.DockStyle.Fill;
             sitemapControl.Location = new System.Drawing.Point(0, 0);
             sitemapControl.Name = "sitemapControl";
-            sitemapControl.Size = new System.Drawing.Size(186, 66);
+            sitemapControl.Size = new System.Drawing.Size(823, 751);
             sitemapControl.TabIndex = 0;
             // 
             // tabFormato
@@ -131,7 +137,7 @@
             tabFormato.Location = new System.Drawing.Point(4, 24);
             tabFormato.Name = "tabFormato";
             tabFormato.Padding = new System.Windows.Forms.Padding(3);
-            tabFormato.Size = new System.Drawing.Size(192, 72);
+            tabFormato.Size = new System.Drawing.Size(829, 757);
             tabFormato.TabIndex = 2;
             tabFormato.Text = "Formato";
             tabFormato.UseVisualStyleBackColor = true;
@@ -142,7 +148,7 @@
             formatoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             formatoPanel.Location = new System.Drawing.Point(3, 3);
             formatoPanel.Name = "formatoPanel";
-            formatoPanel.Size = new System.Drawing.Size(186, 66);
+            formatoPanel.Size = new System.Drawing.Size(823, 751);
             formatoPanel.TabIndex = 0;
             // 
             // formatoControl
@@ -151,7 +157,7 @@
             formatoControl.Dock = System.Windows.Forms.DockStyle.Fill;
             formatoControl.Location = new System.Drawing.Point(0, 0);
             formatoControl.Name = "formatoControl";
-            formatoControl.Size = new System.Drawing.Size(186, 66);
+            formatoControl.Size = new System.Drawing.Size(823, 751);
             formatoControl.TabIndex = 0;
             // 
             // tabPage5
@@ -181,9 +187,37 @@
             asinNoReportControl.Name = "asinNoReportControl";
             asinNoReportControl.Size = new System.Drawing.Size(829, 757);
             asinNoReportControl.TabIndex = 0;
-            // 
+            //
+            // tabCategorias
+            //
+            tabCategorias.Controls.Add(categoriasPanel);
+            tabCategorias.Location = new System.Drawing.Point(4, 24);
+            tabCategorias.Name = "tabCategorias";
+            tabCategorias.Size = new System.Drawing.Size(829, 757);
+            tabCategorias.TabIndex = 6;
+            tabCategorias.Text = "Categorías";
+            tabCategorias.UseVisualStyleBackColor = true;
+            //
+            // categoriasPanel
+            //
+            categoriasPanel.Controls.Add(categoriasControl);
+            categoriasPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            categoriasPanel.Location = new System.Drawing.Point(0, 0);
+            categoriasPanel.Name = "categoriasPanel";
+            categoriasPanel.Size = new System.Drawing.Size(829, 757);
+            categoriasPanel.TabIndex = 0;
+            //
+            // categoriasControl
+            //
+            categoriasControl.AutoScroll = true;
+            categoriasControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            categoriasControl.Location = new System.Drawing.Point(0, 0);
+            categoriasControl.Name = "categoriasControl";
+            categoriasControl.Size = new System.Drawing.Size(829, 757);
+            categoriasControl.TabIndex = 0;
+            //
             // Form1
-            // 
+            //
             AllowDrop = true;
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -202,6 +236,8 @@
             formatoPanel.ResumeLayout(false);
             tabPage5.ResumeLayout(false);
             asinNoReportPanel.ResumeLayout(false);
+            tabCategorias.ResumeLayout(false);
+            categoriasPanel.ResumeLayout(false);
             ResumeLayout(false);
 
         }
@@ -220,6 +256,9 @@
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.Panel asinNoReportPanel;
         private AsinNoReportControl asinNoReportControl;
+        private System.Windows.Forms.TabPage tabCategorias;
+        private System.Windows.Forms.Panel categoriasPanel;
+        private CategoriasControl categoriasControl;
     }
 }
 

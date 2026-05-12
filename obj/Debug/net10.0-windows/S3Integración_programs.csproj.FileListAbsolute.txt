@@ -31,3 +31,5 @@ C:\Users\ariel\GitHub\S3Tools\obj\Debug\net10.0-windows\S3Integración_programs.
 C:\Users\ariel\GitHub\S3Tools\obj\Debug\net10.0-windows\ref\S3Tools.dll
 C:\Users\ariel\GitHub\S3Tools\bin\Debug\net10.0-windows\PlantillaSitemapsTiendas.json
 C:\Users\ariel\GitHub\S3Tools\bin\Debug\net10.0-windows\PlantillaSitemapsBBvs.json
+C:\Users\ariel\GitHub\S3Tools\bin\Debug\net10.0-windows\PlantillaCategoriasAmazon.json
+c:\Users\ariel\GitHub\S3Tools\obj\Debug\net10.0-windows\S3Integración_programs.CategoriasControl.resources
