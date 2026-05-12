@@ -32,11 +32,6 @@ namespace S3Integración_programs
             ShowTab(tabAsinBatcher);
         }
 
-        private void controlRemotoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ShowTab(tabControlRemoto);
-        }
-
         private void TrySetAppIcon()
         {
             try

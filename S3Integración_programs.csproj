@@ -29,6 +29,9 @@
     <Content Include="PlantillaSitemapsBBvs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="PlantillaCategoriasAmazon.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     
     <!-- Application icon -->
     <Content Include="S3Tools.ico">

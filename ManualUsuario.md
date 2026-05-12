@@ -108,8 +108,27 @@ Normaliza las primeras dos columnas de archivos WebScraper.
 - Al finalizar se muestra el total de archivos actualizados.
 
 ## Pestañas sin logica activa
-- **Control Remoto** aparece en la UI pero no tiene logica de negocio implementada
-  en esta version.
+- **Asin no Report** disponible para contrastar ASINs base contra reportes Amazon.
+
+## Asin no Report
+Compara un archivo base (`.csv` o `.xlsx`) contra uno o varios reportes tabulados de
+Amazon (`.txt`) y devuelve los ASINs que existen en la base pero no aparecen en
+ningun reporte.
+
+### Entradas
+- Base: `.csv` o `.xlsx`.
+- Reportes: `.txt` (multiples).
+
+### Pasos
+1) Importa el archivo base.
+2) Si el base es `.xlsx`, selecciona la hoja a analizar.
+3) Importa uno o varios reportes Amazon `.txt`.
+4) Presiona **Analizar**.
+5) Copia el resultado o exportalo como `.txt`.
+
+### Salidas
+- Texto multilinea con ASINs faltantes (uno por linea).
+- Resumen de conteos del analisis.
 
 ## Plantillas de sitemap
 - `PlantillaSitemapsTiendas.json`: ProductosTX, Holaproducto, Altinor, Hervaz Trade.
