@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>S3Tools</RootNamespace>
+    <AssemblyName>S3Tools</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>Resources\S3Tools.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Assembly metadata">
+    <Product>S3Tools</Product>
+    <AssemblyTitle>S3Tools</AssemblyTitle>
+    <Description>Aplicación WinForms .NET 10 que centraliza herramientas operativas para preparación de datos de WebScraper y Amazon México.</Description>
+    <Authors>Carlos Ariel Ureta Armenta</Authors>
+    <Company>S3 Integración</Company>
+    <Copyright>© 2025 S3 Integración</Copyright>
+    <Version>2.5.0.0</Version>
+    <AssemblyVersion>2.5.0.0</AssemblyVersion>
+    <FileVersion>2.5.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup Label="Global assembly attributes">
+    <AssemblyAttribute Include="System.Runtime.Versioning.SupportedOSPlatformAttribute">
+      <_Parameter1>windows</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
+      <_Parameter1>false</_Parameter1>
+      <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.InteropServices.GuidAttribute">
+      <_Parameter1>77a781e7-f9ba-448c-8918-7b4a67c2ac10</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
+  </ItemGroup>
+
+  <ItemGroup Label="Content files copied to output (Link preserves the flat filename next to the .exe)">
+    <Content Include="Resources\PlantillaSitemapsTiendas.json" Link="PlantillaSitemapsTiendas.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\PlantillaSitemapsBBvs.json" Link="PlantillaSitemapsBBvs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\PlantillaCategoriasAmazon.json" Link="PlantillaCategoriasAmazon.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\S3Tools.ico" Link="S3Tools.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

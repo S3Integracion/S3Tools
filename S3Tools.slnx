@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/S3Tools/S3Tools.csproj" />
+  </Folder>
+</Solution>

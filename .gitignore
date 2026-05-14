@@ -1,5 +1,70 @@
+# ----------------------------------------------------------------------------
+# .gitignore para proyectos .NET / Visual Studio
+# Basado en la plantilla oficial de GitHub para Visual Studio + ajustes locales
+# ----------------------------------------------------------------------------
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+publish/
+[Pp]ublishProfiles/*.pubxml.user
+
+# Visual Studio IDE
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.swp
+
+# JetBrains Rider / ReSharper
+.idea/
+*.DotSettings.user
+
+# VS Code
+.vscode/
+
+# Build caches & intermediate files
+*.cache
+*.pdb
+*.tmp
+*.log
+*.tlog
+*.backup
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+
+# Test / coverage
+TestResults/
+[Cc]overage*/
+*.coverage
+*.coveragexml
+
+# Signing / secrets (NUNCA versionar claves privadas)
+*.pfx
+*.snk
+*.cer
+*.p12
+*.key
+
+# Designer caches específicos de Resources
+*.GeneratedMSBuildEditorConfig.editorconfig
+
+# OS noise
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+.DS_Store
+
+# Project-specific (Claude Code, assets locales, recursos no versionados)
 /.github
-/.vs
-/.vscode
-/bin
 /assets
+/.claude

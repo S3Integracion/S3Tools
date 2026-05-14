@@ -1,9 +1,0 @@
-<Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-    <Platform Name="x64" />
-  </Configurations>
-  <Project Path="S3Integración_programs.csproj" Id="77a781e7-f9ba-448c-8918-7b4a67c2ac10">
-    <Platform Solution="Debug|x64" Project="x64" />
-  </Project>
-</Solution>
