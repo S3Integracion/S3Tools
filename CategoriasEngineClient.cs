@@ -48,6 +48,7 @@ namespace S3Integración_programs
         public string Pagina { get; set; }
         public string Tienda { get; set; }
         public string Url { get; set; }
+        public string Plantilla { get; set; }
     }
 
     internal sealed class CategoriasLoadResponse
@@ -72,8 +73,6 @@ namespace S3Integración_programs
     {
         public string Tienda { get; set; }
         public CategoriaAmazon[] CategoriasSeleccionadas { get; set; }
-        public int PaginaInicial { get; set; }
-        public int PaginaFinal { get; set; }
     }
 
     internal sealed class CategoriasGenerateResponse
@@ -114,12 +113,22 @@ namespace S3Integración_programs
             "p_6:([A-Z0-9]+)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        private static readonly Regex StoreIdPatternSeller = new Regex(
+            "[?&]seller=([A-Z0-9]+)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        private static readonly Regex StoreIdPatternMe = new Regex(
+            "[?&]me=([A-Z0-9]+)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         private static readonly Regex StoreIdShape = new Regex(
             "^[A-Z0-9]{8,}$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private static readonly string[] AmazonMxHosts =
+        private static readonly string[] AmazonHosts =
         {
+            "amazon.com",
+            "www.amazon.com",
             "amazon.com.mx",
             "www.amazon.com.mx",
         };
@@ -211,9 +220,9 @@ namespace S3Integración_programs
                     return AnalyzeError("La entrada no tiene un formato de URL valido.");
                 }
 
-                if (!IsAmazonMxHost(parsed.Host))
+                if (!IsAmazonHost(parsed.Host))
                 {
-                    return AnalyzeError("La URL debe pertenecer a amazon.com.mx.");
+                    return AnalyzeError("La URL debe pertenecer a amazon.com o amazon.com.mx.");
                 }
 
                 var tienda = ExtractStoreId(trimmed);
@@ -268,20 +277,7 @@ namespace S3Integración_programs
                     return GenerateError("Selecciona al menos una categoria para generar URLs.");
                 }
 
-                var inicio = request.PaginaInicial;
-                var fin = request.PaginaFinal;
-
-                if (inicio < 1 || fin < 1 || fin < inicio)
-                {
-                    return GenerateError("El rango de paginas debe ser valido (mayor o igual a 1).");
-                }
-
-                if (fin > MaxAllowedPages)
-                {
-                    return GenerateError("El numero de paginas excede el limite permitido (" + MaxAllowedPages + ").");
-                }
-
-                var rangeToken = "[" + inicio + "-" + fin + "]";
+                const string defaultRangeToken = "[1-1]";
                 var urls = new List<UrlGenerada>(categorias.Length);
 
                 foreach (var cat in categorias)
@@ -289,9 +285,10 @@ namespace S3Integración_programs
                     urls.Add(new UrlGenerada
                     {
                         Categoria = cat.Nombre,
-                        Pagina = rangeToken,
+                        Pagina = defaultRangeToken,
                         Tienda = tienda,
-                        Url = BuildUrl(cat.Plantilla, tienda, rangeToken),
+                        Url = BuildUrl(cat.Plantilla, tienda, defaultRangeToken),
+                        Plantilla = cat.Plantilla,
                     });
                 }
 
@@ -392,19 +389,43 @@ namespace S3Integración_programs
 
         private static string ExtractStoreId(string url)
         {
-            var match = StoreIdPatternEncoded.Match(url);
-            if (match.Success && match.Groups.Count > 1)
+            var candidate = TryMatch(StoreIdPatternEncoded, url);
+            if (!string.IsNullOrEmpty(candidate))
             {
-                return match.Groups[1].Value;
+                return candidate;
+            }
+
+            candidate = TryMatch(StoreIdPatternSeller, url);
+            if (!string.IsNullOrEmpty(candidate))
+            {
+                return candidate;
+            }
+
+            candidate = TryMatch(StoreIdPatternMe, url);
+            if (!string.IsNullOrEmpty(candidate))
+            {
+                return candidate;
             }
 
             try
             {
                 var decoded = Uri.UnescapeDataString(url);
-                match = StoreIdPatternDecoded.Match(decoded);
-                if (match.Success && match.Groups.Count > 1)
+                candidate = TryMatch(StoreIdPatternDecoded, decoded);
+                if (!string.IsNullOrEmpty(candidate))
                 {
-                    return match.Groups[1].Value;
+                    return candidate;
+                }
+
+                candidate = TryMatch(StoreIdPatternSeller, decoded);
+                if (!string.IsNullOrEmpty(candidate))
+                {
+                    return candidate;
+                }
+
+                candidate = TryMatch(StoreIdPatternMe, decoded);
+                if (!string.IsNullOrEmpty(candidate))
+                {
+                    return candidate;
                 }
             }
             catch
@@ -414,7 +435,21 @@ namespace S3Integración_programs
             return string.Empty;
         }
 
-        private static bool IsAmazonMxHost(string host)
+        private static string TryMatch(Regex pattern, string input)
+        {
+            var match = pattern.Match(input);
+            if (match.Success && match.Groups.Count > 1)
+            {
+                var value = match.Groups[1].Value;
+                if (StoreIdShape.IsMatch(value))
+                {
+                    return value;
+                }
+            }
+            return string.Empty;
+        }
+
+        private static bool IsAmazonHost(string host)
         {
             if (string.IsNullOrWhiteSpace(host))
             {
@@ -422,7 +457,7 @@ namespace S3Integración_programs
             }
 
             var normalized = host.Trim().ToLowerInvariant();
-            return AmazonMxHosts.Any(h => string.Equals(h, normalized, StringComparison.Ordinal));
+            return AmazonHosts.Any(h => string.Equals(h, normalized, StringComparison.Ordinal));
         }
 
         private static string ResolveTemplatePath()

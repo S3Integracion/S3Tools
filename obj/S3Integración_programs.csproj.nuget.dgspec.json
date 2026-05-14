@@ -53,14 +53,6 @@
             "ClosedXML": {
               "target": "Package",
               "version": "[0.104.2, )"
-            },
-            "System.Configuration.ConfigurationManager": {
-              "target": "Package",
-              "version": "[9.0.0, )"
-            },
-            "System.Drawing.Common": {
-              "target": "Package",
-              "version": "[9.0.0, )"
             }
           },
           "imports": [

@@ -35,11 +35,11 @@ namespace S3Integración_programs
 
         private void ConfigureGrids()
         {
-            BuildGridColumns(_verificationGrid);
-            BuildGridColumns(_resultsGrid);
+            BuildPreviewGridColumns(_verificationGrid);
+            BuildResultsGridColumns(_resultsGrid);
         }
 
-        private static void BuildGridColumns(DataGridView grid)
+        private static void BuildPreviewGridColumns(DataGridView grid)
         {
             grid.AutoGenerateColumns = false;
             grid.Columns.Clear();
@@ -49,6 +49,7 @@ namespace S3Integración_programs
                 Name = "colCategoria",
                 DataPropertyName = nameof(UrlGenerada.Categoria),
                 FillWeight = 22,
+                ReadOnly = true,
             });
             grid.Columns.Add(new DataGridViewTextBoxColumn
             {
@@ -56,6 +57,7 @@ namespace S3Integración_programs
                 Name = "colPagina",
                 DataPropertyName = nameof(UrlGenerada.Pagina),
                 FillWeight = 8,
+                ReadOnly = true,
                 DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter },
             });
             grid.Columns.Add(new DataGridViewTextBoxColumn
@@ -64,8 +66,9 @@ namespace S3Integración_programs
                 Name = "colTienda",
                 DataPropertyName = nameof(UrlGenerada.Tienda),
                 FillWeight = 12,
+                ReadOnly = true,
             });
-            var urlColumn = new DataGridViewLinkColumn
+            grid.Columns.Add(new DataGridViewLinkColumn
             {
                 HeaderText = "URL (doble clic o Ctrl+clic para abrir)",
                 Name = "colUrl",
@@ -73,8 +76,53 @@ namespace S3Integración_programs
                 FillWeight = 60,
                 LinkBehavior = LinkBehavior.HoverUnderline,
                 TrackVisitedState = false,
-            };
-            grid.Columns.Add(urlColumn);
+                ReadOnly = true,
+            });
+        }
+
+        private static void BuildResultsGridColumns(DataGridView grid)
+        {
+            grid.AutoGenerateColumns = false;
+            grid.Columns.Clear();
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Categoria",
+                Name = "colCategoria",
+                DataPropertyName = nameof(UrlGenerada.Categoria),
+                FillWeight = 22,
+                ReadOnly = true,
+            });
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "N paginas",
+                Name = "colPaginasN",
+                FillWeight = 8,
+                ReadOnly = false,
+                MaxInputLength = 4,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleCenter,
+                    BackColor = System.Drawing.Color.FromArgb(255, 250, 230),
+                },
+            });
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Tienda",
+                Name = "colTienda",
+                DataPropertyName = nameof(UrlGenerada.Tienda),
+                FillWeight = 12,
+                ReadOnly = true,
+            });
+            grid.Columns.Add(new DataGridViewLinkColumn
+            {
+                HeaderText = "URL (doble clic o Ctrl+clic para abrir)",
+                Name = "colUrl",
+                DataPropertyName = nameof(UrlGenerada.Url),
+                FillWeight = 58,
+                LinkBehavior = LinkBehavior.HoverUnderline,
+                TrackVisitedState = false,
+                ReadOnly = true,
+            });
         }
 
         private void WireEvents()
@@ -137,6 +185,93 @@ namespace S3Integración_programs
                     OpenGridUrl(_resultsGrid, e.RowIndex, e.ColumnIndex);
                 }
             };
+
+            _resultsGrid.CellValidating += ResultsGrid_CellValidating;
+            _resultsGrid.CellEndEdit += ResultsGrid_CellEndEdit;
+        }
+
+        private void ResultsGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (!IsPagesColumn(e.ColumnIndex) || e.RowIndex < 0 || e.RowIndex >= _resultsData.Count)
+            {
+                return;
+            }
+
+            var raw = (e.FormattedValue ?? string.Empty).ToString().Trim();
+            int parsed;
+            if (!int.TryParse(raw, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out parsed)
+                || parsed < 1
+                || parsed > CategoriasDotNetEngine.MaxAllowedPages)
+            {
+                e.Cancel = true;
+                SetStatus("N invalido. Ingresa un entero entre 1 y " + CategoriasDotNetEngine.MaxAllowedPages + ".");
+            }
+        }
+
+        private void ResultsGrid_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (!IsPagesColumn(e.ColumnIndex) || e.RowIndex < 0 || e.RowIndex >= _resultsData.Count)
+            {
+                return;
+            }
+
+            var cell = _resultsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            var raw = (cell.Value ?? string.Empty).ToString().Trim();
+            int n;
+            if (!int.TryParse(raw, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out n)
+                || n < 1
+                || n > CategoriasDotNetEngine.MaxAllowedPages)
+            {
+                return;
+            }
+
+            var row = _resultsData[e.RowIndex];
+            var rangeToken = "[1-" + n + "]";
+            row.Pagina = rangeToken;
+            row.Url = CategoriasDotNetEngine.BuildUrl(row.Plantilla, row.Tienda, rangeToken);
+            cell.Value = n.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+            _resultsGrid.InvalidateRow(e.RowIndex);
+            SetStatus("Fila " + (e.RowIndex + 1) + " actualizada: rango [1-" + n + "] aplicado a " + row.Categoria + ".");
+        }
+
+        private bool IsPagesColumn(int columnIndex)
+        {
+            if (columnIndex < 0)
+            {
+                return false;
+            }
+            var col = _resultsGrid.Columns["colPaginasN"];
+            return col != null && col.Index == columnIndex;
+        }
+
+        private void RefreshPagesColumn()
+        {
+            var col = _resultsGrid.Columns["colPaginasN"];
+            if (col == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < _resultsData.Count && i < _resultsGrid.Rows.Count; i++)
+            {
+                var row = _resultsData[i];
+                var n = ExtractRangeEnd(row.Pagina);
+                _resultsGrid.Rows[i].Cells[col.Index].Value = n.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            }
+        }
+
+        private static int ExtractRangeEnd(string rangeToken)
+        {
+            if (string.IsNullOrWhiteSpace(rangeToken))
+            {
+                return 1;
+            }
+            var trimmed = rangeToken.Trim('[', ']', ' ');
+            var dash = trimmed.IndexOf('-');
+            var tail = dash >= 0 ? trimmed.Substring(dash + 1) : trimmed;
+            int n;
+            return int.TryParse(tail, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out n) && n >= 1 ? n : 1;
         }
 
         private async System.Threading.Tasks.Task EnsureCategoriesLoadedAsync()
@@ -346,19 +481,10 @@ namespace S3Integración_programs
                 return;
             }
 
-            var n = (int)_pagesNumeric.Value;
-            if (n < 1)
-            {
-                MessageBox.Show(this, "El numero de paginas debe ser mayor o igual a 1.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
             var request = new CategoriasGenerateRequest
             {
                 Tienda = _detectedStore,
                 CategoriasSeleccionadas = seleccionadas,
-                PaginaInicial = 1,
-                PaginaFinal = n,
             };
 
             SetBusy(true);
@@ -374,10 +500,11 @@ namespace S3Integración_programs
             _resultsData.Clear();
             _resultsData.AddRange(response.Urls ?? Array.Empty<UrlGenerada>());
             BindGrid(_resultsGrid, _resultsData);
+            RefreshPagesColumn();
 
             SetStatus(
                 "URLs generadas: " + _resultsData.Count +
-                " (1 por categoria, rango de paginas [1-" + n + "])");
+                ". Edita el numero de paginas por fila para ajustar el rango.");
             UpdateActionState();
         }
 
@@ -543,6 +670,7 @@ namespace S3Integración_programs
             _reloadCategoriesButton.Enabled = !busy;
             _categoriasList.Enabled = !busy;
             _generateButton.Enabled = !busy;
+            _resultsGrid.Enabled = !busy;
             UpdateActionState();
         }
 
@@ -581,15 +709,16 @@ namespace S3Integración_programs
         private void ShowHelp()
         {
             var msg =
-                "Categorias - Generador de URLs de Amazon Mexico\n\n" +
-                "1) Pega una URL de tienda o categoria de amazon.com.mx y presiona Analizar.\n" +
-                "2) El sistema extrae el identificador de tienda (p_6).\n" +
+                "Categorias - Generador de URLs de Amazon\n\n" +
+                "1) Pega una URL de tienda, vendedor o categoria de amazon.com / amazon.com.mx\n" +
+                "   y presiona Analizar. Se reconocen URLs con p_6, seller= o me=.\n" +
+                "2) El sistema extrae el identificador de tienda.\n" +
                 "3) Marca una o varias categorias en la lista.\n" +
                 "   Mientras seleccionas, la tabla de Verificacion muestra una URL\n" +
                 "   por categoria con page=2 (clickeable para abrir en navegador).\n" +
-                "4) Indica el numero N de paginas y presiona Generar URLs.\n" +
-                "   Se genera UNA URL por categoria con el placeholder de rango [1-N]\n" +
-                "   en page y ref=sr_pg_, listo para que el scraper expanda el rango.\n" +
+                "4) Presiona Generar URLs. Cada categoria arranca con [1-1].\n" +
+                "   En la columna 'N paginas' del grid de Resultados edita el numero\n" +
+                "   por fila; la URL se recalcula al salir de la celda con el rango [1-N].\n" +
                 "5) Copia o exporta los resultados (TXT/CSV).\n\n" +
                 "Doble clic o Ctrl+clic sobre una URL la abre en el navegador.\n\n" +
                 "Las plantillas se cargan de PlantillaCategoriasAmazon.json.";
