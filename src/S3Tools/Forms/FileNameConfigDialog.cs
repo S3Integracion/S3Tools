@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace S3Integración_programs
+namespace S3Tools
 {
     internal sealed class FileNameConfigDialog : Form
     {

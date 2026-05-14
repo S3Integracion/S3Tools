@@ -1,6 +1,6 @@
-﻿namespace S3Integración_programs
+﻿namespace S3Tools
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Variable del diseñador necesaria.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             tabControlPrograms = new System.Windows.Forms.TabControl();
             tabAsinBatcher = new System.Windows.Forms.TabPage();
             asinBatcherPanel = new System.Windows.Forms.Panel();
@@ -39,7 +39,7 @@
             tabFormato = new System.Windows.Forms.TabPage();
             formatoPanel = new System.Windows.Forms.Panel();
             formatoControl = new FormatoControl();
-            tabPage5 = new System.Windows.Forms.TabPage();
+            tabAsinNoReport = new System.Windows.Forms.TabPage();
             asinNoReportPanel = new System.Windows.Forms.Panel();
             asinNoReportControl = new AsinNoReportControl();
             tabCategorias = new System.Windows.Forms.TabPage();
@@ -52,7 +52,7 @@
             sitemapPanel.SuspendLayout();
             tabFormato.SuspendLayout();
             formatoPanel.SuspendLayout();
-            tabPage5.SuspendLayout();
+            tabAsinNoReport.SuspendLayout();
             asinNoReportPanel.SuspendLayout();
             tabCategorias.SuspendLayout();
             categoriasPanel.SuspendLayout();
@@ -63,7 +63,7 @@
             tabControlPrograms.Controls.Add(tabAsinBatcher);
             tabControlPrograms.Controls.Add(tabSitemap);
             tabControlPrograms.Controls.Add(tabFormato);
-            tabControlPrograms.Controls.Add(tabPage5);
+            tabControlPrograms.Controls.Add(tabAsinNoReport);
             tabControlPrograms.Controls.Add(tabCategorias);
             tabControlPrograms.Dock = System.Windows.Forms.DockStyle.Fill;
             tabControlPrograms.Location = new System.Drawing.Point(0, 0);
@@ -100,7 +100,6 @@
             asinBatcherControl.Name = "asinBatcherControl";
             asinBatcherControl.Size = new System.Drawing.Size(823, 751);
             asinBatcherControl.TabIndex = 0;
-            asinBatcherControl.Load += asinBatcherControl_Load;
             // 
             // tabSitemap
             // 
@@ -160,15 +159,15 @@
             formatoControl.Size = new System.Drawing.Size(823, 751);
             formatoControl.TabIndex = 0;
             // 
-            // tabPage5
+            // tabAsinNoReport
             // 
-            tabPage5.Controls.Add(asinNoReportPanel);
-            tabPage5.Location = new System.Drawing.Point(4, 24);
-            tabPage5.Name = "tabPage5";
-            tabPage5.Size = new System.Drawing.Size(829, 757);
-            tabPage5.TabIndex = 5;
-            tabPage5.Text = "Asin no Report";
-            tabPage5.UseVisualStyleBackColor = true;
+            tabAsinNoReport.Controls.Add(asinNoReportPanel);
+            tabAsinNoReport.Location = new System.Drawing.Point(4, 24);
+            tabAsinNoReport.Name = "tabAsinNoReport";
+            tabAsinNoReport.Size = new System.Drawing.Size(829, 757);
+            tabAsinNoReport.TabIndex = 5;
+            tabAsinNoReport.Text = "Asin no Report";
+            tabAsinNoReport.UseVisualStyleBackColor = true;
             // 
             // asinNoReportPanel
             // 
@@ -216,7 +215,7 @@
             categoriasControl.Size = new System.Drawing.Size(829, 757);
             categoriasControl.TabIndex = 0;
             //
-            // Form1
+            // MainForm
             //
             AllowDrop = true;
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -224,9 +223,8 @@
             ClientSize = new System.Drawing.Size(837, 785);
             Controls.Add(tabControlPrograms);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
-            Name = "Form1";
+            Name = "MainForm";
             Text = "S3Tools";
-            Load += Form1_Load;
             tabControlPrograms.ResumeLayout(false);
             tabAsinBatcher.ResumeLayout(false);
             asinBatcherPanel.ResumeLayout(false);
@@ -234,7 +232,7 @@
             sitemapPanel.ResumeLayout(false);
             tabFormato.ResumeLayout(false);
             formatoPanel.ResumeLayout(false);
-            tabPage5.ResumeLayout(false);
+            tabAsinNoReport.ResumeLayout(false);
             asinNoReportPanel.ResumeLayout(false);
             tabCategorias.ResumeLayout(false);
             categoriasPanel.ResumeLayout(false);
@@ -253,7 +251,7 @@
         private AsinBatcherControl asinBatcherControl;
         private SitemapControl sitemapControl;
         private FormatoControl formatoControl;
-        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.TabPage tabAsinNoReport;
         private System.Windows.Forms.Panel asinNoReportPanel;
         private AsinNoReportControl asinNoReportControl;
         private System.Windows.Forms.TabPage tabCategorias;

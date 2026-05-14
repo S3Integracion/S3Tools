@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace S3Integración_programs
+namespace S3Tools
 {
     internal sealed class CategoriasEngineClient
     {

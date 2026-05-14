@@ -165,26 +165,55 @@ Las plantillas que no contengan ambos marcadores (`{store}` y `{page}`) se omite
 
 ---
 
-## Estructura principal del código
+## Estructura del proyecto
 
-- `Form1.cs`: contenedor principal con pestañas
-- `AsinBatcherControl.cs`: UI de Asin Batcher
-- `SitemapControl.cs`: UI de Sitemap
-- `FormatoControl.cs`: UI de Formato
-- `AsinNoReportControl.cs`: UI de Asin no Report
-- `CategoriasControl.cs`: UI de Categorías
-- `AsinBatcherEngineClient.cs`: lógica de procesamiento Asin Batcher en C#
-- `SitemapEngineClient.cs`: lógica de generación de sitemap en C#
-- `FormatoEngineClient.cs`: lógica de normalización en C#
-- `AsinNoReportEngineClient.cs`: lógica de comparación base/reportes en C#
-- `CategoriasEngineClient.cs`: análisis de URL, carga de plantillas y generación de URLs en C#
-- `AppState.cs`: persistencia local de estado
-- `FileNameConfigDialog.cs`: configuración de prefijos para nombres de salida
-
-Recursos:
-- `PlantillaSitemapsTiendas.json`
-- `PlantillaSitemapsBBvs.json`
-- `PlantillaCategoriasAmazon.json`
+```
+S3Tools/
+├── .editorconfig              # Reglas de estilo C# y naming rules
+├── .gitignore                 # Patrones .NET estándar (excluye obj/, bin/, .vs/, *.user, *.pfx…)
+├── Directory.Build.props      # Propiedades MSBuild compartidas
+├── S3Tools.slnx               # Solución
+├── README.md                  # Este archivo
+├── LICENSE.TXT
+├── docs/
+│   ├── ManualUsuario.md       # Guía de operación detallada
+│   └── S3Tools.pdf
+└── src/S3Tools/
+    ├── S3Tools.csproj         # Proyecto principal (.NET 10, WinForms)
+    ├── Program.cs             # Punto de entrada
+    ├── Forms/
+    │   ├── MainForm.*         # Ventana principal con pestañas
+    │   └── FileNameConfigDialog.*
+    ├── Controls/              # UserControls por módulo
+    │   ├── AsinBatcher/
+    │   ├── Sitemap/
+    │   ├── Formato/
+    │   ├── AsinNoReport/
+    │   └── Categorias/
+    ├── Services/              # Lógica de negocio por módulo
+    │   ├── AsinBatcher/       # AsinBatcherEngineClient + Extractor + Splitter + UrlBuilder + OutputWriter
+    │   ├── Sitemap/           # SitemapEngineClient + UrlExtractor + SitemapJsonBuilder
+    │   ├── Formato/           # FormatoEngineClient + XlsxHeaderNormalizer + CsvHeaderNormalizer + TemplateResolver
+    │   ├── AsinNoReport/
+    │   └── Categorias/
+    ├── Models/                # DTOs por módulo
+    │   ├── AsinBatcher/       # EngineRequest, EngineResponse, ExtractionResult
+    │   ├── Sitemap/
+    │   └── Formato/
+    ├── Common/                # Utilidades compartidas
+    │   ├── AppState.cs        # Persistencia de UI (última carpeta)
+    │   ├── RegexPatterns.cs   # Patrones Asin / Url centralizados
+    │   ├── StoreCatalog.cs    # Tiendas y mercados soportados
+    │   └── Logging/
+    │       └── FileLogger.cs  # Logger best-effort en %LocalAppData%\S3Tools\logs
+    ├── Resources/             # Plantillas JSON e ícono (copiados al output)
+    │   ├── PlantillaSitemapsTiendas.json
+    │   ├── PlantillaSitemapsBBvs.json
+    │   ├── PlantillaCategoriasAmazon.json
+    │   └── S3Tools.ico
+    └── Properties/
+        └── Resources.resx
+```
 
 ---
 
@@ -203,13 +232,19 @@ Desde la raíz del repositorio:
 
 ```powershell
 dotnet restore
-dotnet build
+dotnet build .\S3Tools.slnx
 ```
 
 Ejecución en desarrollo:
 
 ```powershell
-dotnet run --project .\S3Integración_programs.csproj
+dotnet run --project .\src\S3Tools\S3Tools.csproj
+```
+
+Compilación de Release:
+
+```powershell
+dotnet build .\S3Tools.slnx -c Release
 ```
 
 ---
@@ -223,7 +258,7 @@ dotnet run --project .\S3Integración_programs.csproj
 5. Pulsar **Procesar** o **Generar**.
 6. Revisar carpeta/ZIP/archivo generado.
 
-Para guía detallada de operación, revisar `ManualUsuario.md`.
+Para guía detallada de operación, revisar `docs/ManualUsuario.md`.
 
 ---
 
@@ -231,9 +266,13 @@ Para guía detallada de operación, revisar `ManualUsuario.md`.
 
 La aplicación guarda la última carpeta de salida de Asin Batcher en:
 
-- `%LocalAppData%\S3Integracion\last_asin_output_dir.txt`
+- `%LocalAppData%\S3Tools\last_asin_output_dir.txt`
 
 Esto permite a `Sitemap` precargar automáticamente archivos recientes.
+
+Los logs de la aplicación (inicio, errores no fatales, advertencias) se escriben en:
+
+- `%LocalAppData%\S3Tools\logs\app-YYYYMMDD.log`
 
 ---
 

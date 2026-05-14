@@ -1,24 +1,36 @@
-// Entry point for the WinForms application.
-// Keeps startup minimal and hands control to Form1.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace S3Integración_programs
+namespace S3Tools
 {
+    /// <summary>
+    /// Punto de entrada de la aplicación WinForms.
+    /// Mantiene el arranque mínimo y delega en <see cref="MainForm"/>.
+    /// </summary>
     internal static class Program
     {
-        /// <summary>
-        /// Punto de entrada principal para la aplicación.
-        /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
+            FileLogger.Info("Program", "S3Tools starting (v" +
+                typeof(Program).Assembly.GetName().Version + ")");
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            try
+            {
+                Application.Run(new MainForm());
+            }
+            catch (Exception ex)
+            {
+                FileLogger.Error("Program", "Fatal error in main loop", ex);
+                throw;
+            }
+            finally
+            {
+                FileLogger.Info("Program", "S3Tools shutting down");
+            }
         }
     }
 }

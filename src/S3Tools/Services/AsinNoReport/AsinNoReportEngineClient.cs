@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
 
-namespace S3Integración_programs
+namespace S3Tools
 {
     internal sealed class AsinNoReportEngineClient
     {
@@ -53,7 +53,6 @@ namespace S3Integración_programs
 
     internal static class AsinNoReportDotNetEngine
     {
-        private static readonly Regex AsinRegex = new Regex("\\b[A-Z0-9]{10}\\b", RegexOptions.Compiled);
         private static readonly Regex HeaderNormalizeRegex = new Regex("[^a-z0-9]", RegexOptions.Compiled);
         private static readonly string[] BaseAsinHeaders = { "asin", "asins", "asin1" };
         private static readonly string[] ReportAsinHeaders = { "asin", "asins", "asin1" };
@@ -383,7 +382,7 @@ namespace S3Integración_programs
                 return string.Empty;
             }
 
-            var match = AsinRegex.Match(text);
+            var match = RegexPatterns.Asin.Match(text);
             if (!match.Success)
             {
                 return string.Empty;

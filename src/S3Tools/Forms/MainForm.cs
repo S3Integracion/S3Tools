@@ -1,24 +1,27 @@
-// Main shell form that hosts the tool tabs and injects their controls.
 using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace S3Integración_programs
+namespace S3Tools
 {
-    public partial class Form1 : Form
+    /// <summary>
+    /// Ventana principal de la aplicación. Aloja las pestañas de las cinco herramientas
+    /// (Asin Batcher, Sitemap, Formato, Asin no Report, Categorías) y resuelve el ícono.
+    /// </summary>
+    public partial class MainForm : Form
     {
-        public Form1()
+        private const string AppTitle = "S3Tools";
+        private const string IconFileName = "S3Tools.ico";
+
+        public MainForm()
         {
             InitializeComponent();
-            Text = "S3Tools";
+            Text = AppTitle;
             TrySetAppIcon();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
-
+        /// <summary>Activa una pestaña por instancia (helper utilizado por los menús).</summary>
         private void ShowTab(TabPage tabPage)
         {
             if (tabPage != null)
@@ -32,25 +35,25 @@ namespace S3Integración_programs
             ShowTab(tabAsinBatcher);
         }
 
+        /// <summary>
+        /// Carga el ícono de la aplicación desde el directorio del ejecutable.
+        /// Si no se puede leer, conserva el ícono por defecto.
+        /// </summary>
         private void TrySetAppIcon()
         {
             try
             {
-                var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "S3Tools.ico");
+                var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, IconFileName);
                 if (File.Exists(iconPath))
                 {
                     Icon = new Icon(iconPath);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Keep default icon if the custom one cannot be loaded.
+                // El ícono es decorativo: si falla, seguimos con el predeterminado.
+                FileLogger.Warn(nameof(MainForm), "No se pudo cargar el ícono.", ex);
             }
-        }
-
-        private void asinBatcherControl_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

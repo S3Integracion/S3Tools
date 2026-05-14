@@ -1,0 +1,27 @@
+<Project>
+
+  <!--
+    Propiedades MSBuild aplicadas a TODOS los proyectos descendientes en el árbol.
+    Centraliza opciones comunes para evitar duplicación en cada .csproj.
+  -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Default</AnalysisMode>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <Deterministic>true</Deterministic>
+    <NeutralLanguage>es</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Authoring metadata">
+    <Authors>Carlos Ariel Ureta Armenta</Authors>
+    <Company>S3 Integración</Company>
+    <Copyright>© 2025 S3 Integración</Copyright>
+  </PropertyGroup>
+
+</Project>

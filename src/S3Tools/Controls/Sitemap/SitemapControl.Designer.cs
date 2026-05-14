@@ -1,4 +1,4 @@
-namespace S3Integración_programs
+namespace S3Tools
 {
     partial class SitemapControl
     {

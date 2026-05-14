@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace S3Integración_programs
+namespace S3Tools
 {
     internal sealed partial class AsinNoReportControl : UserControl
     {

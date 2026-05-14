@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace S3Integración_programs
+namespace S3Tools
 {
     internal sealed partial class CategoriasControl : UserControl
     {
