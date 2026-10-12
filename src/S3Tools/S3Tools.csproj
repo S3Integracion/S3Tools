@@ -45,6 +45,11 @@
     <InternalsVisibleTo Include="S3Tools.Tests" />
   </ItemGroup>
 
+  <ItemGroup Label="Plantillas de fábrica embebidas (se siembran en %LocalAppData%\S3Tools\sitemap-templates.json)">
+    <EmbeddedResource Include="Resources\PlantillaSitemapsTiendas.json" LogicalName="S3Tools.Templates.tiendas.json" />
+    <EmbeddedResource Include="Resources\PlantillaSitemapsBBvs.json" LogicalName="S3Tools.Templates.bbvs.json" />
+  </ItemGroup>
+
   <ItemGroup Label="Content files copied to output (Link preserves the flat filename next to the .exe)">
     <Content Include="Resources\PlantillaSitemapsTiendas.json" Link="PlantillaSitemapsTiendas.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
