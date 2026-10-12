@@ -102,7 +102,7 @@ namespace S3Tools
             var main = TryRead(_filePath, out var mainFile, out var mainReason);
             if (main == ReadOutcome.Ok)
             {
-                return Build(mainFile, false);
+                return Build(mainFile, false, null);
             }
 
             if (main == ReadOutcome.Missing && !File.Exists(BackupPath))
@@ -116,7 +116,11 @@ namespace S3Tools
             if (backup == ReadOutcome.Ok)
             {
                 FileLogger.Warn(Source, "Archivo principal no utilizable (" + (mainReason ?? "no existe") + "); se recupera el respaldo.");
-                return Build(backupFile, true);
+
+                // Se conserva el archivo dañado aparte: al volver a guardar, File.Replace no debe
+                // mandarlo a .bak (se perdería en el siguiente guardado).
+                var preserved = main == ReadOutcome.Corrupt ? MoveCorruptAside() : null;
+                return Build(backupFile, true, preserved);
             }
 
             FileLogger.Warn(Source, "Archivo principal (" + (mainReason ?? "no existe") + ") y respaldo (" + (backupReason ?? "no existe") + ") no utilizables.");
@@ -130,12 +134,13 @@ namespace S3Tools
         }
 
         /// <summary>Depura el contenido leído y decide si hay que reescribirlo o dejarlo intacto.</summary>
-        private StoreLoadResult Build(RawFile file, bool recoveredFromBackup)
+        private StoreLoadResult Build(RawFile file, bool recoveredFromBackup, string preservedCorruptPath)
         {
             var warnings = new List<string>();
             if (recoveredFromBackup)
             {
-                warnings.Add("El archivo de plantillas estaba dañado; se recuperó la copia de respaldo.");
+                warnings.Add("El archivo de plantillas estaba dañado; se recuperó la copia de respaldo." +
+                             (preservedCorruptPath != null ? " El archivo dañado se guardó como " + Path.GetFileName(preservedCorruptPath) + "." : string.Empty));
             }
 
             var future = file.SchemaVersion > CurrentSchemaVersion;
@@ -156,6 +161,13 @@ namespace S3Tools
                 templates = new List<SitemapTemplate>(BuiltInSitemapTemplates.CreateDefaults(DateTime.UtcNow));
                 if (!future)
                 {
+                    // El archivo principal legible pero sin entradas útiles se conserva aparte antes de resembrar.
+                    if (File.Exists(_filePath))
+                    {
+                        var preserved = MoveCorruptAside();
+                        warnings.Add("El archivo original se guardó como " + Path.GetFileName(preserved) + ".");
+                    }
+
                     Save(templates);
                 }
             }

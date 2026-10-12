@@ -143,10 +143,16 @@ namespace S3Tools.Tests
         public void Load_CorruptMain_ValidBak_RecoversFromBak()
         {
             WriteFile(_file + ".bak", 1, Entry("good", "Buena"));
-            File.WriteAllText(_file, "{ esto no es json", Utf8NoBom);
+            const string corruptText = "{ esto no es json";
+            File.WriteAllText(_file, corruptText, Utf8NoBom);
             var store = NewStore();
 
             var result = store.Load();
+
+            // El archivo dañado (p. ej. editado a mano) se conserva aparte, no se pierde en .bak.
+            var corrupt = Assert.Single(Directory.GetFiles(_dir, "sitemap-templates.corrupt-*.json"));
+            Assert.Equal(corruptText, File.ReadAllText(corrupt, Utf8NoBom));
+            Assert.Contains("good", File.ReadAllText(_file, Utf8NoBom));
 
             Assert.NotNull(result.Warning);
             Assert.False(result.IsReadOnly);
@@ -283,8 +289,12 @@ namespace S3Tools.Tests
         public void Load_AllEntriesInvalid_Reseeds()
         {
             WriteFile(_file, 1, Entry("bad", "Mala", sitemap: "{}"), Entry("BAD", "Peor"));
+            var original = File.ReadAllBytes(_file);
 
             var result = NewStore().Load();
+
+            var corrupt = Assert.Single(Directory.GetFiles(_dir, "sitemap-templates.corrupt-*.json"));
+            Assert.Equal(original, File.ReadAllBytes(corrupt));
 
             Assert.NotNull(result.Warning);
             Assert.Equal(new[] { "tiendas", "bbvs" }, result.Templates.Select(t => t.Id).ToArray());
