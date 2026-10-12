@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/S3Tools/S3Tools.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/S3Tools.Tests/S3Tools.Tests.csproj" />
+  </Folder>
 </Solution>

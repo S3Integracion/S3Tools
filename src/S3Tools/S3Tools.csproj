@@ -41,6 +41,10 @@
     <PackageReference Include="ClosedXML" Version="0.104.2" />
   </ItemGroup>
 
+  <ItemGroup Label="Visibilidad de tipos internal para pruebas">
+    <InternalsVisibleTo Include="S3Tools.Tests" />
+  </ItemGroup>
+
   <ItemGroup Label="Content files copied to output (Link preserves the flat filename next to the .exe)">
     <Content Include="Resources\PlantillaSitemapsTiendas.json" Link="PlantillaSitemapsTiendas.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
