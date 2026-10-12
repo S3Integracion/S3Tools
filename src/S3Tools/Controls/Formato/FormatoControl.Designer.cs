@@ -34,9 +34,9 @@ namespace S3Tools
             this._summaryLabel = new System.Windows.Forms.Label();
             this.templateGroup = new System.Windows.Forms.GroupBox();
             this.templatePanel = new System.Windows.Forms.FlowLayoutPanel();
-            this._templateAutoRadio = new System.Windows.Forms.RadioButton();
-            this._templateTiendasRadio = new System.Windows.Forms.RadioButton();
-            this._templateBbvsRadio = new System.Windows.Forms.RadioButton();
+            this._templateCombo = new System.Windows.Forms.ComboBox();
+            this._manageTemplatesButton = new System.Windows.Forms.Button();
+            this._templateHintLabel = new System.Windows.Forms.Label();
             this.processPanel = new System.Windows.Forms.FlowLayoutPanel();
             this._processButton = new System.Windows.Forms.Button();
             this._noteLabel = new System.Windows.Forms.Label();
@@ -275,7 +275,7 @@ namespace S3Tools
             this.templateGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.templateGroup.Location = new System.Drawing.Point(13, 498);
             this.templateGroup.Name = "templateGroup";
-            this.templateGroup.Size = new System.Drawing.Size(987, 48);
+            this.templateGroup.Size = new System.Drawing.Size(987, 54);
             this.templateGroup.TabIndex = 2;
             this.templateGroup.TabStop = false;
             this.templateGroup.Text = "Plantilla";
@@ -283,47 +283,45 @@ namespace S3Tools
             // templatePanel
             // 
             this.templatePanel.AutoSize = true;
-            this.templatePanel.Controls.Add(this._templateAutoRadio);
-            this.templatePanel.Controls.Add(this._templateTiendasRadio);
-            this.templatePanel.Controls.Add(this._templateBbvsRadio);
+            this.templatePanel.Controls.Add(this._templateCombo);
+            this.templatePanel.Controls.Add(this._manageTemplatesButton);
+            this.templatePanel.Controls.Add(this._templateHintLabel);
             this.templatePanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.templatePanel.Location = new System.Drawing.Point(3, 18);
             this.templatePanel.Name = "templatePanel";
-            this.templatePanel.Size = new System.Drawing.Size(981, 27);
+            this.templatePanel.Size = new System.Drawing.Size(981, 33);
             this.templatePanel.TabIndex = 0;
             // 
-            // _templateAutoRadio
+            // _templateCombo
             // 
-            this._templateAutoRadio.AutoSize = true;
-            this._templateAutoRadio.Location = new System.Drawing.Point(3, 3);
-            this._templateAutoRadio.Name = "_templateAutoRadio";
-            this._templateAutoRadio.Size = new System.Drawing.Size(58, 21);
-            this._templateAutoRadio.TabIndex = 0;
-            this._templateAutoRadio.TabStop = true;
-            this._templateAutoRadio.Text = "Auto";
-            this._templateAutoRadio.UseVisualStyleBackColor = true;
+            this._templateCombo.AccessibleName = "Plantilla";
+            this._templateCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._templateCombo.FormattingEnabled = true;
+            this._templateCombo.Location = new System.Drawing.Point(3, 6);
+            this._templateCombo.Margin = new System.Windows.Forms.Padding(3, 6, 3, 3);
+            this._templateCombo.Name = "_templateCombo";
+            this._templateCombo.Size = new System.Drawing.Size(320, 24);
+            this._templateCombo.TabIndex = 0;
             // 
-            // _templateTiendasRadio
+            // _manageTemplatesButton
             // 
-            this._templateTiendasRadio.AutoSize = true;
-            this._templateTiendasRadio.Location = new System.Drawing.Point(67, 3);
-            this._templateTiendasRadio.Name = "_templateTiendasRadio";
-            this._templateTiendasRadio.Size = new System.Drawing.Size(80, 21);
-            this._templateTiendasRadio.TabIndex = 1;
-            this._templateTiendasRadio.TabStop = true;
-            this._templateTiendasRadio.Text = "Tiendas";
-            this._templateTiendasRadio.UseVisualStyleBackColor = true;
+            this._manageTemplatesButton.AutoSize = true;
+            this._manageTemplatesButton.Location = new System.Drawing.Point(329, 3);
+            this._manageTemplatesButton.Name = "_manageTemplatesButton";
+            this._manageTemplatesButton.Size = new System.Drawing.Size(160, 27);
+            this._manageTemplatesButton.TabIndex = 1;
+            this._manageTemplatesButton.Text = "Administrar plantillas…";
+            this._manageTemplatesButton.UseVisualStyleBackColor = true;
             // 
-            // _templateBbvsRadio
+            // _templateHintLabel
             // 
-            this._templateBbvsRadio.AutoSize = true;
-            this._templateBbvsRadio.Location = new System.Drawing.Point(153, 3);
-            this._templateBbvsRadio.Name = "_templateBbvsRadio";
-            this._templateBbvsRadio.Size = new System.Drawing.Size(61, 21);
-            this._templateBbvsRadio.TabIndex = 2;
-            this._templateBbvsRadio.TabStop = true;
-            this._templateBbvsRadio.Text = "BBvs";
-            this._templateBbvsRadio.UseVisualStyleBackColor = true;
+            this._templateHintLabel.AutoSize = true;
+            this._templateHintLabel.ForeColor = System.Drawing.SystemColors.GrayText;
+            this._templateHintLabel.Location = new System.Drawing.Point(495, 8);
+            this._templateHintLabel.Margin = new System.Windows.Forms.Padding(3, 8, 3, 0);
+            this._templateHintLabel.Name = "_templateHintLabel";
+            this._templateHintLabel.Size = new System.Drawing.Size(0, 17);
+            this._templateHintLabel.TabIndex = 2;
             // 
             // processPanel
             // 
@@ -434,9 +432,9 @@ namespace S3Tools
         private System.Windows.Forms.Label _summaryLabel;
         private System.Windows.Forms.RadioButton _headerFormatHyphenRadio;
         private System.Windows.Forms.RadioButton _headerFormatUnderscoreRadio;
-        private System.Windows.Forms.RadioButton _templateAutoRadio;
-        private System.Windows.Forms.RadioButton _templateTiendasRadio;
-        private System.Windows.Forms.RadioButton _templateBbvsRadio;
+        private System.Windows.Forms.ComboBox _templateCombo;
+        private System.Windows.Forms.Button _manageTemplatesButton;
+        private System.Windows.Forms.Label _templateHintLabel;
         private System.Windows.Forms.Button _processButton;
         private System.Windows.Forms.Button _helpButton;
         private System.Windows.Forms.Label _noteLabel;

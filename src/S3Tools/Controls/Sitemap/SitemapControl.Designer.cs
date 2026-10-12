@@ -47,8 +47,9 @@ namespace S3Tools
             this._storeHervazTradeRadio = new System.Windows.Forms.RadioButton();
             this.templateGroup = new System.Windows.Forms.GroupBox();
             this.templatePanel = new System.Windows.Forms.FlowLayoutPanel();
-            this._templateNormalRadio = new System.Windows.Forms.RadioButton();
-            this._templateNubeRadio = new System.Windows.Forms.RadioButton();
+            this._templateCombo = new System.Windows.Forms.ComboBox();
+            this._manageTemplatesButton = new System.Windows.Forms.Button();
+            this._templateHintLabel = new System.Windows.Forms.Label();
             this.baseNameLayout = new System.Windows.Forms.TableLayoutPanel();
             this.baseNameLabel = new System.Windows.Forms.Label();
             this._baseNameText = new System.Windows.Forms.TextBox();
@@ -466,7 +467,7 @@ namespace S3Tools
             this.templateGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.templateGroup.Location = new System.Drawing.Point(13, 358);
             this.templateGroup.Name = "templateGroup";
-            this.templateGroup.Size = new System.Drawing.Size(994, 42);
+            this.templateGroup.Size = new System.Drawing.Size(994, 52);
             this.templateGroup.TabIndex = 3;
             this.templateGroup.TabStop = false;
             this.templateGroup.Text = "Plantilla de sitemap";
@@ -474,35 +475,45 @@ namespace S3Tools
             // templatePanel
             // 
             this.templatePanel.AutoSize = true;
-            this.templatePanel.Controls.Add(this._templateNormalRadio);
-            this.templatePanel.Controls.Add(this._templateNubeRadio);
+            this.templatePanel.Controls.Add(this._templateCombo);
+            this.templatePanel.Controls.Add(this._manageTemplatesButton);
+            this.templatePanel.Controls.Add(this._templateHintLabel);
             this.templatePanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.templatePanel.Location = new System.Drawing.Point(3, 16);
             this.templatePanel.Name = "templatePanel";
-            this.templatePanel.Size = new System.Drawing.Size(988, 23);
+            this.templatePanel.Size = new System.Drawing.Size(988, 33);
             this.templatePanel.TabIndex = 0;
             // 
-            // _templateNormalRadio
+            // _templateCombo
             // 
-            this._templateNormalRadio.AutoSize = true;
-            this._templateNormalRadio.Location = new System.Drawing.Point(3, 3);
-            this._templateNormalRadio.Name = "_templateNormalRadio";
-            this._templateNormalRadio.Size = new System.Drawing.Size(58, 17);
-            this._templateNormalRadio.TabIndex = 0;
-            this._templateNormalRadio.TabStop = true;
-            this._templateNormalRadio.Text = "Normal";
-            this._templateNormalRadio.UseVisualStyleBackColor = true;
+            this._templateCombo.AccessibleName = "Plantilla de sitemap";
+            this._templateCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._templateCombo.FormattingEnabled = true;
+            this._templateCombo.Location = new System.Drawing.Point(3, 6);
+            this._templateCombo.Margin = new System.Windows.Forms.Padding(3, 6, 3, 3);
+            this._templateCombo.Name = "_templateCombo";
+            this._templateCombo.Size = new System.Drawing.Size(320, 21);
+            this._templateCombo.TabIndex = 0;
             // 
-            // _templateNubeRadio
+            // _manageTemplatesButton
             // 
-            this._templateNubeRadio.AutoSize = true;
-            this._templateNubeRadio.Location = new System.Drawing.Point(67, 3);
-            this._templateNubeRadio.Name = "_templateNubeRadio";
-            this._templateNubeRadio.Size = new System.Drawing.Size(51, 17);
-            this._templateNubeRadio.TabIndex = 1;
-            this._templateNubeRadio.TabStop = true;
-            this._templateNubeRadio.Text = "Nube";
-            this._templateNubeRadio.UseVisualStyleBackColor = true;
+            this._manageTemplatesButton.AutoSize = true;
+            this._manageTemplatesButton.Location = new System.Drawing.Point(329, 3);
+            this._manageTemplatesButton.Name = "_manageTemplatesButton";
+            this._manageTemplatesButton.Size = new System.Drawing.Size(160, 27);
+            this._manageTemplatesButton.TabIndex = 1;
+            this._manageTemplatesButton.Text = "Administrar plantillas…";
+            this._manageTemplatesButton.UseVisualStyleBackColor = true;
+            // 
+            // _templateHintLabel
+            // 
+            this._templateHintLabel.AutoSize = true;
+            this._templateHintLabel.ForeColor = System.Drawing.SystemColors.GrayText;
+            this._templateHintLabel.Location = new System.Drawing.Point(495, 9);
+            this._templateHintLabel.Margin = new System.Windows.Forms.Padding(3, 9, 3, 0);
+            this._templateHintLabel.Name = "_templateHintLabel";
+            this._templateHintLabel.Size = new System.Drawing.Size(0, 13);
+            this._templateHintLabel.TabIndex = 2;
             // 
             // baseNameLayout
             // 
@@ -768,8 +779,9 @@ namespace S3Tools
         private System.Windows.Forms.Label _summaryLabel;
         private System.Windows.Forms.Label _urlsPerBatchLabel;
         private System.Windows.Forms.Label _timeRangeLabel;
-        private System.Windows.Forms.RadioButton _templateNormalRadio;
-        private System.Windows.Forms.RadioButton _templateNubeRadio;
+        private System.Windows.Forms.ComboBox _templateCombo;
+        private System.Windows.Forms.Button _manageTemplatesButton;
+        private System.Windows.Forms.Label _templateHintLabel;
         private System.Windows.Forms.TextBox _baseNameText;
         private System.Windows.Forms.TextBox _outputText;
         private System.Windows.Forms.Button _downloadsButton;
