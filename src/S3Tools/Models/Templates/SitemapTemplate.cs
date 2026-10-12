@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace S3Tools
 {
@@ -23,7 +24,8 @@ namespace S3Tools
             Name = name;
             Description = description ?? string.Empty;
             BuiltInKey = builtInKey;
-            Stores = stores ?? Array.Empty<string>();
+            // Copia defensiva: la plantilla es inmutable aunque el llamador conserve y modifique su lista.
+            Stores = stores == null ? Array.Empty<string>() : stores.ToArray();
             CreatedUtc = ToUtc(createdUtc);
             UpdatedUtc = ToUtc(updatedUtc);
             SitemapJson = sitemapJson;

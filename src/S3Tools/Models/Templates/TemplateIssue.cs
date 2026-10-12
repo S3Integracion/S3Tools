@@ -92,4 +92,25 @@ namespace S3Tools
         /// <summary>Objeto sitemap analizado; <c>null</c> si el texto no se pudo interpretar como objeto JSON.</summary>
         public JsonObject Sitemap { get; }
     }
+
+    /// <summary>
+    /// Resultado de una mutación del repositorio de plantillas. Con <see cref="Ok"/> verdadero,
+    /// <see cref="Issues"/> solo contiene advertencias; con <see cref="Ok"/> falso contiene al menos un error.
+    /// </summary>
+    internal sealed class TemplateSaveResult
+    {
+        public TemplateSaveResult(bool ok, SitemapTemplate template, IReadOnlyList<TemplateIssue> issues)
+        {
+            Ok = ok;
+            Template = template;
+            Issues = issues ?? new TemplateIssue[0];
+        }
+
+        public bool Ok { get; }
+
+        /// <summary>Plantilla creada, actualizada o eliminada; <c>null</c> si la operación falló o no aplica (restaurar).</summary>
+        public SitemapTemplate Template { get; }
+
+        public IReadOnlyList<TemplateIssue> Issues { get; }
+    }
 }
