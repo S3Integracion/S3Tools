@@ -24,7 +24,8 @@ namespace S3Tools
         public const int MaxDescriptionLength = 200;
 
         private const string Source = nameof(SitemapTemplateRepository);
-        private const string ReadOnlyMessage = "El archivo de plantillas fue creado por una versión más reciente de S3Tools.";
+        private const string FutureSchemaMessage = "El archivo de plantillas fue creado por una versión más reciente de S3Tools.";
+        private const string IoErrorMessage = "No se pudo leer el archivo de plantillas. Los cambios están deshabilitados hasta reiniciar S3Tools.";
         private const string MissingMessage = "La plantilla no existe.";
         private const string DefaultImportName = "Plantilla importada";
 
@@ -35,7 +36,7 @@ namespace S3Tools
         private readonly SitemapTemplateStore _store;
         private List<SitemapTemplate> _templates;
         private string _loadWarning;
-        private bool _isReadOnly;
+        private StoreReadOnlyReason _readOnlyReason;
 
         public SitemapTemplateRepository(string filePath)
         {
@@ -72,7 +73,20 @@ namespace S3Tools
                 lock (_sync)
                 {
                     EnsureLoaded();
-                    return _isReadOnly;
+                    return _readOnlyReason != StoreReadOnlyReason.None;
+                }
+            }
+        }
+
+        /// <summary>Motivo del solo lectura (para mostrar el aviso adecuado); <see cref="StoreReadOnlyReason.None"/> si es modificable.</summary>
+        public StoreReadOnlyReason ReadOnlyReason
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    EnsureLoaded();
+                    return _readOnlyReason;
                 }
             }
         }
@@ -288,7 +302,7 @@ namespace S3Tools
                             MakeUniqueName(factory.Name, NumberSuffix, working, existing.Id),
                             existing.Description,
                             existing.BuiltInKey,
-                            existing.Stores.Concat(FreeFactoryStores(factory, working, existing.Id)).ToArray(),
+                            existing.Stores.Concat(FreeFactoryStores(factory, working, existing.Id).Where(store => !LinksStore(existing, store))).ToArray(),
                             existing.CreatedUtc,
                             now,
                             factory.SitemapJson);
@@ -331,7 +345,7 @@ namespace S3Tools
             var loaded = _store.Load();
             _templates = new List<SitemapTemplate>(loaded.Templates);
             _loadWarning = loaded.Warning;
-            _isReadOnly = loaded.IsReadOnly;
+            _readOnlyReason = loaded.ReadOnlyReason;
         }
 
         /// <summary>
@@ -358,9 +372,9 @@ namespace S3Tools
         {
             EnsureLoaded();
             var issues = new List<TemplateIssue>();
-            if (_isReadOnly)
+            if (_readOnlyReason != StoreReadOnlyReason.None)
             {
-                issues.Add(Error(ReadOnlyMessage));
+                issues.Add(Error(_readOnlyReason == StoreReadOnlyReason.FutureSchema ? FutureSchemaMessage : IoErrorMessage));
                 return new TemplateSaveResult(false, null, issues);
             }
 

@@ -82,14 +82,27 @@ namespace S3Tools
         public string SitemapJson { get; set; }
     }
 
+    /// <summary>Motivo por el que el almacén se abrió en solo lectura.</summary>
+    internal enum StoreReadOnlyReason
+    {
+        /// <summary>El almacén es modificable.</summary>
+        None,
+
+        /// <summary>El archivo usa una versión de esquema más nueva que la soportada.</summary>
+        FutureSchema,
+
+        /// <summary>No se pudo leer el archivo por un error de E/S o de permisos.</summary>
+        IoError,
+    }
+
     /// <summary>Resultado de cargar el almacén de plantillas.</summary>
     internal sealed class StoreLoadResult
     {
-        public StoreLoadResult(IReadOnlyList<SitemapTemplate> templates, string warning, bool isReadOnly)
+        public StoreLoadResult(IReadOnlyList<SitemapTemplate> templates, string warning, StoreReadOnlyReason readOnlyReason)
         {
             Templates = templates;
             Warning = warning;
-            IsReadOnly = isReadOnly;
+            ReadOnlyReason = readOnlyReason;
         }
 
         public IReadOnlyList<SitemapTemplate> Templates { get; }
@@ -97,7 +110,13 @@ namespace S3Tools
         /// <summary>Resumen de las correcciones o recuperaciones aplicadas al cargar; <c>null</c> si la carga fue limpia.</summary>
         public string Warning { get; }
 
+        /// <summary>Motivo del solo lectura; <see cref="StoreReadOnlyReason.None"/> si se puede modificar.</summary>
+        public StoreReadOnlyReason ReadOnlyReason { get; }
+
         /// <summary>Verdadero cuando el archivo no se puede modificar (versión de esquema futura o archivo inaccesible).</summary>
-        public bool IsReadOnly { get; }
+        public bool IsReadOnly
+        {
+            get { return ReadOnlyReason != StoreReadOnlyReason.None; }
+        }
     }
 }

@@ -521,6 +521,7 @@ namespace S3Tools.Tests
             const string message = "El archivo de plantillas fue creado por una versión más reciente de S3Tools.";
 
             Assert.True(repo.IsReadOnly);
+            Assert.Equal(StoreReadOnlyReason.FutureSchema, repo.ReadOnlyReason);
             Assert.NotNull(repo.LoadWarning);
             Assert.Equal(message, Errors(repo.Create(Draft("A"))));
             Assert.Equal(message, Errors(repo.Update("tiendas", Draft("A"))));
@@ -529,6 +530,43 @@ namespace S3Tools.Tests
             Assert.Equal(message, Errors(repo.Import(ValidSitemap, "A")));
             Assert.Equal(message, Errors(repo.RestoreDefaults()));
             Assert.Equal("{\"schemaVersion\":99,\"templates\":[]}", File.ReadAllText(_file));
+        }
+
+        [Fact]
+        public void ReadOnly_IoErrorOnLoad_ReportsIoCause()
+        {
+            NewRepo().GetAll();
+            var before = File.ReadAllText(_file);
+            SitemapTemplateRepository repo;
+            TemplateSaveResult result;
+            using (new FileStream(_file, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                repo = NewRepo();
+                Assert.True(repo.IsReadOnly);
+                result = repo.Create(Draft("No debe guardarse"));
+            }
+
+            Assert.Equal(StoreReadOnlyReason.IoError, repo.ReadOnlyReason);
+            Assert.False(result.Ok);
+            Assert.Equal("No se pudo leer el archivo de plantillas. Los cambios están deshabilitados hasta reiniciar S3Tools.", Errors(result));
+            Assert.Equal(before, File.ReadAllText(_file));
+        }
+
+        [Fact]
+        public void RestoreDefaults_OnFreshDefaults_DoesNotDuplicateStores()
+        {
+            var repo = NewRepo();
+
+            var result = repo.RestoreDefaults();
+
+            Assert.True(result.Ok);
+            Assert.Equal(StoreCatalog.StoresLeft, repo.Find("tiendas").Stores);
+            Assert.Equal(StoreCatalog.StoresRight, repo.Find("bbvs").Stores);
+
+            var reloaded = NewRepo();
+            Assert.Null(reloaded.LoadWarning);
+            Assert.Equal(StoreCatalog.StoresLeft, reloaded.Find("tiendas").Stores);
+            Assert.Equal(StoreCatalog.StoresRight, reloaded.Find("bbvs").Stores);
         }
 
         [Fact]

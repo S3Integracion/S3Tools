@@ -64,7 +64,7 @@ namespace S3Tools
                 return new StoreLoadResult(
                     BuiltInSitemapTemplates.CreateDefaults(DateTime.UtcNow),
                     "No se pudo acceder al archivo de plantillas (" + ex.Message + "). Se usan las plantillas de fábrica y los cambios no se guardarán.",
-                    true);
+                    StoreReadOnlyReason.IoError);
             }
         }
 
@@ -109,7 +109,7 @@ namespace S3Tools
             {
                 var seeded = BuiltInSitemapTemplates.CreateDefaults(DateTime.UtcNow);
                 Save(seeded);
-                return new StoreLoadResult(seeded, null, false);
+                return new StoreLoadResult(seeded, null, StoreReadOnlyReason.None);
             }
 
             var backup = TryRead(BackupPath, out var backupFile, out var backupReason);
@@ -130,7 +130,7 @@ namespace S3Tools
             var warning = movedTo != null
                 ? "El archivo de plantillas estaba dañado y se guardó como " + Path.GetFileName(movedTo) + ". Se restauraron las plantillas de fábrica."
                 : "No se pudo leer el respaldo de plantillas. Se restauraron las plantillas de fábrica.";
-            return new StoreLoadResult(defaults, warning, false);
+            return new StoreLoadResult(defaults, warning, StoreReadOnlyReason.None);
         }
 
         /// <summary>Depura el contenido leído y decide si hay que reescribirlo o dejarlo intacto.</summary>
@@ -176,7 +176,7 @@ namespace S3Tools
                 Save(templates);
             }
 
-            return new StoreLoadResult(templates, warnings.Count == 0 ? null : string.Join(Environment.NewLine, warnings), future);
+            return new StoreLoadResult(templates, warnings.Count == 0 ? null : string.Join(Environment.NewLine, warnings), future ? StoreReadOnlyReason.FutureSchema : StoreReadOnlyReason.None);
         }
 
         private static List<SitemapTemplate> Sanitize(JsonArray entries, List<string> warnings)
