@@ -329,7 +329,7 @@ namespace S3Tools
                 Store = storeName,
                 StoreName = storeName,
                 ZipOutput = _zipCheck.Checked,
-                TemplateMode = GetSelectedTemplateMode(),
+                TemplateId = GetSelectedTemplateId(),
                 NamePrefix1 = _namePrefix1,
                 NamePrefix2 = _namePrefix2,
             };
@@ -372,13 +372,14 @@ namespace S3Tools
             _filesList.Enabled = !busy;
         }
 
-        private string GetSelectedTemplateMode()
+        // Mapeo provisional radios -> id de plantilla de fábrica; el selector de plantillas lo reemplaza.
+        private string GetSelectedTemplateId()
         {
             if (_templateNubeRadio != null && _templateNubeRadio.Checked)
             {
-                return "nube";
+                return "bbvs";
             }
-            return "normal";
+            return "tiendas";
         }
 
         private void ShowNameConfigDialog()

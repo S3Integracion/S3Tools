@@ -24,8 +24,9 @@ namespace S3Tools
         [DataMember(Name = "zip_output")]
         public bool? ZipOutput { get; set; }
 
-        [DataMember(Name = "template_mode")]
-        public string TemplateMode { get; set; }
+        /// <summary>Id de la plantilla del repositorio con la que se genera el sitemap.</summary>
+        [DataMember(Name = "template_id")]
+        public string TemplateId { get; set; }
 
         [DataMember(Name = "name_prefix_1")]
         public string NamePrefix1 { get; set; }

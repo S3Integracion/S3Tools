@@ -20,8 +20,8 @@ namespace S3Tools
         /// <summary>
         /// Aplica el cambio de encabezados a todas las hojas del workbook.
         /// </summary>
-        /// <returns>Clave de plantilla efectiva ("tiendas"/"bbvs").</returns>
-        public static string UpdateHeaders(string path, string templateChoice, string headerFormat)
+        /// <returns>Id de la plantilla efectiva.</returns>
+        public static string UpdateHeaders(string path, string templateChoice, string headerFormat, IReadOnlyList<SitemapTemplate> templates)
         {
             var selected = TemplateResolver.HeaderFormats[headerFormat];
 
@@ -42,8 +42,12 @@ namespace S3Tools
 
                 var worksheets         = new List<WorksheetUpdateData>();
                 string templateKey     = null;
-                var useExplicitTemplate = TemplateResolver.TemplateFiles.ContainsKey(templateChoice);
-                if (useExplicitTemplate) templateKey = templateChoice;
+                var useExplicitTemplate = !string.Equals(templateChoice, TemplateResolver.AutoChoice, StringComparison.OrdinalIgnoreCase);
+                if (useExplicitTemplate)
+                {
+                    // Lanza InvalidOperationException si el id ya no existe, antes de modificar el archivo.
+                    templateKey = TemplateResolver.ResolveTemplate(templateChoice, null, templates);
+                }
 
                 foreach (var sheet in workbookDoc.Descendants(SpreadsheetNs + "sheet"))
                 {
@@ -61,13 +65,13 @@ namespace S3Tools
                     var headers = GetWorksheetHeaders(worksheetDoc, maxColumn, sharedStrings);
                     if (!useExplicitTemplate && string.IsNullOrWhiteSpace(templateKey) && headers.Count > 0)
                     {
-                        templateKey = TemplateResolver.DetectTemplate(headers);
+                        templateKey = TemplateResolver.DetectTemplate(headers, templates);
                     }
 
                     worksheets.Add(new WorksheetUpdateData(sheetPath, worksheetDoc, maxColumn));
                 }
 
-                if (string.IsNullOrWhiteSpace(templateKey)) templateKey = "tiendas";
+                if (string.IsNullOrWhiteSpace(templateKey)) templateKey = TemplateResolver.DetectTemplate(null, templates);
 
                 foreach (var ws in worksheets)
                 {

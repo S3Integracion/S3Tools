@@ -17,7 +17,7 @@ namespace S3Tools
             if (request == null) throw new ArgumentNullException(nameof(request));
 
             request.Action = "process";
-            return Task.Run(() => FormatoEngine.Handle(request));
+            return Task.Run(() => FormatoEngine.Handle(request, SitemapTemplateRepository.Default));
         }
     }
 
@@ -30,13 +30,15 @@ namespace S3Tools
     {
         private const string DefaultHeaderFormat = "underscore";
 
-        public static FormatoEngineResponse Handle(FormatoEngineRequest request)
+        public static FormatoEngineResponse Handle(FormatoEngineRequest request, SitemapTemplateRepository repository)
         {
+            if (repository == null) throw new ArgumentNullException(nameof(repository));
+
             var action = (request?.Action ?? string.Empty).Trim().ToLowerInvariant();
-            return action == "process" ? HandleProcess(request) : Error("Unknown action");
+            return action == "process" ? HandleProcess(request, repository) : Error("Unknown action");
         }
 
-        private static FormatoEngineResponse HandleProcess(FormatoEngineRequest data)
+        private static FormatoEngineResponse HandleProcess(FormatoEngineRequest data, SitemapTemplateRepository repository)
         {
             var inputFiles = (data?.InputFiles ?? Array.Empty<string>())
                 .Where(f => !string.IsNullOrWhiteSpace(f))
@@ -54,6 +56,22 @@ namespace S3Tools
                 return Error("Invalid header_format. Use 'hyphen' or 'underscore'.");
             }
 
+            // Una sola foto de las plantillas para todo el lote: el id elegido se valida una vez,
+            // antes de tocar ningún archivo, y los conteos se reportan por nombre de plantilla.
+            var templates = repository.GetAll();
+            if (!string.Equals(templateChoice, TemplateResolver.AutoChoice, StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    templateChoice = TemplateResolver.ResolveTemplate(templateChoice, null, templates);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Error(ex.Message);
+                }
+            }
+            var namesById = templates.ToDictionary(t => t.Id, t => t.Name, StringComparer.Ordinal);
+
             var updatedFiles = new List<string>();
             var templateCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
@@ -67,11 +85,11 @@ namespace S3Tools
                     string updatedTemplate;
                     if (ext == ".xlsx")
                     {
-                        updatedTemplate = XlsxHeaderNormalizer.UpdateHeaders(fp, templateChoice, headerFormat);
+                        updatedTemplate = XlsxHeaderNormalizer.UpdateHeaders(fp, templateChoice, headerFormat, templates);
                     }
                     else if (ext == ".csv")
                     {
-                        updatedTemplate = CsvHeaderNormalizer.UpdateHeaders(fp, templateChoice, headerFormat);
+                        updatedTemplate = CsvHeaderNormalizer.UpdateHeaders(fp, templateChoice, headerFormat, templates);
                     }
                     else
                     {
@@ -79,8 +97,9 @@ namespace S3Tools
                     }
 
                     updatedFiles.Add(fp);
-                    if (!templateCounts.ContainsKey(updatedTemplate)) templateCounts[updatedTemplate] = 0;
-                    templateCounts[updatedTemplate]++;
+                    var templateName = namesById.TryGetValue(updatedTemplate, out var name) ? name : updatedTemplate;
+                    if (!templateCounts.ContainsKey(templateName)) templateCounts[templateName] = 0;
+                    templateCounts[templateName]++;
                 }
                 catch (Exception ex)
                 {

@@ -13,8 +13,8 @@ namespace S3Tools
     internal static class CsvHeaderNormalizer
     {
         /// <summary>Aplica el cambio de encabezados al CSV in-place.</summary>
-        /// <returns>Clave de plantilla efectiva ("tiendas"/"bbvs").</returns>
-        public static string UpdateHeaders(string path, string templateChoice, string headerFormat)
+        /// <returns>Id de la plantilla efectiva.</returns>
+        public static string UpdateHeaders(string path, string templateChoice, string headerFormat, IReadOnlyList<SitemapTemplate> templates)
         {
             var selected = TemplateResolver.HeaderFormats[headerFormat];
             var text = ReadTextWithEncoding(path, out var encoding);
@@ -32,7 +32,7 @@ namespace S3Tools
             }
 
             var headers = rows[0];
-            var templateKey = TemplateResolver.ResolveTemplate(templateChoice, headers);
+            var templateKey = TemplateResolver.ResolveTemplate(templateChoice, headers, templates);
 
             if (headers.Count >= 1) headers[0] = selected[0];
             if (headers.Count >= 2) headers[1] = selected[1];

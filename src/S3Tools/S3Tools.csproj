@@ -51,12 +51,6 @@
   </ItemGroup>
 
   <ItemGroup Label="Content files copied to output (Link preserves the flat filename next to the .exe)">
-    <Content Include="Resources\PlantillaSitemapsTiendas.json" Link="PlantillaSitemapsTiendas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\PlantillaSitemapsBBvs.json" Link="PlantillaSitemapsBBvs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\PlantillaCategoriasAmazon.json" Link="PlantillaCategoriasAmazon.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

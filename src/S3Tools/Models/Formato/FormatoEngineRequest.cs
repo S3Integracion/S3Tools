@@ -12,7 +12,7 @@ namespace S3Tools
         [DataMember(Name = "input_files")]
         public string[] InputFiles { get; set; }
 
-        /// <summary>"auto" / "tiendas" / "bbvs".</summary>
+        /// <summary>"auto" o el id de una plantilla del repositorio (p. ej. "tiendas", "bbvs").</summary>
         [DataMember(Name = "template")]
         public string Template { get; set; }
 

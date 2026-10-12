@@ -19,7 +19,7 @@ namespace S3Tools
         [DataMember(Name = "updated_files")]
         public string[] UpdatedFiles { get; set; }
 
-        /// <summary>Conteo de archivos por plantilla detectada (claves: "tiendas", "bbvs"...).</summary>
+        /// <summary>Conteo de archivos por plantilla aplicada (claves: nombre de la plantilla).</summary>
         [DataMember(Name = "template_counts")]
         public Dictionary<string, int> TemplateCounts { get; set; }
     }
